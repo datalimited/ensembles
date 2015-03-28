@@ -1,0 +1,6 @@
+library("dplyr")
+dir.create("ram-data")
+setwd("ram-data")
+ramlegacy::make_ramlegacy() # devtools::install_github("seananderson/ramlegacy")
+setwd("../")
+ram <- src_sqlite("ram-data/ramlegacy.sqlite3")
