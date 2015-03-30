@@ -1,9 +1,9 @@
 library("dplyr")
-# # Uncomment to re-cache the RAM data:
-# dir.create("ram-data")
-# setwd("ram-data")
-# ramlegacy::make_ramlegacy() # devtools::install_github("seananderson/ramlegacy")
-# setwd("../")
+# Uncomment to re-cache the RAM data:
+dir.create("ram-data")
+setwd("ram-data")
+ramlegacy::make_ramlegacy() # devtools::install_github("seananderson/ramlegacy")
+setwd("../")
 ram <- src_sqlite("ram-data/ramlegacy.sqlite3")
 
 cdat_old <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors = FALSE) %>%
