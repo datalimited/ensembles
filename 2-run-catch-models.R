@@ -50,13 +50,14 @@ ram_comsir <- ramts %>%
       logistic_model = TRUE,
       obs            = FALSE,
       n_posterior    = 5e3) # was 5e3
-    bbmsy <- reshape2::dcast(comsir_out$quantities, yr ~ sample_id,
-      value.var = "bbmsy")[,-1]
+    bbmsy <- reshape2::dcast(comsir_out$quantities, sample_id ~ yr,
+      value.var = "bbmsy")[,-1] # convert long to wide format
     # TODO switch log to TRUE:
     bbmsy_out <- summarize_bbmsy(bbmsy, log = FALSE)
-  })
     data.frame(year = .$year, c_touse = .$c_touse, bbmsy_out)
+  }) %>% as.data.frame
 
 library("ggplot2")
-# ggplot(ram_cmsy, aes(year, c_touse)) + geom_point() + facet_wrap(~stockid)
+ggplot(ram_cmsy, aes(year, c_touse)) + geom_point() + facet_wrap(~stockid)
 ggplot(ram_cmsy, aes(year, bbmsy_q50)) + geom_point() + facet_wrap(~stockid)
+ggplot(ram_comsir, aes(year, bbmsy_q50)) + geom_point() + facet_wrap(~stockid)
