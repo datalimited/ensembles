@@ -23,7 +23,7 @@ ram_cmsy <- ramts %>%
     bbmsy[is.infinite(bbmsy)] <- NA  # TODO investigate the -Inf values
     # TODO switch log to TRUE:
     bbmsy_out <- summarize_bbmsy(bbmsy, na.rm = TRUE, log = FALSE) # TODO investigate the negative values
-    data.frame(year = .$yr, c_touse = .$c_touse, bbmsy_out)
+    data.frame(year = .$year, c_touse = .$c_touse, bbmsy_out)
   }) %>% as.data.frame
 
 message("Running COM-SIR fits to RAM database...")
@@ -54,8 +54,8 @@ ram_comsir <- ramts %>%
       value.var = "bbmsy")[,-1]
     # TODO switch log to TRUE:
     bbmsy_out <- summarize_bbmsy(bbmsy, log = FALSE)
-    data.frame(year = .$yr, c_touse = .$c_touse, bbmsy_out)
   })
+    data.frame(year = .$year, c_touse = .$c_touse, bbmsy_out)
 
 library("ggplot2")
 # ggplot(ram_cmsy, aes(year, c_touse)) + geom_point() + facet_wrap(~stockid)
