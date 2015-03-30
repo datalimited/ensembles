@@ -1,2 +1,5 @@
 ram-data/*
 *.html
+.Rproj.user
+
+.Rapp.history
