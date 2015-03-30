@@ -25,3 +25,38 @@ ram_cmsy <- ramts %>%
     bbmsy_out <- summarize_bbmsy(bbmsy, na.rm = TRUE, log = FALSE) # TODO investigate the negative values
     data.frame(year = .$yr, c_touse = .$c_touse, bbmsy_out)
   }) %>% as.data.frame
+
+message("Running COM-SIR fits to RAM database...")
+ram_comsir <- ramts %>%
+  filter(stockid %in% unique(ramts$stockid)[1:2]) %>%
+  group_by(stockid) %>%
+  do({
+    message(.$stocklong[1])
+    comsir_out <- comsir(
+      yr             = .$year,
+      ct             = .$c_touse,
+      x              = 0.5,
+      k              = 800,
+      r              = 0.6,
+      a              = 0.8,
+      start_r        = resilience(.$res[1]),
+      norm_k         = TRUE,
+      logk           = TRUE,
+      norm_r         = FALSE,
+      norm_a         = FALSE,
+      norm_x         = FALSE,
+      nsim           = 1e6, # was 1e6
+      cv             = 0.4,
+      logistic_model = TRUE,
+      obs            = FALSE,
+      n_posterior    = 5e3) # was 5e3
+    bbmsy <- reshape2::dcast(comsir_out$quantities, yr ~ sample_id,
+      value.var = "bbmsy")[,-1]
+    # TODO switch log to TRUE:
+    bbmsy_out <- summarize_bbmsy(bbmsy, log = FALSE)
+    data.frame(year = .$yr, c_touse = .$c_touse, bbmsy_out)
+  })
+
+library("ggplot2")
+# ggplot(ram_cmsy, aes(year, c_touse)) + geom_point() + facet_wrap(~stockid)
+ggplot(ram_cmsy, aes(year, bbmsy_q50)) + geom_point() + facet_wrap(~stockid)
