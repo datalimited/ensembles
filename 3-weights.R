@@ -116,7 +116,7 @@ cross_val_weights <- function() {
   cbind(lm_out, gbm_out)
 }
 
-x <- lapply(seq_len(200L), function(yy) cross_val_weights())
+x <- lapply(seq_len(500L), function(yy) cross_val_weights())
 cross_out_lm <- matrix(ncol = length(x), nrow = nrow(d5_wide))
 cross_out_gbm <- matrix(ncol = length(x), nrow = nrow(d5_wide))
 for (i in seq_along(x)) {
