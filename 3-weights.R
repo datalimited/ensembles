@@ -25,6 +25,8 @@ assessed_bbmsy <- assessed_bbmsy[!duplicated(assessed_bbmsy), ]
 d2 <- reshape2::dcast(d, stockid + tsyear + stocklong ~ method, value.var = "b2bmsy") %>%
   inner_join(assessed_bbmsy)
 d2 <- na.omit(d2)
+set.seed(123)
+d2$Minto <- rnorm(nrow(d2), mean = 1.0, sd = 0.3)
 
 d2_long <- reshape2::melt(select(d2, -Bbmsy_toUse), id.vars = c("stockid", "stocklong", "tsyear"))
 d2_long <- inner_join(d2_long, d2[,c("stockid", "tsyear", "Bbmsy_toUse")]) %>%
@@ -114,7 +116,7 @@ cross_val_weights <- function() {
   cbind(lm_out, gbm_out)
 }
 
-x <- lapply(seq_len(250L), function(yy) cross_val_weights())
+x <- lapply(seq_len(200L), function(yy) cross_val_weights())
 cross_out_lm <- matrix(ncol = length(x), nrow = nrow(d5_wide))
 cross_out_gbm <- matrix(ncol = length(x), nrow = nrow(d5_wide))
 for (i in seq_along(x)) {
@@ -169,3 +171,11 @@ p <- ggplot(d5_mare, aes(method_ordered, log10(mare))) +
   ylab("log10(Absolute relative error)") +
   xlab("Method from highest to lowest median absolute relative error") + coord_flip()
 ggsave("figs/ensemble-re-ram-boxplots.pdf", width = 7, height = 6)
+
+sp <- group_by(d5_mare, method) %>%
+  summarise(sp = cor(b2bmsy, Bbmsy_toUse, method = "spearman")) %>%
+  arrange(sp) %>%
+  mutate(or = seq_along(method), method = reorder(method, -or))
+
+p <- ggplot(sp, aes(sp, method)) + geom_point() + xlab("Spearman's correlation")
+ggsave("figs/ensemble-spearman.pdf", width = 5, height = 6)
