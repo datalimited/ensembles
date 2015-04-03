@@ -1,9 +1,11 @@
 # start with the existing data based on the simulations
 
 library("dplyr")
-# lh <- readRDS("raw-data/OldRAMData-for-lifehistory-categories.RDS")
-# lh <- select(lh, database, spname, habitat, pricecategory, envtemp, tl,
-#   agematmax, resilience, totcatch, yeardev, biomass, cmax, LifeHist2)
+lh <- readRDS("raw-data/OldRAMData-for-lifehistory-categories.RDS")
+lh <- select(lh, spname, habitat, pricecategory, envtemp, tl,
+  agematmax, resilience, LifeHist2)
+  # filter(database == "Ram")
+lh <- lh[!duplicated(lh), ]
 
 ram <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors=FALSE)
 
@@ -11,6 +13,9 @@ ram_fits <- readRDS("generated-data/ram-orig-fits.rds")
 
 d <- ram_fits %>% rename(stockid = stock, tsyear = year) %>%
   inner_join(select(ram, tsyear, stockid, stocklong, Bbmsy_toUse, res, CtoUse))
+
+ram_sp <- ram[,c("stockid", "scientificname")]
+ram_sp <- ram_sp[!duplicated(ram_sp), ]
 
 # some duplicates on join - no idea why, checking later
 d <- d[!duplicated(d), ]
@@ -65,9 +70,17 @@ d5_mare <- rbind(d5_mare[,cols], d5_mean[,cols])
 d5_wide <- reshape2::dcast(d5, stockid ~ method, value.var = "b2bmsy") %>%
   inner_join(d5_mean[,c("stockid", "Bbmsy_toUse")])
 
+# bring in some life-history data etc.
+d5_wide <- inner_join(d5_wide, ram_sp) %>% as.data.frame
+d5_wide <- lh %>% rename(scientificname = spname) %>%
+  inner_join(d5_wide)
+d5_wide <- mutate(d5_wide, habitat = as.factor(habitat), pricecategory = as.factor(pricecategory), envtemp = as.factor(envtemp), resilience = as.factor(resilience))
+
+f_lm <- as.formula("Bbmsy_toUse ~ CMSY_new_prior*habitat + CMSY_old_prior*habitat + COMSIR*habitat  + SSCOM*habitat")
+f_gbm <- as.formula("Bbmsy_toUse ~ CMSY_new_prior + CMSY_old_prior + COMSIR + SSCOM + Minto + habitat")
 # run some in-bag models:
-m_lm <- lm(Bbmsy_toUse ~ CMSY_new_prior + CMSY_old_prior + COMSIR + Costello + SSCOM, data = d5_wide)
-m_gbm <- gbm::gbm(Bbmsy_toUse ~ CMSY_new_prior + CMSY_old_prior + COMSIR + Costello + SSCOM,
+m_lm <- lm(f_lm, data = d5_wide)
+m_gbm <- gbm::gbm(f_gbm,
   data = d5_wide, n.trees = 2000, interaction.depth = 5, shrinkage = 0.001,
   distribution = "gaussian")
 
@@ -91,32 +104,34 @@ d5_mare <- rbind(d5_mare[,cols], d5_wide[,cols])
 d5_mare <- as.data.frame(d5_mare)
 
 # and first pass at example out-of-bag:
-set.seed(1)
+set.seed(1234)
 
 cross_val_weights <- function() {
-  train_ids <- base::sample(seq_len(nrow(d5_wide)), round(nrow(d5_wide)/2))
+  train_ids <- base::sample(seq_len(nrow(d5_wide)), round(nrow(d5_wide)*0.5))
   test_ids <- seq_len(nrow(d5_wide))[-train_ids]
 
-  m_lm <- lm(Bbmsy_toUse ~ CMSY_new_prior + CMSY_old_prior + COMSIR + Costello + SSCOM,
+  m_lm <- lm(f_lm,
     data = d5_wide[train_ids, ])
-  m_gbm <- gbm::gbm(Bbmsy_toUse ~ CMSY_new_prior + CMSY_old_prior + COMSIR + Costello + SSCOM,
-    data = d5_wide[train_ids, ], n.trees = 1000, interaction.depth = 4, shrinkage = 0.001,
+  m_gbm <- gbm::gbm(f_gbm,
+    data = d5_wide[train_ids, ], n.trees = 1000, interaction.depth = 5, shrinkage = 0.001,
     distribution = "gaussian")
 
   lm_out <- vector(mode = "numeric", length = nrow(d5_wide))
   gbm_out <- vector(mode = "numeric", length = nrow(d5_wide))
 
-  lm_out[test_ids] <- predict(m_lm, newdata = d5_wide[test_ids,])
+  tryCatch({lm_out[test_ids] <- predict(m_lm, newdata = d5_wide[test_ids,])},
+    error = function(e) rep(NA, length(test_ids)))
   lm_out[train_ids] <- NA
 
-  gbm_out[test_ids] <- gbm::predict.gbm(m_gbm, n.trees = 1000, type = "response",
-    newdata = d5_wide[test_ids, ])
+  tryCatch({gbm_out[test_ids] <- gbm::predict.gbm(m_gbm, n.trees = 1000,
+    type = "response", newdata = d5_wide[test_ids, ])},
+    error = function(e) rep(NA, length(test_ids)))
   gbm_out[train_ids] <- NA
 
   cbind(lm_out, gbm_out)
 }
 
-x <- lapply(seq_len(500L), function(yy) cross_val_weights())
+x <- lapply(seq_len(300L), function(yy) cross_val_weights())
 cross_out_lm <- matrix(ncol = length(x), nrow = nrow(d5_wide))
 cross_out_gbm <- matrix(ncol = length(x), nrow = nrow(d5_wide))
 for (i in seq_along(x)) {
@@ -144,6 +159,8 @@ method_order <- d5_mare %>% group_by(method) %>%
   mutate(or = 1:length(method), method_ordered = reorder(method, or)) %>%
   as.data.frame
 d5_mare <- inner_join(method_order, d5_mare)
+
+d5_mare <- filter(d5_mare, !method %in% c("Costello", "gbm-in-bag", "lm-in-bag"))
 
 scatter_plot <- function(dat) {
   ggplot(dat, aes(b2bmsy, Bbmsy_toUse, colour = method)) +
@@ -179,3 +196,13 @@ sp <- group_by(d5_mare, method) %>%
 
 p <- ggplot(sp, aes(sp, method)) + geom_point() + xlab("Spearman's correlation")
 ggsave("figs/ensemble-spearman.pdf", width = 5, height = 6)
+
+pdf("figs/gbm-partial.pdf", width = 8, height = 5)
+par(cex = 0.6)
+par(mfrow = c(2, 3));for(i in 1:5) plot(m_gbm, i.var = i, ylim = c(0.8, 1.4))
+dev.off()
+
+pdf("figs/lm-coef.pdf", width = 8, height = 8)
+par(cex = 0.8, mar = c(1, 15, 3, 1))
+arm::coefplot(m_lm)
+dev.off()
