@@ -28,6 +28,23 @@ Coilin: 2015-03-27:
 - temperature...
 - slope over 10 years with robust regression? - iucn categories
 
+- bump wc and ETPS to next day
+- less time.... more on general with red faced tests
+
+
+- centered predictor slope and intercept - proporational error
+- add effort dynamics - fit lm(), increasing, decreasing, flat low cv (on sigma), flat high cv  (p value threshold...)
+- do it on simulation data
+- add new costello code
+- perhaps try correlation of last 10 years
+- try AIC of methods within cross-validation
+- check weird ts behaviour on COMSIR
+- check weird lower CI on CMSY
+- ask about missing medium resilience on COMSIR
+- check if `logisticModel` was hardcoded differently in different versions (and find out what final version)
+- random forest...
+- compare the ensemble output between simulated and RAM trained ensembles
+
 # Things to discuss
 - travel dates?
 - my travelling in May?
