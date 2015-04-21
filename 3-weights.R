@@ -38,7 +38,7 @@ ram_fits <- plyr::adply(ram_fits, 1, function(x)
 
 ram_fits$one <- rnorm(nrow(ram_fits), mean = 1, sd = 0.05)
 
-pdf("figs/pairs-models-ram.pdf", width = 9, height = 9)
+png("figs/pairs-models-ram.png", width = 700, height = 700)
 pairs(log(ram_fits[,c("b2bmsy_true", "CMSY_new_prior", "COMSIR", "Costello", "SSCOM", "gbm_ensemble", "mean_ensemble")]), col = "#00000010")
 dev.off()
 
