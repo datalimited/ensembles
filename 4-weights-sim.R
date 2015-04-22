@@ -36,15 +36,12 @@ dsim_wide <- na.omit(dsim_wide)
 
 m_gbm_sim <- gbm::gbm(b_bmsy_true ~
     COM.SIR + Costello + SSCOM + CMSY,
-  data = dsim_wide, distribution = "gaussian", n.trees = 5000, interaction.depth = 4,
-  shrinkage = 0.0005)
+  data = dsim_wide, distribution = "gaussian", n.trees = 2500, interaction.depth = 10,
+  shrinkage = 0.05)
 
 pdf("figs/gbm-partial-sim.pdf", width = 8, height = 8)
 par(cex = 0.6)
 par(mfrow = c(2, 2));for(i in 1:4) gbm::plot.gbm(m_gbm_sim, i.var = i, ylim = c(0.7, 1.5))
 dev.off()
 
-
-
 saveRDS(m_gbm_sim, file = "generated-data/m_gbm_sim.rds")
-
