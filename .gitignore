@@ -5,3 +5,6 @@ ram-data/*
 *.csv
 generated-data/*
 raw-data/CMSY_COMSIR_SSCOM_COSTELLO_STO_BATCH_ALL_RESULTS 2013-06-24.Rdata
+cv-ensembles/*
+raw-data/OldRAMData-for-lifehistory-categories.RDS
+ram_cmsy.rds
