@@ -1,7 +1,8 @@
 library("dplyr")
 
 lh <- readRDS("raw-data/OldRAMData-for-lifehistory-categories.RDS")
-lh <- select(lh, spname, habitat, pricecategory, envtemp, tl,
+lh <- lh %>% filter(database == "Ram") %>%
+  select(spname, habitat, pricecategory, envtemp, tl,
   agematmax, resilience, LifeHist2)
 lh <- lh[!duplicated(lh), ]
 
@@ -50,9 +51,9 @@ ram_fits <- ram_fits %>% rename(b2bmsy_true = Bbmsy_toUse)
 
 # Merge in effort:
 ram <- src_sqlite("ram-data/ramlegacy.sqlite3")
-ramts <- tbl(ram, "timeseries_values_views") %>% as.data.frame  %>%
-  select(stockid, year, Utouse) %>%
-  rename(tsyear = year, effort = Utouse)
+ramts <- tbl(ram, "timeseries_values_views") %>% as.data.frame %>%
+  select(stockid, year, Utouse, Ctouse) %>%
+  rename(tsyear = year, effort = Utouse, catch = Ctouse)
 
 ram_fits <- inner_join(ram_fits, ramts)
 ram_fits <- inner_join(ram_fits, ram_sp)
@@ -90,6 +91,13 @@ ram_fits$sigma <- NULL
 ram_fits$slope <- NULL
 ram_fits <- inner_join(ram_fits, qq)
 
+# add max catch:
+ram_fits <- ram_fits %>%
+  group_by(stockid) %>%
+  mutate(log_max_catch = log(max(catch)),
+    log_total_catch = log(sum(catch))) %>%
+  as.data.frame
+
 # strip out all but the last 10 years, which we'll focus on:
 # we'll also drop all with less than 15 years
 # that removes ballpark 25 stocks
@@ -119,5 +127,6 @@ zz <- select(zz, -Minto)
 ram_fits <- select(ram_fits, -method, -b2bmsy)
 ram_fits <- ram_fits[!duplicated(ram_fits), ]
 ram_fits <- inner_join(ram_fits, zz)
+
 
 saveRDS(ram_fits, "generated-data/ram_fits.rds")
