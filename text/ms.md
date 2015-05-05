@@ -1,16 +1,40 @@
----
-output: html_document
-bibliography: ../notes/fisheries-ensembles.bib
-csl: ../notes/cjfas.csl
----
-
-# Improving estimates of ecological population status in the face of disparate models
+# Robust estimates of population status from ensemble models
 
 # Combining data-limited fisheries models to derive robust estimates of stock status
 
+# Improving estimates of ecological population status in the face of disparate models
+
 # Improving ecological decision making in the face of conflicting output with ensemble models
 
-Sean C. Anderson, Jamie Afflerbach, Andrew B. Cooper, Mark Dickey-Collas, Olaf P. Jensen, Kristin M. Kleisner, Catherine Longo, Cóilín Minto, Giacomo Chato Osio, Dan Ovando, Andrew A. Rosenberg, Elizabeth R. Selig, James T. Thorson, and potentially others...
+Sean C. Anderson^1^, 
+Jamie Afflerbach^n^, 
+Andrew B. Cooper^n^, 
+Mark Dickey-Collas^n^, 
+Olaf P. Jensen^n^, 
+Kristin M. Kleisner^n^, 
+Catherine Longo^n^, 
+C\'{o}il\'{i}n Minto^n^, 
+Giacomo Chato Osio^n^, 
+Dan Ovando^n^, 
+Andrew A. Rosenberg^n^, 
+Elizabeth R. Selig^n^, 
+James T. Thorson^n^
+(order to be determined and others may be added)
+
+\noindent
+^1^School of Resource and Environmental Management,
+Simon Fraser University, Burnaby, BC, V5A 1S6, Canada
+
+\noindent
+^\*^Corresponding author: Sean C. Anderson,
+School of Resource and Environmental Management,
+Simon Fraser University,
+Burnaby BC, V5A 1S6;
+%Phone: 1-778-782-3989;
+E-mail: sean_anderson@sfu.ca
+
+# Abstract
+
 
 # Introduction
 
@@ -37,6 +61,8 @@ Here, we develop ensemble models for data-limited exploited fish populations. We
 
 Funding...
 
+\bibliographystyle{apalike}
+\bibliography{fisheries-ensembles}
+
 # Figures
 
-# References
