@@ -43,8 +43,13 @@ dsim_meta <- dsim %>%
     total_catch = sum(catch))
 dsim_sum <- inner_join(dsim_sum, dsim_meta)
 
+# add a binary above/below B/Bmsy = 1 column for a potential response:
+dsim_sum <- dsim_sum %>% mutate(
+  above_bbmsy1_true = ifelse(bbmsy_true_mean > 1, 1, 0))
+
 # save a data frame of 'true' operating model values to merge in:
-trues <- select(dsim_sum, stock_id, iter, bbmsy_true_mean, bbmsy_true_slope)
+trues <- select(dsim_sum, stock_id, iter, above_bbmsy1_true,
+  bbmsy_true_mean, bbmsy_true_slope)
 trues <- trues[!duplicated(trues), ] # one value per operating model stock_id
 
 # switch from long to wide format for modelling:
@@ -84,9 +89,16 @@ cv_sim_slope <- plyr::ldply(seq_len(4), .parallel = TRUE,
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
      formula = "bbmsy_true_slope ~ CMSY + COM.SIR + Costello + SSCOM + LH"))
 
+cv_sim_binary <- plyr::ldply(seq_len(4), .parallel = TRUE,
+  .fun = function(.n)
+    cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = FALSE,
+      id = "sim-mean", distribution = "bernoulli",
+      formula = "above_bbmsy1_true ~ CMSY + COM.SIR + Costello + SSCOM + LH"))
+saveRDS(cv_sim_binary, file = "generated-data/cv_sim_binary.rds") # used in 5-roc.R
+
 # -------------------------------------------------------
 # now switch to long format data, summarize, and compare:
-cv_sim_mean_long <- reshape2::melt(cv_sim_mean,
+cv_sim_mean_long <- reshape2::melt(select(cv_sim_mean, -above_bbmsy1_true),
   id.vars = c("stock_id", "iter", "test_iter", "LH", "bbmsy_true_mean"),
   variable.name = "method_id", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_mean) %>%
@@ -95,7 +107,7 @@ cv_sim_mean_long <- reshape2::melt(cv_sim_mean,
     bbmsy_true_trans = log(bbmsy_true),
     bbmsy_est_trans = log(bbmsy_est))
 
-cv_sim_slope_long <- reshape2::melt(cv_sim_slope,
+cv_sim_slope_long <- reshape2::melt(select(cv_sim_slope, -above_bbmsy1_true),
   id.vars = c("stock_id", "iter", "test_iter", "LH", "bbmsy_true_slope"),
   variable.name = "method_id", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_slope) %>%
@@ -114,6 +126,7 @@ ggplot(cv_sim_slope_long, aes(bbmsy_true, bbmsy_est)) +
 
 cv_sim_long <- suppressWarnings(
   dplyr::bind_rows(cv_sim_mean_long, cv_sim_slope_long))
+saveRDS(cv_sim_long, "generated-data/cv_sim_long.rds")
 
 cors <- cv_sim_long %>% group_by(method_id, type) %>%
   summarise(spearman = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
