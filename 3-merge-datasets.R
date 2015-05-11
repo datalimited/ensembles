@@ -49,7 +49,7 @@ d2_long <- inner_join(d2_long, d2[,c("stockid", "tsyear", "Bbmsy_toUse")]) %>%
 ram_fits <- d2_long
 ram_fits <- ram_fits %>% rename(b2bmsy_true = Bbmsy_toUse)
 
-# Merge in effort:
+# Merge in exploitation:
 ram <- src_sqlite("ram-data/ramlegacy.sqlite3")
 ramts <- tbl(ram, "timeseries_values_views") %>% as.data.frame %>%
   select(stockid, year, Utouse, Ctouse) %>%
@@ -65,7 +65,7 @@ ram_fits <- mutate(ram_fits,
   envtemp = as.factor(envtemp),
   resilience = as.factor(resilience))
 
-# Categorize the effort: increasing, decreasing
+# Categorize the exploitation: increasing, decreasing
 
 categorize_effort <- function(effort) {
   d <- data.frame(year = seq_along(effort), log(effort))
@@ -113,13 +113,6 @@ ram_fits <- plyr::ddply(ram_fits, c("method", "stockid"), function(x) {
 ram_fits <- select(ram_fits, -agematmax, -LifeHist2)
 ram_fits[ram_fits$tl < 0, "tl"] <- NA # were some -999 values
 
-# # Get median b/bmsy in last 5 years
-# ram_fits <- ram_fits %>% group_by(stockid, method) %>%
-#   mutate(
-#     b2bmsy_median = median(b2bmsy[6:10]),
-#     b2bmsy_true_median = median(b2bmsy_true[6:10])) %>%
-#   as.data.frame
-
 # Now widen the data for model fitting etc:
 zz <- reshape2::dcast(ram_fits, tsyear + stockid ~ method, value.var = "b2bmsy")
 zz <- select(zz, -Minto)
@@ -127,6 +120,5 @@ zz <- select(zz, -Minto)
 ram_fits <- select(ram_fits, -method, -b2bmsy)
 ram_fits <- ram_fits[!duplicated(ram_fits), ]
 ram_fits <- inner_join(ram_fits, zz)
-
 
 saveRDS(ram_fits, "generated-data/ram_fits.rds")
