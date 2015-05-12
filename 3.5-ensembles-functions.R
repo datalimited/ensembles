@@ -37,12 +37,16 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
   }
 
   m_gbm <- gbm::gbm(as.formula(gbm_formula),
-    data = train_dat, n.trees = 3000L, interaction.depth = 3, shrinkage = 0.001,
+    data = train_dat, n.trees = 10000L, interaction.depth = 2, shrinkage = 0.01,
     distribution = distribution)
   saveRDS(m_gbm, file = paste0(cache_folder, id, "-", .n, "-gbm.rds"))
   test_dat$gbm_ensemble <- tryCatch({gbm::predict.gbm(m_gbm,
     n.trees = m_gbm$n.trees, newdata = test_dat, type = "response")},
     error = function(e) rep(NA, nrow(test_dat)))
+
+  #m_rf <- randomForest::randomForest(as.formula(gbm_formula), data = train_dat)
+  #test_dat$rf_ensemble <- tryCatch({exp(predict(m_rf, newdata = test_dat))},
+    #error = function(e) rep(NA, nrow(test_dat)))
 
   if (lm_formula != "") {
     m_lm <- lm(as.formula(lm_formula), data = train_dat)
