@@ -78,22 +78,26 @@ ggplot(partial, aes(predictor_value, y)) + geom_line() + facet_wrap(~predictor) 
 library("doParallel")
 registerDoParallel(cores = 4)
 
-cv_sim_mean <- plyr::ldply(seq_len(16), .parallel = TRUE,
+cv_sim_mean <- plyr::ldply(seq_len(8), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
-      formula = "log(bbmsy_true_mean) ~ CMSY + COM.SIR + Costello + SSCOM + LH"))
+      gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COM.SIR + Costello + SSCOM + LH",
+      lm_formula = "log(bbmsy_true_mean) ~ (CMSY + COM.SIR + Costello + SSCOM + LH)^2"))
 cv_sim_mean$gbm_ensemble <- exp(cv_sim_mean$gbm_ensemble)
+cv_sim_mean$lm_ensemble <- exp(cv_sim_mean$lm_ensemble)
 
-cv_sim_slope <- plyr::ldply(seq_len(4), .parallel = TRUE,
+cv_sim_slope <- plyr::ldply(seq_len(8), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
-     formula = "bbmsy_true_slope ~ CMSY + COM.SIR + Costello + SSCOM + LH"))
+     gbm_formula = "bbmsy_true_slope ~ CMSY + COM.SIR + Costello + SSCOM + LH",
+     lm_formula = "bbmsy_true_slope ~ (CMSY + COM.SIR + Costello + SSCOM + LH)^2"))
 
 cv_sim_binary <- plyr::ldply(seq_len(4), .parallel = TRUE,
   .fun = function(.n)
-    cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = FALSE,
+    cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE,
       id = "sim-mean", distribution = "bernoulli",
-      formula = "above_bbmsy1_true ~ CMSY + COM.SIR + Costello + SSCOM + LH"))
+      gbm_formula = "above_bbmsy1_true ~ CMSY + COM.SIR + Costello + SSCOM + LH",
+      glm_formula = "above_bbmsy1_true ~ (CMSY + COM.SIR + Costello + SSCOM + LH)^2"))
 saveRDS(cv_sim_binary, file = "generated-data/cv_sim_binary.rds") # used in 5-roc.R
 
 # -------------------------------------------------------
