@@ -47,7 +47,8 @@ partial <- plyr::ldply(seq_len(5), function(i) {
   dd
 })
 
-ggplot(partial, aes(predictor_value, y)) + geom_line() + facet_wrap(~predictor) + xlim(0, 3)
+p <- ggplot(partial, aes(predictor_value, y)) + geom_line() + facet_wrap(~predictor) + xlim(0, 3)
+ggsave("figs/partial-ram.pdf", width = 7, height = 5)
 
 # work through cross validation of ensemble models:
 library("doParallel")
@@ -95,26 +96,9 @@ cv_ram_slope_long <- reshape2::melt(select(cv_ram_slope, -above_bbmsy1_true),
     bbmsy_true_trans = bbmsy_true,
     bbmsy_est_trans = bbmsy_est)
 
-ggplot(cv_ram_mean_long, aes(bbmsy_true, bbmsy_est)) +
-  geom_point(alpha = 0.07) +
-    facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
-
-ggplot(cv_ram_slope_long, aes(bbmsy_true, bbmsy_est)) +
-  geom_point(alpha = 0.07) +
-    facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
-
 cv_ram_long <- suppressWarnings(
   dplyr::bind_rows(cv_ram_mean_long, cv_ram_slope_long))
 saveRDS(cv_ram_long, "generated-data/cv_ram_long.rds")
-
-cors <- cv_ram_long %>% group_by(method, type) %>%
-  summarise(spearman = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
-    use = "pairwise.complete.obs")) %>% as.data.frame %>%
-  mutate(spearman = round(spearman, 4)) %>%
-  arrange(type, -spearman)
-
-ggplot(cors, aes(x = method, xend = method, yend = spearman)) +
-  geom_segment(y = 0, lwd = 1.2) + facet_wrap(~type)
 
 cors %>% tidyr::spread(type, spearman) %>%
   ggplot(aes(mean, slope)) + geom_point() +
@@ -144,7 +128,9 @@ cors2 <- cors %>% mutate(
 
 performance <- bind_rows(re2, cors2) %>% as.data.frame
 
-performance %>% reshape2::dcast(method + type ~ summary, value.var = c("performance")) %>%
-  ggplot(aes(MARE, spearman)) + geom_point() + geom_text(aes(label = method), hjust = 0.2) +
+p <- performance %>% reshape2::dcast(method + type ~ summary, value.var = c("performance")) %>%
+  ggplot(aes(MARE, spearman)) + geom_point() +
+  geom_text(aes(label = method), hjust = 0.2, size = 3) +
   facet_wrap(~type, scales = "free") +
   xlab("MARE within stocks") + ylab("Spearman correlation across stocks")
+ggsave("figs/performance-ram-scatter.pdf", width = 8, height = 4)
