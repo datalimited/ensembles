@@ -10,17 +10,17 @@ ram <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors=FALSE)
 
 ram_fits <- readRDS("generated-data/ram-orig-fits.rds")
 
-cmsy_2015 <- readRDS("generated-data/ram-cmsy-2015.rds")
+cmsy_refit <- readRDS("generated-data/ram-cmsy-sigr-0.05.rds")
 
 ram_fits <- ram_fits %>% rename(stockid = stock)
 
 ram_fits <- filter(ram_fits, !method %in% c("CMSY_old_prior", "CMSY_new_prior"))
 
-cmsy_2015 <- cmsy_2015 %>% select(stockid, year, bbmsy_q50) %>%
-  mutate(method = "CMSY_new_prior") %>%
+cmsy_refit <- cmsy_refit %>% select(stockid, year, bbmsy_q50) %>%
+  mutate(method = "CMSY") %>%
   rename(b2bmsy = bbmsy_q50)
 
-ram_fits <- rbind(ram_fits, cmsy_2015)
+ram_fits <- dplyr::bind_rows(ram_fits, cmsy_refit)
 
 ram_fits <- rename(ram_fits, tsyear = year)
 
@@ -53,11 +53,11 @@ ram_fits <- ram_fits %>% rename(b2bmsy_true = Bbmsy_toUse)
 ram <- src_sqlite("ram-data/ramlegacy.sqlite3")
 ramts <- tbl(ram, "timeseries_values_views") %>% as.data.frame %>%
   select(stockid, year, Utouse, Ctouse) %>%
-  rename(tsyear = year, effort = Utouse, catch = Ctouse)
+  rename(tsyear = year, expl = Utouse, catch = Ctouse)
 
 ram_fits <- inner_join(ram_fits, ramts)
 ram_fits <- inner_join(ram_fits, ram_sp)
-ram_fits <- inner_join(ram_fits, rename(lh, scientificname = spname))
+ram_fits <- suppressWarnings(inner_join(ram_fits, rename(lh, scientificname = spname)))
 
 ram_fits <- mutate(ram_fits,
   habitat = as.factor(habitat),
@@ -67,9 +67,9 @@ ram_fits <- mutate(ram_fits,
 
 # Categorize the exploitation: increasing, decreasing
 
-categorize_effort <- function(effort) {
-  d <- data.frame(year = seq_along(effort), log(effort))
-  m <- lm(effort ~ year, data = d)
+categorize_exploitation <- function(expl) {
+  d <- data.frame(year = seq_along(expl), log(expl))
+  m <- lm(expl ~ year, data = d)
   slope <- summary(m)$coefficient["year","Estimate"]
   p_slope <- summary(m)$coefficient["year","Pr(>|t|)"]
   sigma <- summary(m)$sigma
@@ -85,7 +85,7 @@ categorize_effort <- function(effort) {
 }
 
 qq <- plyr::ddply(ram_fits, c("method", "stockid"), function(x) {
-  categorize_effort(x$effort)
+  categorize_exploitation(x$expl)
 })
 ram_fits$sigma <- NULL
 ram_fits$slope <- NULL
@@ -102,23 +102,31 @@ ram_fits <- ram_fits %>%
 # we'll also drop all with less than 15 years
 # that removes ballpark 25 stocks
 # first, make sure in order:
-ram_fits <- arrange(ram_fits, method, stockid, tsyear)
-ram_fits <- plyr::ddply(ram_fits, c("method", "stockid"), function(x) {
-  if (nrow(x) >= 15) {
-    out <- x[(nrow(x)-9):nrow(x),]
-    out$year_before_end <- seq_len(10)
-    out
-  }
-})
+
+# ram_fits <- plyr::ddply(ram_fits, c("method", "stockid"), function(x) {
+#   if (nrow(x) >= 15) {
+#     out <- x[(nrow(x)-9):nrow(x),]
+#     out$year_before_end <- seq_len(10)
+#     out
+#   }
+# })
 ram_fits <- select(ram_fits, -agematmax, -LifeHist2)
 ram_fits[ram_fits$tl < 0, "tl"] <- NA # were some -999 values
 
 # Now widen the data for model fitting etc:
-zz <- reshape2::dcast(ram_fits, tsyear + stockid ~ method, value.var = "b2bmsy")
-zz <- select(zz, -Minto)
+# zz <- reshape2::dcast(ram_fits, tsyear + stockid ~ method, value.var = "b2bmsy")
+# zz <- select(zz, -Minto)
 
-ram_fits <- select(ram_fits, -method, -b2bmsy)
-ram_fits <- ram_fits[!duplicated(ram_fits), ]
-ram_fits <- inner_join(ram_fits, zz)
+ram_fits <- filter(ram_fits, method != "Minto")
+# ram_fits <- select(ram_fits, -method, -b2bmsy)
+# ram_fits <- ram_fits[!duplicated(ram_fits), ]
+ram_fits <- arrange(ram_fits, method, stockid, tsyear)
+
+# to match the simulation data frame:
+ram_fits <- rename(ram_fits,
+  b_bmsy_true = b2bmsy_true,
+  b_bmsy_est = b2bmsy)
+
+# ram_fits <- inner_join(ram_fits, zz)
 
 saveRDS(ram_fits, "generated-data/ram_fits.rds")
