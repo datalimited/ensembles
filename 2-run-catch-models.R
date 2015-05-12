@@ -8,30 +8,24 @@ ramts <- readRDS("generated-data/ramts.rds")
 # unknowns <- unique(unknowns$stockid)
 
 # Re-fit catch-MSY because there was an issue with the stochastic sigmaR:
-message("Running CMSY fits to RAM database...")
-ram_cmsy <- ramts %>%
-  filter(stockid %in% unique(ramts$stockid)) %>%
-# filter(stockid %in% unknowns) %>%
-  group_by(stockid) %>%
-  do({
-    cmsy_out <- cmsy(
-      yr             = .$year,
-      ct             = .$catch,
-      prior_log_mean = .$log_mean[1],
-      prior_log_sd   = .$log_sd[1],
-      start_r        = resilience(.$res[1], unknown_equals_medium = TRUE),
-      sig_r          = 0.05,
-      reps           = 10000L)
-    if(!is.null(cmsy_out)) {
-      bbmsy <- cmsy_out$biomass[, -1] / cmsy_out$bmsy
-      bbmsy_out <- summarize_bbmsy(bbmsy, na.rm = TRUE, log = TRUE)
-      data.frame(year = .$year, c_touse = .$catch, bbmsy_out)
-    } else {
-      data.frame(year = .$year, c_touse = .$catch,
-        bbmsy_out = rep(NA, nrow(.)))
-    }
-  }) %>% as.data.frame
+library("doParallel")
+registerDoParallel(cores = 4)
+ram_cmsy <- plyr::ddply(ramts, "stockid", .parallel = TRUE, .fun = function(.) {
+  cmsy_out <- cmsy(yr      = .$year,
+                   ct      = .$catch,
+                   start_r = resilience(.$res[1]),
+                   sig_r   = 0.05,
+                   reps    = 10000L)
+  if (!is.null(cmsy_out)) {
+    bbmsy <- cmsy_out$biomass[, -1] / cmsy_out$bmsy
+    bbmsy_out <- summarize_bbmsy(bbmsy, na.rm = TRUE, log = TRUE)
+    data.frame(year = .$year, c_touse = .$catch, bbmsy_out)
+  } else {
+    data.frame(year = .$year, c_touse = .$catch, bbmsy_out = rep(NA, nrow(.)))
+  }
+})
 ram_cmsy <- select(ram_cmsy, -bbmsy_out)
+
 # saveRDS(ram_cmsy, file = "~/Desktop/ram_cmsy.rds")
 
 # ram_cmsy_unknown_equal_medium <- ramts %>%
