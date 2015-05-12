@@ -51,6 +51,11 @@ d_slope <- reshape2::dcast(dsim_sum, stockid + iter + LH ~ method,
   value.var = "bbmsy_est_slope") %>%
   inner_join(select(trues, -bbmsy_true_mean))
 
+# strip out those with NAs (in CMSY)
+# create problems with some models, such as randomForest, otherwise
+d_mean <- na.omit(d_mean)
+d_slope <- na.omit(d_slope)
+
 # run a model on all the data to generate data for partial dependence plots:
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH,
   data = d_mean, n.trees = 10000L, interaction.depth = 2, shrinkage = 0.001)
