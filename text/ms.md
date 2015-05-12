@@ -30,7 +30,6 @@ Simon Fraser University, Burnaby, BC, V5A 1S6, Canada
 School of Resource and Environmental Management,
 Simon Fraser University,
 Burnaby BC, V5A 1S6;
-%Phone: 1-778-782-3989;
 E-mail: sean_anderson@sfu.ca
 
 # Abstract
@@ -38,9 +37,7 @@ E-mail: sean_anderson@sfu.ca
 
 # Introduction
 
-@greene2006: probably the closest thing to what we're doing but with climate models (Bayesian multilevel ensemble)
-
-# Methods
+[@greene2006] probably the closest thing to what we're doing but with climate models (Bayesian multilevel ensemble)
 
 We often have multiple models of ecological systems. For example, models might incorporate different data types, assume alternate population dynamics, or make contrasting assumptions about the starting state of a system. These models may suggest different conclusions about population status and often times we do not know which model is best. How can we reconcile multiple models to make robust management decisions about ecological resources?
 
@@ -52,6 +49,8 @@ The idea behind ensemble models forms the backbone of many machine learning meth
 In fisheries science, a common problem is estimating the status of an exploited fish population. For the majority of fish stocks, we have limited information to go on and stock status isn't known. In recent years, a number of methods have been proposed to derive population status based on limited information and a set of assumptions. However, we know that these models can give conflicting output and no one model is that accurate.
 
 Here, we develop ensemble models for data-limited exploited fish populations. We explore a variety of ensemble approaches applied to both simulated and real-world fish stocks and compare performance...
+
+# Methods
 
 # Results
 
