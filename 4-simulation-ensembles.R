@@ -17,11 +17,13 @@ dsim <- dsim %>%
   arrange(stockid, iter, year) # critical since not all in order
 
 # summarise the mean and slope in the last N years:
-dsim_sum <- dsim %>%
-  group_by(stockid, method, iter) %>%
-  do(mean_slope_bbmsy(.)) %>%
-  as.data.frame()
-  saveRDS(dsim_sum, file = "generated-data/dsim_sum.rds")
+library("doParallel")
+registerDoParallel(cores = 4)
+
+dsim_sum <- plyr::ddply(dsim, c("stockid", "method", "iter"),
+  .parallel = TRUE, .fun = mean_slope_bbmsy)
+saveRDS(dsim_sum, file = "generated-data/dsim_sum.rds")
+# dsim_sum <- readRDS("generated-data/dsim_sum.rds")
 
 # join in some characteristics that we'll use in models:
 dsim_meta <- dsim %>%
