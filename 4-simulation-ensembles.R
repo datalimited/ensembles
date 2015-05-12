@@ -51,7 +51,7 @@ d_slope <- reshape2::dcast(dsim_sum, stockid + iter + LH ~ method,
 
 # run a model on all the data to generate data for partial dependence plots:
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH,
-  data = d_mean, n.trees = 3000L, interaction.depth = 3, shrinkage = 0.001)
+  data = d_mean, n.trees = 10000L, interaction.depth = 2, shrinkage = 0.001)
 partial <- plyr::ldply(seq_len(5), function(i) {
   dd <- gbm::plot.gbm(m, i.var = i, return.grid = TRUE)
   dd$predictor <- names(dd)[1]
