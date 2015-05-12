@@ -1,5 +1,18 @@
 # General purpose functions to be used throughout
 
+mean_slope_bbmsy <- function(dat, years_window = 3) {
+  # chunk of data must have columns: b_bmsy_true, b_bmsy_est
+  .n <- nrow(dat)
+  i <- seq(.n-(years_window-1), .n)
+  bbmsy_true_mean = mean(dat$b_bmsy_true[i])
+  bbmsy_est_mean = mean(dat$b_bmsy_est[i])
+  ytrue <- dat$b_bmsy_true[i]
+  yest <- dat$b_bmsy_est[i]
+  bbmsy_true_slope <- coef(mblm::mblm(ytrue ~ i))[[2]]
+  bbmsy_est_slope <- coef(mblm::mblm(yest ~ i))[[2]]
+  data.frame(bbmsy_true_mean, bbmsy_est_mean, bbmsy_true_slope, bbmsy_est_slope)
+}
+
 # A general function for cross-validation testing ensemble models:
 cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
   gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH",
