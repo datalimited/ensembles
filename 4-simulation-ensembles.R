@@ -107,8 +107,6 @@ cv_sim_mean <- plyr::ldply(seq_len(4), .parallel = TRUE,
       gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH",
       lm_formula = "log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM + LH)^2"))
 cv_sim_mean$gbm_ensemble <- exp(cv_sim_mean$gbm_ensemble)
-cv_sim_mean$gbm2_ensemble <- exp(cv_sim_mean$gbm2_ensemble)
-#cv_sim_mean$rf_ensemble <- exp(cv_sim_mean$rf_ensemble)
 cv_sim_mean$lm_ensemble <- exp(cv_sim_mean$lm_ensemble)
 
 cv_sim_slope <- plyr::ldply(seq_len(4), .parallel = TRUE,
