@@ -20,11 +20,11 @@ $(TEXT).pdf: $(MS).tex $(TEXT).tex $(REFS).bib
 quick:
 	pdflatex $(TEXT)
 
-dropbox: text rtf
+dropbox: $(TEXT).pdf rtf
 	cp $(TEXT).pdf ~/Dropbox/Public/$(TEXT)-v$(VERSION).pdf
 	mv $(TEXT).rtf ~/Dropbox/Public/$(TEXT)-v$(VERSION).rtf
 
-rtf: text
+rtf: $(TEXT).pdf
 	latex2rtf -E0 $(TEXT).tex
 
 extractbib: text
