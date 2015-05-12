@@ -2,23 +2,23 @@
 
 # A general function for cross-validation testing ensemble models:
 cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
-  gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COM.SIR + Costello + SSCOM + LH",
+  gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH",
   geo_mean = TRUE,
-  individual_models = c("CMSY", "COM.SIR", "Costello", "SSCOM"),
+  individual_models = c("CMSY", "COMSIR", "Costello", "SSCOM"),
   id = "mean", cache_folder = "generated-data/cv-sim/", distribution = "gaussian",
   lm_formula = "", glm_formula = "") {
 
   cv_ids_set <- FALSE # legacy code, leaving in in case needed for RAM stocks
   while(!cv_ids_set) {
-    nstocks <- length(unique(dat$stock_id))
+    nstocks <- length(unique(dat$stockid))
     train_ids <- sample(nstocks, round(nstocks * fraction_train))
     test_ids <- seq_len(nstocks)[-train_ids]
 
-    train_stock_ids <- unique(dat$stock_id)[train_ids]
-    test_stock_ids <- unique(dat$stock_id)[test_ids]
+    train_stockids <- unique(dat$stockid)[train_ids]
+    test_stockids <- unique(dat$stockid)[test_ids]
 
-    train_dat <- filter(dat, stock_id %in% train_stock_ids)
-    test_dat <- filter(dat, stock_id %in% test_stock_ids)
+    train_dat <- filter(dat, stockid %in% train_stockids)
+    test_dat <- filter(dat, stockid %in% test_stockids)
 
     cv_ids_set <- TRUE
   }
