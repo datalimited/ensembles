@@ -62,6 +62,37 @@ partial <- plyr::ldply(seq_len(5), function(i) {
 
 # partial dependence plot:
 ggplot(partial, aes(predictor_value, y)) + geom_line() + facet_wrap(~predictor) + xlim(0, 3)
+p <- ggplot(partial, aes(predictor_value, y)) + geom_line() +
+  facet_wrap(~predictor) + xlim(0, 3)
+ggsave("figs/partial-sim.pdf", width = 7, height = 5)
+
+partial_2d <- plyr::ldply(1:5, function(x) plyr::ldply(1:5, function(y) {
+  dd <- gbm::plot.gbm(m, i.var = c(x, y), return.grid = TRUE, continuous.resolution = 20)
+  dd$var1 <- names(dd)[1]
+  dd$var2 <- names(dd)[2]
+  names(dd)[1] <- "x"
+  names(dd)[2] <- "y"
+  names(dd)[3] <- "z"
+  dd$z <- exp(dd$z)
+  dd
+}))
+
+# check colour pallete:
+zlim <- c(min(partial_2d$z), max(partial_2d$z))
+pal <- colorRampPalette(c("blue", "white", "red"))(16)[-c(13:16)]
+#plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, col = pal)
+pdf("figs/partial-sim-2d.pdf", width = 9, height = 9)
+par(mfrow = c(5, 5), mar = c(3,3,1,1), oma = c(4, 4, 1, 1), cex = 0.5)
+par(xpd = NA, mgp = c(1.5, 0.5, 0))
+plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
+  xx <- reshape2::dcast(x, x ~ y, value.var = "z")
+  image(xx[,1], as.numeric(colnames(xx)[-1]), as.matrix(xx[,-1]), main = "",
+    xlab = unique(x$var1), ylab = unique(x$var2),
+    zlim = zlim,
+    col = colorRampPalette(c("blue", "white", "red"))(16)[-c(13:16)])
+})
+dev.off()
+message(paste("zlim were", round(zlim, 2), collapse = " "))
 
 # work through cross validation of ensemble models:
 library("doParallel")
