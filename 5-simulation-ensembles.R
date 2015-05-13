@@ -145,13 +145,15 @@ cv_sim_slope_long <- reshape2::melt(select(cv_sim_slope, -above_bbmsy1_true),
     bbmsy_true_trans = bbmsy_true,
     bbmsy_est_trans = bbmsy_est)
 
-# ggplot(cv_sim_mean_long, aes(bbmsy_true, bbmsy_est)) +
-#   geom_point(alpha = 0.01) +
-#     facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
-#
-# ggplot(cv_sim_slope_long, aes(bbmsy_true, bbmsy_est)) +
-#   geom_point(alpha = 0.01) +
-#     facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
+p <- ggplot(cv_sim_mean_long, aes(bbmsy_true, bbmsy_est)) +
+  geom_point(alpha = 0.01) +
+    facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
+ggsave("figs/cv-sim-mean-scatter.pdf", width = 8, height = 8)
+
+p <- ggplot(cv_sim_slope_long, aes(bbmsy_true, bbmsy_est)) +
+  geom_point(alpha = 0.01) +
+    facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
+ggsave("figs/cv-sim-slope-scatter.pdf", width = 8, height = 8)
 
 cv_sim_long <- suppressWarnings(
   dplyr::bind_rows(cv_sim_mean_long, cv_sim_slope_long))
