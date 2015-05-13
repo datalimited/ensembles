@@ -60,7 +60,7 @@ ggsave("figs/partial-ram.pdf", width = 7, height = 5)
 library("doParallel")
 registerDoParallel(cores = 4)
 
-cv_ram_mean <- plyr::ldply(seq_len(8), .parallel = TRUE,
+cv_ram_mean <- plyr::ldply(seq_len(16), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + habitat",
@@ -68,13 +68,13 @@ cv_ram_mean <- plyr::ldply(seq_len(8), .parallel = TRUE,
 cv_sim_mean$gbm_ensemble <- exp(cv_sim_mean$gbm_ensemble)
 cv_sim_mean$lm_ensemble <- exp(cv_sim_mean$lm_ensemble)
 
-cv_ram_slope <- plyr::ldply(seq_len(8), .parallel = TRUE,
+cv_ram_slope <- plyr::ldply(seq_len(16), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
      gbm_formula = "bbmsy_true_slope ~ CMSY + COMSIR + Costello + SSCOM + habitat",
      lm_formula = "bbmsy_true_slope ~ (CMSY + COMSIR + Costello + SSCOM + habitat)^2"))
 
-cv_ram_binary <- plyr::ldply(seq_len(4), .parallel = TRUE,
+cv_ram_binary <- plyr::ldply(seq_len(16), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE,
       id = "sim-mean", distribution = "bernoulli",
@@ -105,12 +105,12 @@ cv_ram_slope_long <- reshape2::melt(select(cv_ram_slope, -above_bbmsy1_true),
 p <- ggplot(cv_ram_mean_long, aes(bbmsy_true, bbmsy_est)) +
   geom_point(alpha = 0.05) +
     facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
-ggsave("figs/cv-ram-mean-scatter.pdf", width = 8, height = 8)
+ggsave("figs/cv-ram-mean-scatter.png", width = 8, height = 8)
 
 p <- ggplot(cv_ram_slope_long, aes(bbmsy_true, bbmsy_est)) +
   geom_point(alpha = 0.05) +
     facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
-ggsave("figs/cv-ram-slope-scatter.pdf", width = 8, height = 8)
+ggsave("figs/cv-ram-slope-scatter.png", width = 8, height = 8)
 
 cv_ram_long <- suppressWarnings(
   dplyr::bind_rows(cv_ram_mean_long, cv_ram_slope_long))

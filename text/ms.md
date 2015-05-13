@@ -91,7 +91,7 @@ Funding...
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-sim-slope-scatter.pdf}
+\includegraphics[width=\textwidth]{../figs/cv-sim-slope-scatter.png}
 \caption{Cross-validated simulation ensemble scatter plot --- slope B/Bmsy}
 \label{fig:scatter-sim-slope}
 \end{center}
@@ -99,7 +99,7 @@ Funding...
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/performance-sim-scatter.pdf}
+\includegraphics[width=\textwidth]{../figs/performance-sim-scatter.png}
 \caption{Performance for simulation ensembles.}
 \label{fig:performance-sim}
 \end{center}
@@ -123,7 +123,7 @@ Funding...
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-ram-mean-scatter.pdf}
+\includegraphics[width=\textwidth]{../figs/cv-ram-mean-scatter.png}
 \caption{Cross-validated RAM ensemble scatter plot --- mean B/Bmsy}
 \label{fig:scatter-ram-mean}
 \end{center}
@@ -131,7 +131,7 @@ Funding...
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-ram-slope-scatter.pdf}
+\includegraphics[width=\textwidth]{../figs/cv-ram-slope-scatter.png}
 \caption{Cross-validated RAM ensemble scatter plot --- slope B/Bmsy}
 \label{fig:scatter-ram-slope}
 \end{center}
