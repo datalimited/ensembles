@@ -1,19 +1,19 @@
 library("dplyr")
 
-lh <- readRDS("raw-data/OldRAMData-for-lifehistory-categories.RDS")
-lh <- lh %>% filter(database == "Ram") %>%
-  select(spname, habitat, pricecategory, envtemp, tl,
-  agematmax, resilience, LifeHist2)
-lh <- lh[!duplicated(lh), ]
+# A huge file; too big for Git:
+# lh <- readRDS("raw-data/OldRAMData-for-lifehistory-categories.RDS")
+# lh <- lh %>% filter(database == "Ram") %>%
+#   select(spname, habitat, pricecategory, envtemp, tl,
+#   agematmax, resilience, LifeHist2)
+# lh <- lh[!duplicated(lh), ]
+# saveRDS(lh, "generated-data/lifehistory.rds")
+lh <- readRDS("generated-data/lifehistory.rds")
 
 ram <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors=FALSE)
-
 ram_fits <- readRDS("generated-data/ram-orig-fits.rds")
-
 cmsy_refit <- readRDS("generated-data/ram-cmsy-sigr-0.05.rds")
 
 ram_fits <- ram_fits %>% rename(stockid = stock)
-
 ram_fits <- filter(ram_fits, !method %in% c("CMSY_old_prior", "CMSY_new_prior"))
 
 cmsy_refit <- cmsy_refit %>% select(stockid, year, bbmsy_q50) %>%
@@ -21,7 +21,6 @@ cmsy_refit <- cmsy_refit %>% select(stockid, year, bbmsy_q50) %>%
   rename(b2bmsy = bbmsy_q50)
 
 ram_fits <- dplyr::bind_rows(ram_fits, cmsy_refit)
-
 ram_fits <- rename(ram_fits, tsyear = year)
 
 d <- ram_fits %>% inner_join(select(ram, tsyear, stockid, stocklong,
@@ -30,7 +29,7 @@ d <- ram_fits %>% inner_join(select(ram, tsyear, stockid, stocklong,
 ram_sp <- ram[,c("stockid", "scientificname")]
 ram_sp <- ram_sp[!duplicated(ram_sp), ]
 
-# some duplicates on join - no idea why, checking later
+# some duplicates on join:
 d <- d[!duplicated(d), ]
 
 # need to widen and lengthen to strip out years where anything is NA
@@ -66,7 +65,6 @@ ram_fits <- mutate(ram_fits,
   resilience = as.factor(resilience))
 
 # Categorize the exploitation: increasing, decreasing
-
 categorize_exploitation <- function(expl) {
   d <- data.frame(year = seq_along(expl), log(expl))
   m <- lm(expl ~ year, data = d)
@@ -98,35 +96,15 @@ ram_fits <- ram_fits %>%
     log_total_catch = log(sum(catch))) %>%
   as.data.frame
 
-# strip out all but the last 10 years, which we'll focus on:
-# we'll also drop all with less than 15 years
-# that removes ballpark 25 stocks
-# first, make sure in order:
-
-# ram_fits <- plyr::ddply(ram_fits, c("method", "stockid"), function(x) {
-#   if (nrow(x) >= 15) {
-#     out <- x[(nrow(x)-9):nrow(x),]
-#     out$year_before_end <- seq_len(10)
-#     out
-#   }
-# })
 ram_fits <- select(ram_fits, -agematmax, -LifeHist2)
 ram_fits[ram_fits$tl < 0, "tl"] <- NA # were some -999 values
 
-# Now widen the data for model fitting etc:
-# zz <- reshape2::dcast(ram_fits, tsyear + stockid ~ method, value.var = "b2bmsy")
-# zz <- select(zz, -Minto)
-
 ram_fits <- filter(ram_fits, method != "Minto")
-# ram_fits <- select(ram_fits, -method, -b2bmsy)
-# ram_fits <- ram_fits[!duplicated(ram_fits), ]
 ram_fits <- arrange(ram_fits, method, stockid, tsyear)
 
 # to match the simulation data frame:
 ram_fits <- rename(ram_fits,
   b_bmsy_true = b2bmsy_true,
   b_bmsy_est = b2bmsy)
-
-# ram_fits <- inner_join(ram_fits, zz)
 
 saveRDS(ram_fits, "generated-data/ram_fits.rds")

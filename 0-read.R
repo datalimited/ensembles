@@ -20,11 +20,6 @@ priors_old <- read.csv("RL_pred_Bbmsy.csv", stringsAsFactors = FALSE) %>%
   mutate(res = tolower(res))
 priors_old <- priors_old[!duplicated(priors_old), ]
 
-# ramts <- tbl(ram, "timeseries_values_views") %>% as.data.frame
-# %>%
-  # left_join(priors_old, by = "stockid") %>%
-  # select(-assessid)
-
 clean_ramnames <- function(x) {
   names(x) <- tolower(names(x))
   names(x) <- gsub("\\.", "_", names(x))
@@ -33,23 +28,7 @@ clean_ramnames <- function(x) {
 }
 
 ramts <- priors_old
-
 ramts <- clean_ramnames(ramts)
 ramts <- rename(ramts, year = tsyear, bbmsy_ram = bbmsy__touse, catch = c_touse)
-
-# %>%
-  # arrange(stockid, year)
-# %>%
-  # select(-b_bmsy, -ssb_ssbmsy, -f_fmsy, - tc, -tl, -ssb, -tb) %>%
-  # arrange(stockid, year)
-
-# Don't have priors or weren't in original data:
-# dropped <- ramts %>% filter(is.na(post_median)) %>%
-#   select(stockid) %>%
-#   filter(!duplicated(stockid))
-#
-# if(length(dropped[[1]] > 0))
-#   warning(paste(length(dropped[[1]]), "stocks were dropped:",
-#     "they were not in the original prior data."))
 
 saveRDS(ramts, file = "generated-data/ramts.rds")
