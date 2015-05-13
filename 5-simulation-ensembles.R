@@ -159,15 +159,6 @@ cv_sim_long <- suppressWarnings(
   dplyr::bind_rows(cv_sim_mean_long, cv_sim_slope_long))
 saveRDS(cv_sim_long, "generated-data/cv_sim_long.rds")
 
-# cors <- cv_sim_long %>% group_by(method, type) %>%
-#   summarise(spearman = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
-#     use = "pairwise.complete.obs")) %>% as.data.frame %>%
-#   mutate(spearman = round(spearman, 4)) %>%
-#   arrange(type, -spearman)
-
-# ggplot(cors, aes(x = method, xend = method, yend = spearman)) +
-#   geom_segment(y = 0, lwd = 1.2) + facet_wrap(~type)
-
 cors %>% tidyr::spread(type, spearman) %>%
   ggplot(aes(mean, slope)) + geom_point() +
   geom_text(aes(label = method), hjust = 0.5, vjust = -0.5) +
