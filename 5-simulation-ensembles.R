@@ -15,7 +15,7 @@ dsim <- rename(dsim, stockid = stock_id, method = method_id) # to match RAM fits
 # TODO: should 'scenario' be across sigmaC and sigmaR values too?
 dsim <- dsim %>%
   mutate(stockid =
-    paste0(stockid, "_sigmaC_", sigmaC, "_sigmaR_", sigmaR, "_lh", LH)) %>%
+    paste0(stockid, "_sigmaC_", sigmaC, "_sigmaR_", sigmaR, "_lh", LH)) %>% # TODO: pull sigmaC and sigmaR out of scenario
   arrange(stockid, iter, year) # critical since not all in order
 
 # summarise the mean and slope in the last N years:
