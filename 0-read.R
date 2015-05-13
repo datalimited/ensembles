@@ -10,7 +10,7 @@ cdat_old <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv",
   stringsAsFactors = FALSE) %>%
   select(stockid, res, tsyear, CtoUse, Bbmsy_toUse, scientificname) %>%
   filter(!is.na(CtoUse))
-priors_old <- read.csv("RL_pred_Bbmsy.csv", stringsAsFactors = FALSE) %>%
+priors_old <- read.csv("raw-data/RL_pred_Bbmsy.csv", stringsAsFactors = FALSE) %>%
   select(stockid, log.SD, log.Mean, post.median, stocklong) %>%
   rename(
     log_sd = log.SD,
