@@ -1,11 +1,10 @@
 library("ggplot2")
 library("doParallel")
-library("datalimited")
+library("datalimited") # install first, e.g.: devtools::install("path/to/datalimited")
 registerDoParallel(cores = 4)
 
 ramts <- readRDS("generated-data/ramts.rds")
-
-sig_r_vector <- c(0.05)
+sig_r_vector <- c(0.05) # so we can iterate across multiple values
 
 # Re-fit catch-MSY because there was an issue with the stochastic sigmaR:
 for (i in seq_along(sig_r_vector)) {

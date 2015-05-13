@@ -1,3 +1,7 @@
+# This script does a bunch of messy merging of RAM data It takes the original
+# fits, merges in the revised CMSY fits, joins in some lifehistory data, renames
+# some columns, and shapes the data appropriately for the ensemble models.
+
 library("dplyr")
 
 # A huge file; too big for Git:
@@ -49,10 +53,13 @@ ram_fits <- d2_long
 ram_fits <- ram_fits %>% rename(b2bmsy_true = Bbmsy_toUse)
 
 # Merge in exploitation:
-ram <- src_sqlite("ram-data/ramlegacy.sqlite3")
-ramts <- tbl(ram, "timeseries_values_views") %>% as.data.frame %>%
-  select(stockid, year, Utouse, Ctouse) %>%
-  rename(tsyear = year, expl = Utouse, catch = Ctouse)
+# Too big for Git:
+# ram <- src_sqlite("ram-data/ramlegacy.sqlite3")
+# ramts <- tbl(ram, "timeseries_values_views") %>% as.data.frame %>%
+#   select(stockid, year, Utouse, Ctouse) %>%
+#   rename(tsyear = year, expl = Utouse, catch = Ctouse)
+# saveRDS(ramts, file = "generated-data/ramts_exploitation.rds")
+ramts <- readRDS("generated-data/ramts_exploitation.rds")
 
 ram_fits <- inner_join(ram_fits, ramts)
 ram_fits <- inner_join(ram_fits, ram_sp)

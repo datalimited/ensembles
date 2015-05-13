@@ -1,3 +1,9 @@
+# The main file to run ensemble models for the RAM data.
+# Right now this is largely copied from the simulation data version.
+# If we decide to keep this and do anything remotedly fancy then
+# I'll generalize the code into functions and call it for both
+# the simulation and RAM data.
+
 library("dplyr")
 library("ggplot2")
 source("3.5-ensembles-functions.R")

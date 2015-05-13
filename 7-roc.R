@@ -10,6 +10,11 @@ get_roc <- function(true, est) {
 cv_sim_binary <- readRDS("generated-data/cv_sim_binary.rds") %>% as.data.frame
 cv_ram_binary <- readRDS("generated-data/cv_ram_binary.rds") %>% as.data.frame
 
+# If you want to be picky and take the individual models
+# at their word and use a threshold of 1.
+# Otherwise, they get treated as continuous variables
+# with a moving threshold by the ROC function.
+
 # cv_sim_binary <- cv_sim_binary %>% mutate(
 #   CMSY = ifelse(CMSY > 1, 1, 0),
 #   COM.SIR = ifelse(COM.SIR > 1, 1, 0),
