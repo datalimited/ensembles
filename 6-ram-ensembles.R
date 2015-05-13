@@ -129,7 +129,7 @@ re2 <- re %>% group_by(type, method) %>%
     performance_u = quantile(abs(re), 0.75, na.rm = TRUE)) %>%
   mutate(summary = "MARE")
 
-cors <- cv_sim_long %>% group_by(method, type) %>%
+cors <- cv_ram_long %>% group_by(method, type) %>%
   summarise(spearman = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
     use = "pairwise.complete.obs")) %>% as.data.frame %>%
   mutate(spearman = round(spearman, 4)) %>%
