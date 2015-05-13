@@ -83,7 +83,7 @@ Funding...
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-sim-mean-scatter.pdf}
+\includegraphics[width=\textwidth]{../figs/cv-sim-mean-scatter.png}
 \caption{Cross-validated simulation ensemble scatter plot --- mean B/Bmsy}
 \label{fig:scatter-sim-mean}
 \end{center}
@@ -99,7 +99,7 @@ Funding...
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/performance-sim-scatter.png}
+\includegraphics[width=\textwidth]{../figs/performance-sim-scatter.pdf}
 \caption{Performance for simulation ensembles.}
 \label{fig:performance-sim}
 \end{center}
