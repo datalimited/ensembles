@@ -65,3 +65,60 @@ Funding...
 
 # Figures
 
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{../figs/partial-sim.pdf}
+\caption{Partial dependence plots for simulation ensembles.}
+\label{fig:partial-sim}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
+\caption{Partial dependence 2d plots for simulation ensembles.}
+\label{fig:partial-2d-sim}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{../figs/performance-sim-scatter.pdf}
+\caption{Performance for simulation ensembles.}
+\label{fig:performance-sim}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../figs/roc-sim.pdf}
+\caption{ROC for simulation data ensembles.}
+\label{fig:roc-sim}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{../figs/partial-ram.pdf}
+\caption{Partial dependence plots for RAM ensembles.}
+\label{fig:partial-ram}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{../figs/performance-ram-scatter.pdf}
+\caption{Performance for RAM ensembles.}
+\label{fig:performance-ram}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../figs/roc-ram.pdf}
+\caption{ROC for RAM data ensembles.}
+\label{fig:roc-ram}
+\end{center}
+\end{figure}
+
+
