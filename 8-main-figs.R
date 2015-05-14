@@ -1,36 +1,39 @@
 # Make the main figures
 
+library(dplyr)
+library(ggplot2)
+
 d <- readRDS("generated-data/cv_sim_long.rds") %>%
   filter(type == "mean") %>%
   filter(method != "dummy") %>%
   as.data.frame()
 
-d2 <- d %>% group_by(test_iter, method) %>%
-  summarise(
-    mare = median(abs(re)),
-    mre = median(re),
-    corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
-      use = "pairwise.complete.obs"))
-
-ggplot(d2, aes(method, corr)) + geom_violin()
-ggplot(d2, aes(method, mare)) + geom_violin()
-ggplot(d2, aes(method, mre)) + geom_violin()
-
-d %>% filter(re < 4, re > -4) %>%
-  ggplot(aes(re)) + geom_histogram() + facet_wrap(~method) +
-  geom_vline(xintercept = 0)
-
-d %>% filter(re < 4, re > -4) %>%
-  ggplot(aes(method, re)) + geom_boxplot() +
-  geom_hline(yintercept = 0)
-
-p <- d %>% filter(method != "dummy") %>%
-  ggplot(aes(bbmsy_true, bbmsy_est)) +
-    geom_point(alpha = 0.01) +
-    facet_wrap(~method, ncol = 4) + ylim(0, 3) + xlim(0, 3) +
-    coord_fixed() +
-    geom_abline(intercept = 0, slope = 1, lty = 3)
-suppressWarnings(print(p))
+# d2 <- d %>% group_by(test_iter, method) %>%
+#   summarise(
+#     mare = median(abs(re)),
+#     mre = median(re),
+#     corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
+#       use = "pairwise.complete.obs"))
+#
+# ggplot(d2, aes(method, corr)) + geom_violin()
+# ggplot(d2, aes(method, mare)) + geom_violin()
+# ggplot(d2, aes(method, mre)) + geom_violin()
+#
+# d %>% filter(re < 4, re > -4) %>%
+#   ggplot(aes(re)) + geom_histogram() + facet_wrap(~method) +
+#   geom_vline(xintercept = 0)
+#
+# d %>% filter(re < 4, re > -4) %>%
+#   ggplot(aes(method, re)) + geom_boxplot() +
+#   geom_hline(yintercept = 0)
+#
+# p <- d %>% filter(method != "dummy") %>%
+#   ggplot(aes(bbmsy_true, bbmsy_est)) +
+#     geom_point(alpha = 0.01) +
+#     facet_wrap(~method, ncol = 4) + ylim(0, 3) + xlim(0, 3) +
+#     coord_fixed() +
+#     geom_abline(intercept = 0, slope = 1, lty = 3)
+# suppressWarnings(print(p))
 
 hexagon <- function (x, y, unitcell = 1, ...) {
   polygon(
@@ -64,8 +67,11 @@ add_label <- function(xfrac, yfrac, label, pos = 4, ...) {
   text(x, y, label, pos = pos, ...)
 }
 
-clean_names <- data_frame(method = c("CMSY", "COMSIR", "Costello", "SSCOM", "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
-  clean_method = c("CMSY", "COM-SIR", "mPRM", "SSCOM", "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"))
+clean_names <- dplyr::data_frame(
+  method = c("CMSY", "COMSIR", "Costello", "SSCOM",
+    "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
+  clean_method = c("CMSY", "COM-SIR", "mPRM", "SSCOM",
+    "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"))
 
 d <- suppressWarnings(inner_join(d, clean_names))
 
@@ -81,8 +87,8 @@ plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
     filter(d, method == unique(d$method)[m])$bbmsy_true,
     filter(d, method == unique(d$method)[m])$bbmsy_est,
     xbnds = xlim, ybnds = ylim, xbins = xbins)
-  dx <- hcell2xy(bin)$x
-  dy <- hcell2xy(bin)$y
+  dx <- hexbin::hcell2xy(bin)$x
+  dy <- hexbin::hcell2xy(bin)$y
   dxy <- data.frame(x = dx, y = dy)
   counts <- bin@count
   counts <- round(log(counts*1.5))
