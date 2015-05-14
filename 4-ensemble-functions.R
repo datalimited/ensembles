@@ -23,15 +23,15 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
 
   cv_ids_set <- FALSE # legacy code, leaving in in case needed for RAM stocks
   while(!cv_ids_set) {
-    nstocks <- length(unique(dat$stockid))
-    train_ids <- sample(nstocks, round(nstocks * fraction_train))
-    test_ids <- seq_len(nstocks)[-train_ids]
+    n_ids <- length(unique(dat$cv_id))
+    train_ids <- sample(n_ids, round(n_ids * fraction_train))
+    test_ids <- seq_len(n_ids)[-train_ids]
 
-    train_stockids <- unique(dat$stockid)[train_ids]
-    test_stockids <- unique(dat$stockid)[test_ids]
+    train_cv_ids <- unique(dat$cv_id)[train_ids]
+    test_cv_ids <- unique(dat$cv_id)[test_ids]
 
-    train_dat <- filter(dat, stockid %in% train_stockids)
-    test_dat <- filter(dat, stockid %in% test_stockids)
+    train_dat <- filter(dat, cv_id %in% train_cv_ids)
+    test_dat <- filter(dat, cv_id %in% test_cv_ids)
 
     cv_ids_set <- TRUE
   }

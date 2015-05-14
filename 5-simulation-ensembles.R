@@ -12,10 +12,12 @@ dsim <- rename(dsim, stockid = stock_id, method = method_id) # to match RAM fits
 
 # extend the stockid to be truly unique per scenario:
 # (note that there are still multiple iterations with the same stockid)
-# TODO: should 'scenario' be across sigmaC and sigmaR values too?
+# cv_id defines groups that should *all* be in the testing or training
+# datasets
 dsim <- dsim %>%
+  mutate(cv_id = paste0(stockid, "_lh_", LH)) %>%
   mutate(stockid =
-    paste0(stockid, "_sigmaC_", sigmaC, "_sigmaR_", sigmaR, "_lh", LH)) %>% # TODO: pull sigmaC and sigmaR out of scenario
+    paste0(stockid, "_sigmaC_", sigmaC, "_sigmaR_", sigmaR, "_lh_", LH)) %>%
   arrange(stockid, iter, year) # critical since not all in order
 
 # summarise the mean and slope in the last N years:
@@ -31,6 +33,7 @@ saveRDS(dsim_sum, file = "generated-data/dsim_sum.rds")
 dsim_meta <- dsim %>%
   group_by(stockid, iter) %>%
   summarise(
+    cv_id = cv_id[1],
     LH = LH[1],
     max_catch = max(catch),
     total_catch = sum(catch))
@@ -46,10 +49,10 @@ trues <- select(dsim_sum, stockid, iter, above_bbmsy1_true,
 trues <- trues[!duplicated(trues), ] # one value per operating model stockid
 
 # switch from long to wide format for modelling:
-d_mean <- reshape2::dcast(dsim_sum, stockid + iter + LH ~ method,
+d_mean <- reshape2::dcast(dsim_sum, stockid + cv_id + iter + LH ~ method,
   value.var = "bbmsy_est_mean")  %>%
   inner_join(select(trues, -bbmsy_true_slope))
-d_slope <- reshape2::dcast(dsim_sum, stockid + iter + LH ~ method,
+d_slope <- reshape2::dcast(dsim_sum, stockid + cv_id + iter + LH ~ method,
   value.var = "bbmsy_est_slope") %>%
   inner_join(select(trues, -bbmsy_true_mean))
 
@@ -109,20 +112,26 @@ cv_sim_mean <- plyr::ldply(seq_len(16), .parallel = TRUE,
       gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH",
       lm_formula = "log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM + LH)^2"))
 cv_sim_mean$gbm_ensemble <- exp(cv_sim_mean$gbm_ensemble)
+cv_sim_mean$rf_ensemble <- exp(cv_sim_mean$rf_ensemble)
 cv_sim_mean$lm_ensemble <- exp(cv_sim_mean$lm_ensemble)
+cv_sim_mean$cv_id <- NULL
+cv_sim_mean$dummy <- rnorm(nrow(cv_sim_mean), 1, 0.2)
 
-cv_sim_slope <- plyr::ldply(seq_len(16), .parallel = TRUE,
+cv_sim_slope <- plyr::ldply(seq_len(4), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
      gbm_formula = "bbmsy_true_slope ~ CMSY + COMSIR + Costello + SSCOM + LH",
      lm_formula = "bbmsy_true_slope ~ (CMSY + COMSIR + Costello + SSCOM + LH)^2"))
+cv_sim_slope$cv_id <- NULL
+cv_sim_slope$dummy <- rnorm(nrow(cv_sim_slope), 0, 0.2)
 
-cv_sim_binary <- plyr::ldply(seq_len(16), .parallel = TRUE,
+cv_sim_binary <- plyr::ldply(seq_len(4), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE,
       id = "sim-mean", distribution = "bernoulli",
       gbm_formula = "above_bbmsy1_true ~ CMSY + COMSIR + Costello + SSCOM + LH",
       glm_formula = "above_bbmsy1_true ~ (CMSY + COMSIR + Costello + SSCOM + LH)^2"))
+cv_sim_binary$cv_id <- NULL
 saveRDS(cv_sim_binary, file = "generated-data/cv_sim_binary.rds") # used in 5-roc.R
 
 # -------------------------------------------------------
@@ -160,9 +169,10 @@ cv_sim_long <- suppressWarnings(
 saveRDS(cv_sim_long, "generated-data/cv_sim_long.rds")
 
 re <- cv_sim_long %>% mutate(
-  sq_er = (bbmsy_est_trans - bbmsy_true_trans)^2,
-  re    = (bbmsy_est_trans - bbmsy_true_trans) / bbmsy_true_trans,
-  pe    = bbmsy_est_trans / bbmsy_true_trans)
+  sq_er = (bbmsy_est - bbmsy_true)^2,
+  re    = (bbmsy_est - bbmsy_true) / bbmsy_true)
+
+re %>% saveRDS(file = "generated-data/cv_sim_long.rds")
 
 # make a data frame that summarizes all these performance metrics at once:
 re2 <- re %>% group_by(type, method) %>%
