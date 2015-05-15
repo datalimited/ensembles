@@ -1,5 +1,4 @@
 # Make the main figures
-
 library(dplyr)
 library(ggplot2)
 
@@ -8,24 +7,154 @@ d <- readRDS("generated-data/cv_sim_long.rds") %>%
   filter(method != "dummy") %>%
   as.data.frame()
 
-# d2 <- d %>% group_by(test_iter, method) %>%
-#   summarise(
-#     mare = median(abs(re)),
-#     mre = median(re),
-#     corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
-#       use = "pairwise.complete.obs"))
-#
-# ggplot(d2, aes(method, corr)) + geom_violin()
-# ggplot(d2, aes(method, mare)) + geom_violin()
-# ggplot(d2, aes(method, mre)) + geom_violin()
-#
+clean_names <- dplyr::data_frame(
+  method = c("CMSY", "COMSIR", "Costello", "SSCOM",
+    "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
+  clean_method = c("CMSY", "COM-SIR", "mPRM", "SSCOM",
+    "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"),
+  order = c(1, 2, 4, 3, 8, 7, 6, 5),
+  label_fudge_x = c(
+    -0.01, -0.030, 0, -0.03,
+    0, 0, 0, -0.02),
+  label_fudge_y = c(
+    0, -0.005, 0.02, 0,
+    0, 0.025, 0.02, 0))
+
+d <- suppressWarnings(inner_join(d, clean_names))
+
+d2 <- d %>% group_by(test_iter, clean_method, order, label_fudge_x, label_fudge_y) %>%
+  summarise(
+    mare = median(abs(re)),
+    mre = median(re),
+    corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
+      use = "pairwise.complete.obs"))
+
+# ------------------------------------
+# Performance distributions simulation
+# ------------------------------------
+
+d2$clean_method <- as.factor(d2$clean_method)
+d2$clean_method <- reorder(d2$clean_method, d2$order)
+
+# ggplot(d2, aes(clean_method, corr)) + geom_violin()
+# ggplot(d2, aes(clean_method, mare)) + geom_violin()
+# ggplot(d2, aes(clean_method, mre)) + geom_violin()
 # d %>% filter(re < 4, re > -4) %>%
-#   ggplot(aes(re)) + geom_histogram() + facet_wrap(~method) +
+#   ggplot(aes(re)) + geom_histogram() + facet_wrap(~clean_method) +
 #   geom_vline(xintercept = 0)
-#
-# d %>% filter(re < 4, re > -4) %>%
-#   ggplot(aes(method, re)) + geom_boxplot() +
-#   geom_hline(yintercept = 0)
+
+#bg_plot <- function(colour = "#00000009") {
+  #rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4],
+    #col = colour, border = FALSE)
+#}
+
+performance_panel <- function(dat, column_id, ylim_adj = c(-0.1, 0.1), xaxis = FALSE,
+  flip_yaxis = FALSE, yticks = NULL, add_zero_line = TRUE) {
+
+  axis_col <- "grey50"
+  label_col <- "grey50"
+  cols_ii <- RColorBrewer::brewer.pal(8, "Blues")
+
+  ylim <- range(dat[,column_id][[1]]) + ylim_adj
+  if (flip_yaxis) ylim <- rev(ylim)
+
+  plot(1, 1, xlim = c(.8, nrow(clean_names)+0.2),
+    ylim = ylim, type = "n", axes = FALSE, ann = FALSE, yaxs = "i")
+  rect(4.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
+  rect(5.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
+  rect(6.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
+  rect(7.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
+  if(add_zero_line)
+    abline(h = 0, col = "grey70", lty = 2, lwd = 1)
+  beanplot::beanplot(as.formula(paste(column_id, "~ clean_method")),
+    data = dat, add = TRUE,
+    border = NA, axes = FALSE, col = cols_ii[c(5, 3, 4, 8)], what =
+    c(0, 1, 1, 0), log = FALSE)
+  points(jitter(as.numeric(dat$clean_method), amount = 0.09),
+    dat[,column_id][[1]], col = "#D0D0D0", pch = 20, cex = 0.37)
+  if (is.null(yticks))
+    axis(2, las = 1, col = axis_col, col.axis = axis_col)
+  else
+    axis(2, las = 1, at = yticks, col = axis_col, col.axis = axis_col)
+
+  if (xaxis)
+    axis(1, col = axis_col, col.axis = label_col, at = 1:length(unique(dat$clean_method)),
+      labels = levels(dat$clean_method), las = 3)
+  box(col = axis_col)
+
+}
+
+pdf("figs/performance-beanplots-sim.pdf", width = 5, height = 5)
+par(mfrow = c(3, 1))
+par(mar = c(0, 3, 0, 0), cex = 0.8, oma = c(8, 3, 1.5, .5), tck = -0.03, mgp = c(2, 0.5, 0))
+performance_panel(d2, "corr", c(-0.1, 0.1), flip_yaxis = FALSE, yticks = c(0, 0.2, 0.4))
+mtext("Correlation\nacross populations", side = 2, line = 3, col = "grey40")
+performance_panel(d2, "mare", c(-0.05, 0.05), xaxis = FALSE, flip_yaxis = FALSE,
+  yticks = c(0.3, 0.4, 0.5, 0.6))
+mtext("Inaccuracy\n(MARE)", side = 2, line = 3, col = "grey40")
+performance_panel(d2, "mre", c(-0.1, 0.1), flip_yaxis = FALSE, xaxis = TRUE,
+  yticks = c(0, 0.2, 0.4))
+mtext("Bias and\nprecision (MRE)", side = 2, line = 3, col = "grey40")
+dev.off()
+
+d2_long <- reshape2::melt(d2, id.vars = c("test_iter", "clean_method", "order",
+    "label_fudge_x", "label_fudge_y"))
+
+d3 <- d2_long %>% group_by(clean_method, order, variable, label_fudge_x, label_fudge_y) %>%
+  summarise(
+    m = median(value),
+    l = quantile(value, 0.25),
+    u = quantile(value, 0.75)) %>%
+  as.data.frame()
+
+d3$text_col <- ifelse(grepl("Ensemble", d3$clean_method), "grey20", "grey50")
+
+l <- reshape2::dcast(d3, clean_method ~ variable, value.var = "l")
+u <- reshape2::dcast(d3, clean_method ~ variable, value.var = "u")
+m <- reshape2::dcast(d3, clean_method + text_col ~ variable, value.var = "m")
+
+fudge_x <- reshape2::dcast(d3, clean_method ~ variable, value.var = "label_fudge_x")
+fudge_y <- reshape2::dcast(d3, clean_method ~ variable, value.var = "label_fudge_y")
+
+pal <- data_frame(
+  col = RColorBrewer::brewer.pal(11, "RdBu"),
+  mre = seq(-max(m$mre)*1.05, max(m$mre)*1.05, length.out = 11))
+m$col <- pal$col[findInterval(m$mre, pal$mre)]
+
+xlim <- filter(d3, variable == "mare") %>% select(l, u) %>% range
+ylim <- filter(d3, variable == "corr") %>% select(l, u) %>% range
+
+pdf("figs/fig3.pdf", width = 4, height = 3.1)
+par(mfrow = c(1, 1), mgp = c(1.5, 0.4, 0), las = 1, tck = -0.012,
+  oma = c(3, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
+  xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+par(xpd = NA)
+plot(m$mare, m$corr, xlim = xlim, ylim = ylim, pch = 21, bg = m$col, col = "grey50",
+  axes = FALSE, xlab = "", ylab = "", type = "n")
+segments(m$mare, l$corr, m$mare, u$corr, col = "#00000050", lwd = 1.4)
+segments(l$mare, m$corr, u$mare, m$corr, col = "#00000050", lwd = 1.4)
+points(m$mare, m$corr, pch = 21, bg = m$col, col = "grey50", cex = 1.5)
+text(
+  m$mare + fudge_x$mare,
+  m$corr + fudge_y$corr - 0.015,
+  m$clean_method, cex = 0.90, pos = 4, col = m$text_col)
+box(col = "grey50")
+axis(2, col = "grey50", cex.axis = par()[["cex"]], at = c(0.1, 0.2, 0.3))
+par(mgp = par()[["mgp"]] + c(0, -0.25, 0))
+axis(1, col = "grey50", cex.axis = par()[["cex"]], at = c(0.4, 0.45, 0.5, 0.55))
+mtext("Within population inaccuracy (MARE)", side = 1, line = 1.7, col = "grey40", cex = 0.8)
+mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las = 0, cex = 0.8)
+#legend("bottomright", bty = "n", pch = c(21, 21, 21), bg = c("red", "red", "blue"),
+  #legend = c(4, 0, -1))
+dev.off()
+
+#mtext(LETTERS[ii], adj = 0.05, line = -1.5, col = "grey40", cex = 0.8)
+#text(0.5, 0.48, panel_labs[ii-4], col = label_col, pos = 4, cex = 1.05)
+
+
+# ------------------------
+# Scatter plots simulation
+# ------------------------
 #
 # p <- d %>% filter(method != "dummy") %>%
 #   ggplot(aes(bbmsy_true, bbmsy_est)) +
@@ -66,14 +195,6 @@ add_label <- function(xfrac, yfrac, label, pos = 4, ...) {
   y <- u[4] - yfrac * (u[4] - u[3])
   text(x, y, label, pos = pos, ...)
 }
-
-clean_names <- dplyr::data_frame(
-  method = c("CMSY", "COMSIR", "Costello", "SSCOM",
-    "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
-  clean_method = c("CMSY", "COM-SIR", "mPRM", "SSCOM",
-    "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"))
-
-d <- suppressWarnings(inner_join(d, clean_names))
 
 pdf("figs/fig2.pdf", width = 8, height = 4)
 par(mfrow = c(2, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
