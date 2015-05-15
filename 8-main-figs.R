@@ -76,11 +76,11 @@ clean_names <- dplyr::data_frame(
 d <- suppressWarnings(inner_join(d, clean_names))
 
 pdf("figs/fig2.pdf", width = 8, height = 4)
-par(mfrow = c(2, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03, oma = c(3.5, 3.5, .5, .5),
-  cex = 0.8, mar = c(0, 0, 0, 0), xaxs = "i", yaxs = "i", col.axis = "grey50",
-  col.lab = "grey50")
+par(mfrow = c(2, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
+  oma = c(3.5, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
+  xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
 plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
-  xbins <- 75
+  xbins <- 140
   xlim <- c(0, max(d$bbmsy_est))
   ylim <- c(0, max(d$bbmsy_est))
   bin <- hexbin::hexbin(
@@ -92,6 +92,7 @@ plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
   dxy <- data.frame(x = dx, y = dy)
   counts <- bin@count
   counts <- round(log(counts*1.5))
+  #alternative power transformation:
   #counts <- round((counts)^0.30)
   if (m %in% 1)
     pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))
@@ -103,14 +104,14 @@ plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
     pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Purples"))
   if (m %in% 5:8)
     pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greys"))
-  #pal_function <- colorRampPalette(rev(RColorBrewer::brewer.pal(9, "Spectral")))
   pal <- pal_function(max(counts))
+  #add transparency to de-emphasize fist colour bins:
   #pal[1:10] <- paste0(pal[1:10], round(seq(50, 99, length.out = 10)))
-  plot(1, 1, xlim = c(0, 2.5), ylim = c(0, 2.7), type = "n", asp = 1, xlab = "", ylab = "",
-    xaxt = "n", yaxt = "n")
+  plot(1, 1, xlim = c(0, 2.5), ylim = c(0, 2.7), type = "n", asp = 1,
+    xlab = "", ylab = "", xaxt = "n", yaxt = "n")
   for (i in 1:nrow(dxy)) {
-    hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]], unitcell = diff(xlim)/xbins/2,
-      border = NA)
+    hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
+      unitcell = diff(xlim)/xbins/2, border = NA)
   }
   abline(v = 1, lty = "22", col = "#33333350", lwd = 1.5)
   abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
@@ -121,5 +122,6 @@ plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
   if (m %in% 5:8) axis(1, at = c(0, 1, 2), col = "grey50")
     })
  mtext(expression(B/B[MSY]), side = 1, line = 2.1, outer = TRUE, col = "grey20")
- mtext(expression(widehat(B/B[MSY])), side = 2, line = 1.6, outer = TRUE, las = 0, col = "grey20")
+ mtext(expression(widehat(B/B[MSY])), side = 2, line = 1.6, outer = TRUE,
+   las = 0, col = "grey20")
 dev.off()
