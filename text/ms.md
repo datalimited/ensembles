@@ -100,6 +100,10 @@ real-world fish stocks and compare performance...
 
 # Methods
 
+Repeated three-fold cross-validation [@hastie2009] to test out-of-sample
+prediction error. Split into three, build models on two of the three, test on
+the third, repeat for all splits, repeat entire procedure N times.
+
 # Results
 
 # Discussion
@@ -145,8 +149,8 @@ Funding...
 - error cancellation is one but not the only reason for superiority of ensemble
   models [@hagedorn2005]
 
-- ensemble model may be only marginally better than the best single model in any
-  given case, but we don't usually know which is the best single model
+- ensemble model may be only marginally better than the best single model in
+  any given case, but we don't usually know which is the best single model
   [@hagedorn2005]
 
 - ensemble models useful for regional climate models too; as an example,
@@ -191,6 +195,42 @@ Funding...
 \clearpage
 
 # Figures
+
+\begin{figure}[htbp]
+\begin{center}
+%\includegraphics[width=\textwidth]{../figs/fig2.pdf}
+\caption{illustration of methods and cartoon results}
+\label{fig:didactic}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{../figs/fig2.pdf}
+\caption{Simulation cross plots}
+\label{fig:sim-hexagon}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=3.7in]{../figs/fig3.pdf}
+\caption{Performance with simulation ensembles}
+\label{fig:performance-sim}
+\end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=3.7in]{../figs/performance-beanplots-sim.pdf}
+\caption{Performance with simulation ensembles (alternate of previous figure).}
+\label{fig:performance-sim}
+\end{center}
+\end{figure}
 
 
 \clearpage
