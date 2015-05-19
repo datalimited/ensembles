@@ -3,7 +3,6 @@ library(dplyr)
 library(ggplot2)
 
 d <- readRDS("generated-data/cv_sim_long.rds") %>%
-  filter(type == "mean") %>%
   filter(method != "dummy") %>%
   as.data.frame()
 
@@ -14,27 +13,30 @@ clean_names <- dplyr::data_frame(
     "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"),
   order = c(1, 2, 4, 3, 8, 7, 6, 5),
   label_fudge_x = c(
-    -0.01, -0.030, 0, -0.03,
-    0, 0, 0, -0.02),
+    0, -0.06,0,-0.06,
+    0, 0,0,0),
   label_fudge_y = c(
-    0, -0.005, 0.02, 0,
-    0, 0.025, 0.02, 0))
+    0, 0,0.03,0,
+    0, 0,0,0))
 
 d <- suppressWarnings(inner_join(d, clean_names))
 
-d2 <- d %>% group_by(test_iter, clean_method, order, label_fudge_x, label_fudge_y) %>%
+d2 <- d %>% group_by(test_iter, type, clean_method, order, label_fudge_x, label_fudge_y) %>%
   summarise(
     mare = median(abs(re)),
     mre = median(re),
     corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
       use = "pairwise.complete.obs"))
 
+d2$clean_method <- as.factor(d2$clean_method)
+d2$clean_method <- reorder(d2$clean_method, d2$order)
+
+d2_slope <- filter(d2, type == "slope")
+d2 <- filter(d2, type == "mean")
+
 # ------------------------------------
 # Performance distributions simulation
 # ------------------------------------
-
-d2$clean_method <- as.factor(d2$clean_method)
-d2$clean_method <- reorder(d2$clean_method, d2$order)
 
 # ggplot(d2, aes(clean_method, corr)) + geom_violin()
 # ggplot(d2, aes(clean_method, mare)) + geom_violin()
@@ -139,14 +141,15 @@ text(
   m$corr + fudge_y$corr - 0.015,
   m$clean_method, cex = 0.90, pos = 4, col = m$text_col)
 box(col = "grey50")
-axis(2, col = "grey50", cex.axis = par()[["cex"]], at = c(0.1, 0.2, 0.3))
+axis(2, col = "grey50", cex.axis = par()[["cex"]], at = seq(0.1, 0.5, 0.1))
 par(mgp = par()[["mgp"]] + c(0, -0.25, 0))
-axis(1, col = "grey50", cex.axis = par()[["cex"]], at = c(0.4, 0.45, 0.5, 0.55))
+axis(1, col = "grey50", cex.axis = par()[["cex"]], at = seq(0.3, 0.6, 0.1))
 mtext("Within population inaccuracy (MARE)", side = 1, line = 1.7, col = "grey40", cex = 0.8)
 mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las = 0, cex = 0.8)
 #legend("bottomright", bty = "n", pch = c(21, 21, 21), bg = c("red", "red", "blue"),
   #legend = c(4, 0, -1))
 dev.off()
+1
 
 #mtext(LETTERS[ii], adj = 0.05, line = -1.5, col = "grey40", cex = 0.8)
 #text(0.5, 0.48, panel_labs[ii-4], col = label_col, pos = 4, cex = 1.05)
@@ -196,55 +199,76 @@ add_label <- function(xfrac, yfrac, label, pos = 4, ...) {
   text(x, y, label, pos = pos, ...)
 }
 
-pdf("figs/fig2.pdf", width = 8, height = 4)
-par(mfrow = c(2, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
-  oma = c(3.5, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
-  xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
-  xbins <- 140
-  xlim <- c(0, max(d$bbmsy_est))
-  ylim <- c(0, max(d$bbmsy_est))
-  bin <- hexbin::hexbin(
-    filter(d, method == unique(d$method)[m])$bbmsy_true,
-    filter(d, method == unique(d$method)[m])$bbmsy_est,
-    xbnds = xlim, ybnds = ylim, xbins = xbins)
-  dx <- hexbin::hcell2xy(bin)$x
-  dy <- hexbin::hcell2xy(bin)$y
-  dxy <- data.frame(x = dx, y = dy)
-  counts <- bin@count
-  counts <- round(log(counts*1.5))
-  #alternative power transformation:
-  #counts <- round((counts)^0.30)
-  if (m %in% 1)
-    pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))
-  if (m %in% 2)
-    pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Oranges"))
-  if (m %in% 3)
-    pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greens"))
-  if (m %in% 4)
-    pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Purples"))
-  if (m %in% 5:8)
-    pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greys"))
-  pal <- pal_function(max(counts))
-  #add transparency to de-emphasize fist colour bins:
-  #pal[1:10] <- paste0(pal[1:10], round(seq(50, 99, length.out = 10)))
-  plot(1, 1, xlim = c(0, 2.5), ylim = c(0, 2.7), type = "n", asp = 1,
-    xlab = "", ylab = "", xaxt = "n", yaxt = "n")
-  for (i in 1:nrow(dxy)) {
-    hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
-      unitcell = diff(xlim)/xbins/2, border = NA)
-  }
-  abline(v = 1, lty = "22", col = "#33333350", lwd = 1.5)
-  abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
-  abline(a = 0, b = 1, lty = "22", col = "#33333350", lwd = 1.5)
-  box(col = "grey50")
-  add_label(-0.01, 0.08, unique(d$clean_method)[m], col = "grey20")
-  if (m %in% c(1, 8)) axis(2, at = c(0, 1, 2), col = "grey50")
-  if (m %in% 5:8) axis(1, at = c(0, 1, 2), col = "grey50")
+plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
+  ylab = expression(widehat(B/B[MSY])), lims_hex = c(0, max(dat$bbmsy_est)),
+  xlim_plot = c(0, 2.5), ylim_plot = c(0, 2.7), axis_ticks = c(0, 1, 2)) {
+  par(mfrow = c(2, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
+    oma = c(3.5, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
+    xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+  plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
+    xlim <- lims_hex
+    ylim <- lims_hex
+    bin <- hexbin::hexbin(
+      filter(dat, method == unique(d$method)[m])$bbmsy_true,
+      filter(dat, method == unique(d$method)[m])$bbmsy_est,
+      xbnds = xlim, ybnds = ylim, xbins = xbins)
+    dx <- hexbin::hcell2xy(bin)$x
+    dy <- hexbin::hcell2xy(bin)$y
+    dxy <- data.frame(x = dx, y = dy)
+    counts <- bin@count
+    counts <- round(log(counts*1.5))
+    #alternative power transformation:
+    #counts <- round((counts)^0.30)
+    if (m %in% 1)
+      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))
+    if (m %in% 2)
+      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Oranges"))
+    if (m %in% 3)
+      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greens"))
+    if (m %in% 4)
+      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Purples"))
+    if (m %in% 5:8)
+      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greys"))
+    pal <- pal_function(max(counts))
+    #add transparency to de-emphasize fist colour bins:
+    #pal[1:10] <- paste0(pal[1:10], round(seq(50, 99, length.out = 10)))
+    plot(1, 1, xlim = xlim_plot, ylim = ylim_plot, type = "n", asp = 1,
+      xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+    for (i in 1:nrow(dxy)) {
+      hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
+        unitcell = diff(xlim)/xbins/2, border = NA)
+    }
+    abline(v = 1, lty = "22", col = "#33333350", lwd = 1.5)
+    abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
+    abline(a = 0, b = 1, lty = "22", col = "#33333350", lwd = 1.5)
+    box(col = "grey50")
+    add_label(-0.01, 0.08, unique(d$clean_method)[m], col = "grey20")
+    if (m %in% c(1, 8)) axis(2, at = axis_ticks, col = "grey50")
+    if (m %in% 5:8) axis(1, at = axis_ticks, col = "grey50")
     })
- mtext(expression(B/B[MSY]), side = 1, line = 2.1, outer = TRUE, col = "grey20")
- mtext(expression(widehat(B/B[MSY])), side = 2, line = 1.6, outer = TRUE,
-   las = 0, col = "grey20")
+  mtext(xlab, side = 1, line = 2.1, outer = TRUE, col = "grey20")
+  mtext(ylab, side = 2, line = 1.6, outer = TRUE,
+    las = 0, col = "grey20")
+}
+
+
+d_mean_plot <- filter(d, type == "mean")
+d_mean_plot$bbmsy_est[d_mean_plot$bbmsy_est > 10] <- NA
+d_mean_plot <- na.omit(d_mean_plot)
+
+pdf("figs/fig2.pdf", width = 8, height = 4)
+plot_hex_fig(d_mean_plot, xbins = 100L)
+dev.off()
+
+d_slope_plot <- filter(d, type == "slope")
+d_slope_plot$bbmsy_est[d_slope_plot$bbmsy_est > 10] <- NA
+d_slope_plot <- na.omit(d_slope_plot)
+
+pdf("figs/hex-slope-sim.pdf", width = 8, height = 4)
+plot_hex_fig(d_slope_plot, xbins = 100L, lims_hex = range(d_slope_plot$bbmsy_est),
+  xlim_plot = c(-0.5, 0.5), ylim_plot = c(-0.5, 0.5))
+dev.off()
+
 # ----------------------------------------------
 # Example time series plot to motivate the study
 # ----------------------------------------------
