@@ -8,15 +8,15 @@
 %\usepackage{amsmath}
 %\usepackage{amsfonts}
 \usepackage{setspace}
-%\usepackage{booktabs}
-%\usepackage{ragged2e}
+\usepackage{booktabs}
+\usepackage{ragged2e}
 %\usepackage{verbatim}
 %\usepackage[sectionbib]{chapterbib}
 %\usepackage{amsmath}
-%\usepackage{longtable}
-%\usepackage{multirow}
-%\usepackage{array}
-%\usepackage{tabu} % for spacing between rows in longtable
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabu} % for spacing between rows in longtable
 \usepackage{titlesec}
 \usepackage{url}
 \usepackage[utf8]{inputenc}
@@ -26,6 +26,8 @@
 \usepackage{xcolor}
 \renewcommand\linenumberfont{\normalfont\tiny\sffamily\color{gray}}
 \modulolinenumbers[2]
+
+\newcommand*{\bbmsy}[1]{$B/B_\mathrm{MSY}$}
 
 % Linux Libertine:
 \usepackage{textcomp}
@@ -90,7 +92,15 @@
 
 \input{ms}
 
+\bibliographystyle{apalike}
+\bibliography{fisheries-ensembles}
 
-%\include{supp}
+\clearpage
+
+\input{figs}
+
+\clearpage
+
+\input{supp}
 
 \end{document}

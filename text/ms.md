@@ -32,25 +32,7 @@ Simon Fraser University,
 Burnaby BC, V5A 1S6;
 E-mail: sean_anderson@sfu.ca
 
-## Figures
-
-Figure 1: Illustration of ensemble methods with cartoon results
-
-Figure 2: Cross-validation scatter plots
-
-Figure 3: Cross-validation performance metrics (correlation across stocks, MARE
-within stocks, relative error distributions to illustrate bias and precision)
-
-Figure 4: Performance metrics or applying simulation to RAM and/or RAM to
-simulation (scatter panel and performance panels)
-
-## Supplementary Figures
-
-- partial dependence plots
-- 2D partial dependence plots
-- scatterplots and performance metrics for slopes
-- scatterplots and performance metrics for cross-validated RAM stocks
-- ROC plots
+\clearpage
 
 ## Main messages
 
@@ -113,6 +95,11 @@ the third, repeat for all splits, repeat entire procedure N times.
 Funding...
 
 # Citation notes
+
+- @breiner2015 ensemble models of species distribution models for rare species
+
+- @jones2015 ensemble models of species distribution models - globally for
+  marine biodiversity
 
 - [@greene2006] example similar to ours but with climate models (Bayesian
   multilevel ensemble)
@@ -188,144 +175,3 @@ Funding...
 
 - @rykiel1996 "Testing ecological models: the meaning of validation" (see for
   performance criteria, theory on model testing and assessment)
-
-\bibliographystyle{apalike}
-\bibliography{fisheries-ensembles}
-
-\clearpage
-
-# Figures
-
-\begin{figure}[htbp]
-\begin{center}
-%\includegraphics[width=\textwidth]{../figs/fig2.pdf}
-\caption{illustration of methods and cartoon results}
-\label{fig:didactic}
-\end{center}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/fig2.pdf}
-\caption{Simulation cross plots}
-\label{fig:sim-hexagon}
-\end{center}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=3.7in]{../figs/fig3.pdf}
-\caption{Performance with simulation ensembles}
-\label{fig:performance-sim}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=3.7in]{../figs/performance-beanplots-sim.pdf}
-\caption{Performance with simulation ensembles (alternate of previous figure).}
-\label{fig:performance-sim}
-\end{center}
-\end{figure}
-
-
-\clearpage
-
-# Supporting Material
-
-# Supplementary Figures
-
-\renewcommand{\thefigure}{S\arabic{figure}}
-\setcounter{figure}{0}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/partial-sim.pdf}
-\caption{Partial dependence plots for simulation ensembles.}
-\label{fig:partial-sim}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
-\caption{Partial dependence 2d plots for simulation ensembles.}
-\label{fig:partial-2d-sim}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-sim-mean-scatter.png}
-\caption{Cross-validated simulation ensemble scatter plot --- mean B/Bmsy}
-\label{fig:scatter-sim-mean}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-sim-slope-scatter.png}
-\caption{Cross-validated simulation ensemble scatter plot --- slope B/Bmsy}
-\label{fig:scatter-sim-slope}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/performance-sim-scatter.pdf}
-\caption{Performance for simulation ensembles.}
-\label{fig:performance-sim}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../figs/roc-sim.pdf}
-\caption{ROC for simulation data ensembles.}
-\label{fig:roc-sim}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/partial-ram.pdf}
-\caption{Partial dependence plots for RAM ensembles.}
-\label{fig:partial-ram}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-ram-mean-scatter.png}
-\caption{Cross-validated RAM ensemble scatter plot --- mean B/Bmsy}
-\label{fig:scatter-ram-mean}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-ram-slope-scatter.png}
-\caption{Cross-validated RAM ensemble scatter plot --- slope B/Bmsy}
-\label{fig:scatter-ram-slope}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/performance-ram-scatter.pdf}
-\caption{Performance for RAM ensembles.}
-\label{fig:performance-ram}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../figs/roc-ram.pdf}
-\caption{ROC for RAM data ensembles.}
-\label{fig:roc-ram}
-\end{center}
-\end{figure}

@@ -1,24 +1,22 @@
 TEXT = anderson-etal-ensembles
 MS = ms
 SOM = supp
+FIGS = figs
 VERSION = 0.1
 REFS = fisheries-ensembles
 
 all: $(TEXT).pdf
 
-$(MS).tex: $(MS).md
+%.tex: %.md
 	pandoc -S --no-wrap --bibliography=$(REFS).bib --natbib -fmarkdown-all_symbols_escapable $< -o $@
-	perl -p -i -e "s/Figure /Figure~/g" $(MS).tex
-	perl -p -i -e "s/Fig\. /Fig.~/g" $(MS).tex
-	perl -p -i -e "s/vs\. /vs.~/g" $(MS).tex
-	perl -p -i -e "s/Table /Table~/g" $(MS).tex
-	perl -p -i -e "s/Figs\. /Figs.~/g" $(MS).tex
+	perl -p -i -e "s/Figure /Figure~/g" $@
+	perl -p -i -e "s/Fig\. /Fig.~/g" $@
+	perl -p -i -e "s/vs\. /vs.~/g" $@
+	perl -p -i -e "s/Table /Table~/g" $@
+	perl -p -i -e "s/Figs\. /Figs.~/g" $@
 
-$(TEXT).pdf: $(MS).tex $(TEXT).tex $(REFS).bib
+$(TEXT).pdf: $(MS).tex $(SOM).tex $(FIGS).tex $(TEXT).tex $(REFS).bib
 	latexmk $(TEXT)
-
-quick:
-	pdflatex $(TEXT)
 
 dropbox: $(TEXT).pdf rtf
 	cp $(TEXT).pdf ~/Dropbox/Public/$(TEXT)-v$(VERSION).pdf
