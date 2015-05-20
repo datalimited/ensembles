@@ -20,7 +20,6 @@ presentations/*.key
 *.aux
 text/*.pdf
 text/ms.tex
-
 text/figs.tex
-
 text/supp.tex
+.DS_Store
