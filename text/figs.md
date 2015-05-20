@@ -60,6 +60,15 @@ performance across the two metrics.}
 \end{center}
 \end{figure}
 
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=5in]{../figs/hex-mean-ram.pdf}
+\includegraphics[width=3in]{../figs/ram-ensemble-performance.pdf}
+\caption{RAM stocks fit with ensemble models built from the simulated dataset.}
+\label{fig:performance-ram}
+\end{center}
+\end{figure}
+
 <!--
 \begin{figure}[htbp]
 \begin{center}
