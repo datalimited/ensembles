@@ -32,13 +32,14 @@ prediction of population status.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/fig2.pdf}
-\caption{True vs. predicted \bbmsy\\ for a dataset of simulated fisheries
-dynamics. Upper panels represent four individual data-limited methods. The
-output from these methods is combined, along with additional covariates, to
-form the ensemble model estimates along the lower row. These results are
-derived from a repeated three-fold cross-validation procedure. The data were
+\caption{True vs. predicted \bbmsy\\ for a simulated dataset of known
+population status. Upper panels represent four individual data-limited methods.
+The output from these methods is combined, along with additional covariates, to
+form the ensemble model estimates in the lower panels. These scatterplots
+represent repeated three-fold cross-validation tests where the ensemble models
+are built on two-thirds of the data and tested on the third. The data were
 binned into hexagons for visual presentation. Darker areas indicate areas with
-greater density of points.}
+greater density of data.}
 \label{fig:sim-hexagon}
 \end{center}
 \end{figure}
@@ -48,14 +49,16 @@ greater density of points.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=3.7in]{../figs/fig3.pdf}
-\caption{Performance of individual and ensemble models fitted to a simulated
-dataset. The x-axis represents within-population innaccuracy---specifically
-median absolute relative error. The y-axis represents across-population
-Spearman rank-order correlation. The colour shading represents bias in relative
-error: white points are unbiased, blue points methods that predict \bbmsy\\
-values that are too high, red points represent methods that predict \bbmsy\\
-values that are too low. The top-left corner contains methods with the best
-performance across the two metrics.}
+\caption{Performance of individual and ensemble models fitted to a 
+dataset of known population status. The x-axis represents within-population
+innaccuracy: median absolute relative error. The y-axis
+represents across-population Spearman rank-order correlation. The colour
+shading represents bias in relative error: white points are unbiased, blue
+points methods that predict \bbmsy\\ values that are too high, red points
+represent methods that predict \bbmsy\\ values that are too low. The top-left
+corner contains methods with the best performance across the two metrics. These
+performance metrics are derived from the data in Fig.~\ref{fig:sim-hexagon} and
+based on repeated three-fold cross-validation testing.}
 \label{fig:performance-sim}
 \end{center}
 \end{figure}
