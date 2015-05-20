@@ -54,7 +54,7 @@ partial <- plyr::ldply(seq_len(5), function(i) {
 })
 
 p <- ggplot(partial, aes(predictor_value, y)) + geom_line() + facet_wrap(~predictor) + xlim(0, 3)
-ggsave("figs/partial-ram.pdf", width = 7, height = 5)
+ggsave("../figs/partial-ram.pdf", width = 7, height = 5)
 
 # work through cross validation of ensemble models:
 library("doParallel")
@@ -105,12 +105,12 @@ cv_ram_slope_long <- reshape2::melt(select(cv_ram_slope, -above_bbmsy1_true),
 p <- ggplot(cv_ram_mean_long, aes(bbmsy_true, bbmsy_est)) +
   geom_point(alpha = 0.05) +
     facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
-ggsave("figs/cv-ram-mean-scatter.png", width = 8, height = 8)
+ggsave("../figs/cv-ram-mean-scatter.png", width = 8, height = 8)
 
 p <- ggplot(cv_ram_slope_long, aes(bbmsy_true, bbmsy_est)) +
   geom_point(alpha = 0.05) +
     facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
-ggsave("figs/cv-ram-slope-scatter.png", width = 8, height = 8)
+ggsave("../figs/cv-ram-slope-scatter.png", width = 8, height = 8)
 
 cv_ram_long <- suppressWarnings(
   dplyr::bind_rows(cv_ram_mean_long, cv_ram_slope_long))
@@ -149,4 +149,4 @@ p <- performance %>% reshape2::dcast(method + type ~ summary, value.var = c("per
   geom_text(aes(label = method), hjust = 0.2, size = 3) +
   facet_wrap(~type, scales = "free") +
   xlab("MARE within stocks") + ylab("Spearman correlation across stocks")
-ggsave("figs/performance-ram-scatter.pdf", width = 8, height = 4)
+ggsave("../figs/performance-ram-scatter.pdf", width = 8, height = 4)

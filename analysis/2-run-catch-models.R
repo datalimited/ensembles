@@ -28,7 +28,7 @@ for (i in seq_along(sig_r_vector)) {
   p <- dplyr::left_join(ram_cmsy, ramts[,c("year", "stockid", "stocklong", "bbmsy_ram"), ])
   saveRDS(p, file = paste0("generated-data/ram-cmsy-sigr-", sig_r_vector[i], ".rds"))
 
-  pdf(paste0("figs/cmsy-ram-sigr-", sig_r_vector[i], ".pdf"), width = 5, height = 4)
+  pdf(paste0("../figs/cmsy-ram-sigr-", sig_r_vector[i], ".pdf"), width = 5, height = 4)
   plyr::d_ply(p, "stocklong", function(x) {
     message(x$stocklong[1])
     q <- ggplot(x, aes(year, bbmsy_q50)) + geom_line()  +

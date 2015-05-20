@@ -24,7 +24,7 @@ spec <- simsStoch %>%
 library("ggplot2")
 p <- ggplot(spec, aes(spec_freq, log(spec_dens), group = spec_freq)) +
   geom_boxplot() + facet_wrap(~ED)
-ggsave("figs/spectral-distributions.pdf", width = 8, height = 7)
+ggsave("../figs/spectral-distributions.pdf", width = 8, height = 7)
 
 spec_wide <- spec %>%
   mutate(spec_freq = paste0("spec_freq_", spec_freq)) %>%

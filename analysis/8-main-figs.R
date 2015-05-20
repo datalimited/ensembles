@@ -86,7 +86,7 @@ performance_panel <- function(dat, column_id, ylim_adj = c(-0.1, 0.1), xaxis = F
 
 }
 
-pdf("figs/performance-beanplots-sim.pdf", width = 5, height = 5)
+pdf("../figs/performance-beanplots-sim.pdf", width = 5, height = 5)
 par(mfrow = c(3, 1))
 par(mar = c(0, 3, 0, 0), cex = 0.8, oma = c(8, 3, 1.5, .5), tck = -0.03, mgp = c(2, 0.5, 0))
 performance_panel(d2, "corr", c(-0.1, 0.1), flip_yaxis = FALSE, yticks = c(0, 0.2, 0.4))
@@ -126,7 +126,7 @@ m$col <- pal$col[findInterval(m$mre, pal$mre)]
 xlim <- filter(d3, variable == "mare") %>% select(l, u) %>% range
 ylim <- filter(d3, variable == "corr") %>% select(l, u) %>% range
 
-pdf("figs/fig3.pdf", width = 4, height = 3.1)
+pdf("../figs/fig3.pdf", width = 4, height = 3.1)
 par(mfrow = c(1, 1), mgp = c(1.5, 0.4, 0), las = 1, tck = -0.012,
   oma = c(3, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
   xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
@@ -275,7 +275,7 @@ d_mean_plot <- filter(d, type == "mean")
 d_mean_plot$bbmsy_est[d_mean_plot$bbmsy_est > 10] <- NA
 d_mean_plot <- na.omit(d_mean_plot)
 
-pdf("figs/fig2.pdf", width = 8, height = 4)
+pdf("../figs/fig2.pdf", width = 8, height = 4)
 plot_hex_fig(d_mean_plot, xbins = 100L)
 dev.off()
 
@@ -283,7 +283,7 @@ d_slope_plot <- filter(d, type == "slope")
 d_slope_plot$bbmsy_est[d_slope_plot$bbmsy_est > 10] <- NA
 d_slope_plot <- na.omit(d_slope_plot)
 
-pdf("figs/hex-slope-sim.pdf", width = 8, height = 4)
+pdf("../figs/hex-slope-sim.pdf", width = 8, height = 4)
 plot_hex_fig(d_slope_plot, xbins = 80L, lims_hex = range(d_slope_plot$bbmsy_est),
   xlim_plot = c(-0.5, 0.5), ylim_plot = c(-0.5, 0.5), axis_ticks = c(-0.4, 0, 0.4),
   xlab = expression(B/B[BMSY]~slope), ylab = expression(widehat(B/B[BMSY])~slope))
@@ -293,7 +293,7 @@ dev.off()
 d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
 d_ram <- suppressWarnings(inner_join(d_ram, clean_names))
 
-pdf("figs/hex-mean-ram.pdf", width = 8, height = 4)
+pdf("../figs/hex-mean-ram.pdf", width = 8, height = 4)
 plot_hex_fig(d_ram, add_hex = FALSE, alpha = 80)
 dev.off()
 
@@ -370,7 +370,7 @@ plot_method <- function(dat) {
 xlim <- c(1990, 2010)
 ylim <- range(c(dl_dat$b_bmsyiq25, dl_dat$b_bmsyiq75))
 
-pdf("figs/motivate.pdf", width = 5, height = 3.5)
+pdf("../figs/motivate.pdf", width = 5, height = 3.5)
 par(mar = c(3, 3.4, .5, 4.5), cex = 0.8, oma = c(0, 0, 0, 0), tck = -0.015,
   mgp = c(2, 0.5, 0), col.axis = "grey40", las = 1)
 plot(1, 1, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", axes = FALSE)

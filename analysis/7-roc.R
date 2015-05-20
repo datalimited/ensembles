@@ -44,7 +44,7 @@ p <- ggplot(rocs_sim, aes(spec, sens, colour = method)) + geom_line() + coord_eq
   theme(plot.background = element_blank(),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank())
-ggsave("figs/roc-sim.pdf", width = 7, height = 5)
+ggsave("../figs/roc-sim.pdf", width = 7, height = 5)
 
 p <- ggplot(rocs_ram, aes(spec, sens, colour = method)) + geom_line() + coord_equal() +
   geom_abline(intercept = 1, slope = 1, lty = 2, col = "darkgrey") +
@@ -53,4 +53,4 @@ p <- ggplot(rocs_ram, aes(spec, sens, colour = method)) + geom_line() + coord_eq
   theme(plot.background = element_blank(),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank())
-ggsave("figs/roc-ram.pdf", width = 7, height = 5)
+ggsave("../figs/roc-ram.pdf", width = 7, height = 5)

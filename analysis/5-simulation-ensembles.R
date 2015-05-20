@@ -92,7 +92,7 @@ partial <- plyr::ldply(seq_len(nvar), function(i) {
 # partial dependence plot:
 p <- ggplot(partial, aes(predictor_value, y)) + geom_line() +
   facet_wrap(~predictor, scales = "free_x") + ylim(0.3, 1.6)
-ggsave("figs/partial-sim.pdf", width = 7, height = 5)
+ggsave("../figs/partial-sim.pdf", width = 7, height = 5)
 
 partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
   dd <- gbm::plot.gbm(m, i.var = c(x, y), return.grid = TRUE, continuous.resolution = 20)
@@ -110,7 +110,7 @@ zlim <- c(min(partial_2d$z), max(partial_2d$z))
 pal <- rev(colorRampPalette(c("blue", "white", "red"))(17)[-c(13:17)])
 # white should line up with 1: (adjust the above line as needed)
 plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, col = pal)
-pdf("figs/partial-sim-2d.pdf", width = 10, height = 10)
+pdf("../figs/partial-sim-2d.pdf", width = 10, height = 10)
 par(mfrow = c(nvar, nvar), mar = c(3,3,1,1), oma = c(4, 4, 1, 1), cex = 0.5)
 par(xpd = NA, mgp = c(1.5, 0.5, 0))
 plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
@@ -181,12 +181,12 @@ cv_sim_slope_long <- cv_sim_slope %>%
 p <- ggplot(cv_sim_mean_long, aes(bbmsy_true, bbmsy_est)) +
   geom_point(alpha = 0.01) +
     facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
-ggsave("figs/cv-sim-mean-scatter.png", width = 8, height = 8)
+ggsave("../figs/cv-sim-mean-scatter.png", width = 8, height = 8)
 
 p <- ggplot(cv_sim_slope_long, aes(bbmsy_true, bbmsy_est)) +
   geom_point(alpha = 0.01) +
     facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
-ggsave("figs/cv-sim-slope-scatter.png", width = 8, height = 8)
+ggsave("../figs/cv-sim-slope-scatter.png", width = 8, height = 8)
 
 cv_sim_long <- suppressWarnings(
   dplyr::bind_rows(cv_sim_mean_long, cv_sim_slope_long))
@@ -228,4 +228,4 @@ p <- performance %>%
   geom_text(aes(label = method), hjust = 0.2, size = 3) +
   facet_wrap(~type, scales = "free") +
   xlab("MARE within stocks") + ylab("Spearman correlation across stocks")
-ggsave("figs/performance-sim-scatter.pdf", width = 8, height = 4)
+ggsave("../figs/performance-sim-scatter.pdf", width = 8, height = 4)
