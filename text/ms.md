@@ -66,7 +66,7 @@ between model outputs and potentially incorporates additional information to
 derive a best estimate.
 
 Ensemble models are widely used in the climate sciences, where thousands of
-models are combined across different structural ... The idea behind ensemble
+models with varying structural combined across different structural ... The idea behind ensemble
 models forms the backbone of many machine learning methods. For example...
 
 In fisheries science, a common problem is estimating the status of an exploited
@@ -82,9 +82,60 @@ real-world fish stocks and compare performance...
 
 # Methods
 
+We tested the ability of ensemble models to improve estimates of population status. Specifically, we applied ensemble models to a large-scale fully factorial dataset of simulated fisheries. We combined 
+
 Repeated three-fold cross-validation [@hastie2009] to test out-of-sample
 prediction error. Split into three, build models on two of the three, test on
 the third, repeat for all splits, repeat entire procedure N times.
+
+## Datasets
+
+<!--TODO: github flr repo not available-->
+We developed and tested ensemble models with both a fully factorial simulated
+dataset [@rosenberg2014] and the RAM Legacy Stock Assessment Database
+[@ricard2012]. @rosenberg2014 provide a full description of the simulation
+model and the code to generate the simulations is available at
+<https://github.com/flr/StockSims>. To summarize, the model included all
+combinations of the following factors:
+
+- Three life histories: small pelagic, demersal, large pelagic.
+- Two time series lengths: 20 and 60 years.
+- Three levels of initial depletion: 1, 0.7, and 0.4.
+- Four harvest dynamics: (1) a constant harvest rate, (2) a harvest rate that
+  is coupled with biomass to mimic an open-access single-species fishery, (3) a
+  one-way trip where harvest rate increases five percent per year to 80% of the
+  level at which the stock would crash, and (4) roller-coaster shaped where the
+  harvest rate increases, maintains a steady level at 80% of the level at which
+  the stock would crash, and then decreases to FMSY. 
+- Two levels of multiplicative standard deviation around catch (0 and 0.2)
+- Two levels of standard deviation of recruitment variability (0.2 and 0.6)
+- Two levels of autoregressive correlation on recruitment variability (0 and 0.6)
+
+\noindent
+Ten stochastic draws of recruitment and catch-recording variability were run
+for each combination for a total of 5760 stocks.
+
+Our analysis with the RAM Legacy Stock Assessment Database was based on a
+version downloaded on XX. This version includes XX stocks from XX countries
+across XX taxonomic orders.
+
+## Additional covariates
+
+Ensemble methods allow us to incorporate additional covariates into our models
+and potentially leverage interactions of how these covariates combine with the
+main individual model estimates to estimate population status.
+Examples might be life-history characteristics, additional information on
+exploitation patterns, or additional statistical properties of the data going
+into the individual models.
+For simplicity, and to allow us to apply models developed with the simulated
+dataset to the real-world dataset, we added only one set of additional
+covariates: spectral properties of the catch time series itself. We fit
+spectral models to the catch time series and recorded a representative
+short-term and long-term spectral density: 0.05 (corresponding to a 20-year
+cycle) and 0.2 (corresponding to a 5-year cycle).
+
+## Testing model performance
+
 
 # Results
 
