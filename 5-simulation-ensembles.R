@@ -69,6 +69,7 @@ d_slope <- reshape2::dcast(dsim_sum,
 # create problems with some models, such as randomForest, otherwise
 d_mean <- na.omit(d_mean)
 d_slope <- na.omit(d_slope)
+saveRDS(d_mean, file = "generated-data/sim-mean-dat.rds")
 
 nvar <- 8L
 
