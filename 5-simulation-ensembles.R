@@ -74,6 +74,10 @@ saveRDS(d_mean, file = "generated-data/sim-mean-dat.rds")
 nvar <- 8L
 
 # run a model on all the data to generate data for partial dependence plots:
+# m_rf <- randomForest::randomForest(
+#   log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH +
+#   max_catch + spec_freq_0.05 + spec_freq_0.2, data = d_mean)
+
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH +
   max_catch + spec_freq_0.05 + spec_freq_0.2,
   data = d_mean, n.trees = 10000L, interaction.depth = 2, shrinkage = 0.001)
@@ -87,7 +91,7 @@ partial <- plyr::ldply(seq_len(nvar), function(i) {
 
 # partial dependence plot:
 p <- ggplot(partial, aes(predictor_value, y)) + geom_line() +
-  facet_wrap(~predictor, scales = "free_x")
+  facet_wrap(~predictor, scales = "free_x") + ylim(0.3, 1.6)
 ggsave("figs/partial-sim.pdf", width = 7, height = 5)
 
 partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
