@@ -149,7 +149,6 @@ mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las
 #legend("bottomright", bty = "n", pch = c(21, 21, 21), bg = c("red", "red", "blue"),
   #legend = c(4, 0, -1))
 dev.off()
-1
 
 #mtext(LETTERS[ii], adj = 0.05, line = -1.5, col = "grey40", cex = 0.8)
 #text(0.5, 0.48, panel_labs[ii-4], col = label_col, pos = 4, cex = 1.05)
@@ -201,22 +200,32 @@ add_label <- function(xfrac, yfrac, label, pos = 4, ...) {
 
 plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   ylab = expression(widehat(B/B[MSY])), lims_hex = c(0, max(dat$bbmsy_est)),
-  xlim_plot = c(0, 2.5), ylim_plot = c(0, 2.7), axis_ticks = c(0, 1, 2)) {
+  xlim_plot = c(0, 2.5), ylim_plot = c(0, 2.7), axis_ticks = c(0, 1, 2),
+  add_hex = TRUE, alpha = 50) {
   par(mfrow = c(2, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
     oma = c(3.5, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
     xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-  plyr::l_ply(c(1:4, 8, 7, 6, 5), function(m) {
-    xlim <- lims_hex
-    ylim <- lims_hex
-    bin <- hexbin::hexbin(
-      filter(dat, method == unique(d$method)[m])$bbmsy_true,
-      filter(dat, method == unique(d$method)[m])$bbmsy_est,
-      xbnds = xlim, ybnds = ylim, xbins = xbins)
-    dx <- hexbin::hcell2xy(bin)$x
-    dy <- hexbin::hcell2xy(bin)$y
-    dxy <- data.frame(x = dx, y = dy)
-    counts <- bin@count
-    counts <- round(log(counts*1.5))
+
+  #if (max(dat$order) == 8)
+    #panels <- c(1:4, 8, 7, 6, 5)
+  #else
+    panels <- seq_len(length(unique(dat$order)))
+
+  plyr::l_ply(panels, function(m) {
+
+    if (add_hex) {
+      xlim <- lims_hex
+      ylim <- lims_hex
+      bin <- hexbin::hexbin(
+        filter(dat, order == m)$bbmsy_true,
+        filter(dat, order == m)$bbmsy_est,
+        xbnds = xlim, ybnds = ylim, xbins = xbins)
+      dx <- hexbin::hcell2xy(bin)$x
+      dy <- hexbin::hcell2xy(bin)$y
+      dxy <- data.frame(x = dx, y = dy)
+      counts <- bin@count
+      counts <- round(log(counts*1.5))
+    }
     #alternative power transformation:
     #counts <- round((counts)^0.30)
     if (m %in% 1)
@@ -229,21 +238,31 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
       pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Purples"))
     if (m %in% 5:8)
       pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greys"))
-    pal <- pal_function(max(counts))
+    if (add_hex) {
+      pal <- pal_function(max(counts))
+    } else {
+      pal <- pal_function(10)
+    }
     #add transparency to de-emphasize fist colour bins:
     #pal[1:10] <- paste0(pal[1:10], round(seq(50, 99, length.out = 10)))
     plot(1, 1, xlim = xlim_plot, ylim = ylim_plot, type = "n", asp = 1,
       xlab = "", ylab = "", xaxt = "n", yaxt = "n")
-    for (i in 1:nrow(dxy)) {
-      hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
-        unitcell = diff(xlim)/xbins/2, border = NA)
+    if (add_hex) {
+      for (i in 1:nrow(dxy)) {
+        hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
+          unitcell = diff(xlim)/xbins/2, border = NA)
+      }
+    } else {
+      dd <- dat %>% filter(order == m)
+      points(dd$bbmsy_true, dd$bbmsy_est, col = paste0(pal[8], alpha), pch = 21,
+        bg = paste0(pal[5], alpha))
     }
     abline(v = 1, lty = "22", col = "#33333350", lwd = 1.5)
     abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
     abline(a = 0, b = 1, lty = "22", col = "#33333350", lwd = 1.5)
     box(col = "grey50")
-    add_label(-0.01, 0.08, unique(d$clean_method)[m], col = "grey20")
-    if (m %in% c(1, 8)) axis(2, at = axis_ticks, col = "grey50")
+    add_label(-0.01, 0.08, unique(filter(dat, order == m)$clean_method), col = "grey20")
+    if (m %in% c(1, 5)) axis(2, at = axis_ticks, col = "grey50")
     if (m %in% 5:8) axis(1, at = axis_ticks, col = "grey50")
     })
   mtext(xlab, side = 1, line = 2.1, outer = TRUE, col = "grey20")
@@ -265,9 +284,27 @@ d_slope_plot$bbmsy_est[d_slope_plot$bbmsy_est > 10] <- NA
 d_slope_plot <- na.omit(d_slope_plot)
 
 pdf("figs/hex-slope-sim.pdf", width = 8, height = 4)
-plot_hex_fig(d_slope_plot, xbins = 100L, lims_hex = range(d_slope_plot$bbmsy_est),
-  xlim_plot = c(-0.5, 0.5), ylim_plot = c(-0.5, 0.5))
+plot_hex_fig(d_slope_plot, xbins = 80L, lims_hex = range(d_slope_plot$bbmsy_est),
+  xlim_plot = c(-0.5, 0.5), ylim_plot = c(-0.5, 0.5), axis_ticks = c(-0.4, 0, 0.4),
+  xlab = expression(B/B[BMSY]~slope), ylab = expression(widehat(B/B[BMSY])~slope))
 dev.off()
+
+# plot the ram extrapolations:
+d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
+d_ram <- suppressWarnings(inner_join(d_ram, clean_names))
+
+pdf("figs/hex-mean-ram.pdf", width = 8, height = 4)
+plot_hex_fig(d_ram, add_hex = FALSE, alpha = 80)
+dev.off()
+
+re_ram <- d_ram %>% mutate(
+  sq_er = (bbmsy_est - bbmsy_true)^2,
+  re    = (bbmsy_est - bbmsy_true) / bbmsy_true)
+
+re_ram %>% group_by(clean_method) %>%
+  summarise(mare = median(abs(re)),
+  mre = median(re),
+  corr = cor(bbmsy_true, bbmsy_est, method = "spearman"))
 
 # ----------------------------------------------
 # Example time series plot to motivate the study
