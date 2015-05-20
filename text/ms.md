@@ -156,9 +156,9 @@ Funding...
   Learning"; ensembles are often much more accurate than the "individual
   classifiers that make them up"; but components must be diverse and accurate
 
-- @dietterich2000: a main justification for ensembles: they are representational
-  --- no one model usually can contain all hypothetical functional forms, but
-  many separate models can cover more hypotheses
+- @dietterich2000: a main justification for ensembles: they are
+  representational --- no one model usually can contain all hypothetical
+  functional forms, but many separate models can cover more hypotheses
 
 - strong paper showing that ensemble models are most accurate when the various
   individual models make errors in uncorrelated ways [@ali1996]
@@ -169,9 +169,9 @@ Funding...
   a ton of hind cast testing can be done, vs. long-term climate) (asymmetrical
   loss function)
 
-- [@weigel2010] optimal weights are always as good or better than equal weights,
-  but if you get the weights wrong, you can be better off just using equal
-  weights; but averaging was almost always better than any one model
+- [@weigel2010] optimal weights are always as good or better than equal
+  weights, but if you get the weights wrong, you can be better off just using
+  equal weights; but averaging was almost always better than any one model
 
 - @rykiel1996 "Testing ecological models: the meaning of validation" (see for
   performance criteria, theory on model testing and assessment)
