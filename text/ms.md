@@ -119,6 +119,13 @@ Our analysis with the RAM Legacy Stock Assessment Database was based on a
 version downloaded on XX. This version includes XX stocks from XX countries
 across XX taxonomic orders.
 
+## Individual models of population status
+
+COM-SIR
+CMSY
+SSCOM
+mPRM
+
 ## Additional covariates
 
 Ensemble methods allow us to incorporate additional covariates into our models
@@ -134,8 +141,26 @@ spectral models to the catch time series and recorded a representative
 short-term and long-term spectral density: 0.05 (corresponding to a 20-year
 cycle) and 0.2 (corresponding to a 5-year cycle).
 
+## Ensemble models
+
+Mean
+Linear model (interactions chosen through cross-validation, or AIC)
+Random forest
+GBM
+
 ## Testing model performance
 
+A critical component to any predictive modelling exercise is to evaluate the
+predictive performance of a model on new data [@hastie2009]. Typically, data
+are limited in availability, and so a common and effective tool is
+cross-validation [@hastie2009]. We used repeated three-fold cross validation to
+test predictive performance: we randomly divided the dataset into three sets,
+build the model on two-thirds of the data, and evaluate predictive performance
+on the remaining third of the data. We repeated this across each of the thirds
+of the data and then repeated the whole procedure XX times to account for bias
+that may result from any one set of validation splits. 
+
+## Performance metrics
 
 # Results
 
@@ -147,6 +172,7 @@ Funding...
 
 # Citation notes
 
+<!--
 - @breiner2015 ensemble models of species distribution models for rare species
 
 - @jones2015 ensemble models of species distribution models - globally for
@@ -226,3 +252,4 @@ Funding...
 
 - @rykiel1996 "Testing ecological models: the meaning of validation" (see for
   performance criteria, theory on model testing and assessment)
+-->
