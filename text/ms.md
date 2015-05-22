@@ -66,8 +66,9 @@ between model outputs and potentially incorporates additional information to
 derive a best estimate.
 
 Ensemble models are widely used in the climate sciences, where thousands of
-models with varying structural combined across different structural ... The idea behind ensemble
-models forms the backbone of many machine learning methods. For example...
+models with varying structural combined across different structural ... The
+idea behind ensemble models forms the backbone of many machine learning
+methods. For example...
 
 In fisheries science, a common problem is estimating the status of an exploited
 fish population. For the majority of fish stocks, we have limited information to
@@ -82,7 +83,9 @@ real-world fish stocks and compare performance...
 
 # Methods
 
-We tested the ability of ensemble models to improve estimates of population status. Specifically, we applied ensemble models to a large-scale fully factorial dataset of simulated fisheries. We combined 
+We tested the ability of ensemble models to improve estimates of population
+status. Specifically, we applied ensemble models to a large-scale fully
+factorial dataset of simulated fisheries. We combined 
 
 Repeated three-fold cross-validation [@hastie2009] to test out-of-sample
 prediction error. Split into three, build models on two of the three, test on
@@ -143,10 +146,92 @@ cycle) and 0.2 (corresponding to a 5-year cycle).
 
 ## Ensemble models
 
-Mean
-Linear model (interactions chosen through cross-validation, or AIC)
-Random forest
-GBM
+The individual models we seek to combine with ensemble models provide time
+series of \bbmsy\\. Therefore, we can use ensemble models to estimate a number of
+different attributes of the time series. Here, we focus on two attributes the
+mean and slope of \bbmsy\\ in the last 3 years. We refer to these quantities
+collectively as $\theta$. Together, these quantities address both the current
+state and trajectory of status, both of which may be of management and
+conservation interest. To avoid undue influence of the end points of the time
+series on the calculated slope, we instead measured the median slope as the
+Theil-Sen estimator [@theil1950].
+
+An ensemble model can combine inference through anything from a simple average,
+to a weighted average, to a complex non-linear model. Here we choose four
+ensemble models to compare: an average, a linear model with two-way
+interactions, a random forest, and boosted regression tree. 
+
+*Linear model*: For populations $i$ $1$ through $n$, individual models and
+covariates $j$ $1$ through $m$, and allowing $\theta$ to refer to both
+quantities estimated from individual models and additional covariates, we fit
+the linear model with two-way interactions as:
+
+<!--\noindent-->
+<!--The geometric mean is calculated as-->
+
+<!--$$B/B_{\mathrm{MSY-ensemble}(i)} = \exp \left(\frac{\sum_{j=1}^{4} \log B/B_{\mathrm{MSY}(ji)}}{4}\right)$$-->
+
+
+<!--$$-->
+<!--\log B/B_{\mathrm{MSY-ensemble}(i)} = -->
+  <!--\beta_0 + \beta_1 \log B/B_{\mathrm{MSY}(i)} -->
+<!--$$-->
+
+$$
+\theta_{\mathrm{ensemble}(i)} = 
+  \beta_0 + 
+  \sum_{j=1}^m \beta_j \theta_{j(i)} + 
+  \sum_{j=1}^m \sum_{\substack{k =1 \\ j \neq k}}^m 
+            \beta_{kj} \theta_{k(i)} \theta_{j(i)} +
+  \epsilon_i, \quad
+  \epsilon_i \sim \mathrm{Normal}(0, \sigma),
+$$
+
+\noindent
+where $\beta$ represents coefficients and $\epsilon$ represents normally
+distributed residual variation. We also tried fitting linear models without
+interactions but found better cross-validation predictive performance from all
+performance measures evaluated using the procedure outlined below.
+
+*Random forests* are a machine learning method that combines a series of
+regression trees. Each tree is built on a random subset of the data and random
+subset of the covariates of the model. By combining many of these
+stochastically generated models, random forests can provide good TODO... (REF).
+We fit the random forest models with the **randomForest** package [@liaw2002]
+for the statistical software \textsf{R} [@r2015] with the default argument
+values. 
+
+*Boosted regression models* are a machine learning method that, like random
+forests, combines a series of regression trees, but it adds a boosting
+procedure. Boosting refers to fitting a series of models with each subsequent
+model fit to the residuals from the previous model; data points that are fit
+poorly in a given model are given more weight in the next model [@elith2008].
+Boosting can result in TODO and TODO and is a common and powerful machine
+learning technique (REF) [@elith2008]. We fit the boosted regression tree
+models with the **GBM** package [@ridgeway2015] for \textsf{R} with 10000
+trees, an interaction depth of $2$, a learning rate (shrinkage parameter) of
+$0.01$, and all other arguments at their default values. 
+
+For all ensemble models, since \bbmsy\\ is bounded at zero, we log transformed
+all $\overline{B/B_\mathrm{MSY}}_{(ji)}$ and exponentiated the estimated $\log
+\widehat{\overline{B/B_\mathrm{MSY}}}_\mathrm{ensemble}$ to derive a median
+estimate of $\widehat{\overline{B/B_\mathrm{MSY}}}_\mathrm{ensemble}$. We fit
+models to the slope of \bbmsy\\ on the natural scale.
+
+## Performance metrics
+
+When assessing the predictive ability of a model there are a number of
+dimensions that can be evaluated, which correspond to different goals. When the
+predicted variable is continuous these metrics typically measure some aspect of
+performance within populations such as bias, precision, or accuracy (a
+combination of bias and precision), or the ability to correctly rank or
+correlate across populations. Here, we measure proportional error (PE; also
+called 'relative error') defined as $(\hat{\theta} - \theta)/\theta$, where
+$\theta$ represents the true parameter value and $\hat{\theta}$ the estimate of
+that parameter ($\overline{B/B_\mathrm{BMSY}}$ or slope of \bbmsy\\). We summarize PE
+as median PE to measure bias, median absolute PE to measure accuracy, and
+Spearman's rank-order correlation to measure the ability to correctly rank
+population status.
 
 ## Testing model performance
 
@@ -155,12 +240,11 @@ predictive performance of a model on new data [@hastie2009]. Typically, data
 are limited in availability, and so a common and effective tool is
 cross-validation [@hastie2009]. We used repeated three-fold cross validation to
 test predictive performance: we randomly divided the dataset into three sets,
-build the model on two-thirds of the data, and evaluate predictive performance
-on the remaining third of the data. We repeated this across each of the thirds
-of the data and then repeated the whole procedure XX times to account for bias
-that may result from any one set of validation splits. 
+built ensemble models on two-thirds of the data, and evaluated predictive
+performance on the remaining third of the data. We repeated this across each of
+the three splits and then repeated the whole procedure XX times to account for
+bias that may result from any one set of validation splits.
 
-## Performance metrics
 
 # Results
 
