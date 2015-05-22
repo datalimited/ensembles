@@ -6,12 +6,11 @@ source("4-ensemble-functions.R")
 
 if (!file.exists("generated-data/cv-sim/")) system("mkdir generated-data/cv-sim")
 
-dsim <- readRDS("raw-data/batch1-results.rds")
+dsim <- readRDS("generated-data/dsim.rds")
 spec <- readRDS("generated-data/spec-frequencies-sim.rds")
 dsim <- suppressWarnings(left_join(dsim, spec)) # warnings on character-factor conversions
 dsim$method_id <- sub("COM.SIR", "COMSIR", dsim$method_id) # to match RAM fits
 dsim <- rename(dsim, stockid = stock_id, method = method_id) # to match RAM fits
-
 # extend the stockid to be truly unique per scenario:
 # (note that there are still multiple iterations with the same stockid)
 # cv_id defines groups that should *all* be in the testing or training
@@ -159,7 +158,7 @@ saveRDS(cv_sim_binary, file = "generated-data/cv_sim_binary.rds") # used in 5-ro
 # -------------------------------------------------------
 # now switch to long format data, summarize, and compare:
 cv_sim_mean_long <- cv_sim_mean %>%
-  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true, -cv_id) %>%
+  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_mean"),
   variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_mean) %>%
@@ -169,7 +168,7 @@ cv_sim_mean_long <- cv_sim_mean %>%
     bbmsy_est_trans = log(bbmsy_est))
 
 cv_sim_slope_long <- cv_sim_slope %>%
-  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true, -cv_id) %>%
+  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_slope"),
   variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_slope) %>%
@@ -178,15 +177,15 @@ cv_sim_slope_long <- cv_sim_slope %>%
     bbmsy_true_trans = bbmsy_true,
     bbmsy_est_trans = bbmsy_est)
 
-p <- ggplot(cv_sim_mean_long, aes(bbmsy_true, bbmsy_est)) +
-  geom_point(alpha = 0.01) +
-    facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
-ggsave("../figs/cv-sim-mean-scatter.png", width = 8, height = 8)
-
-p <- ggplot(cv_sim_slope_long, aes(bbmsy_true, bbmsy_est)) +
-  geom_point(alpha = 0.01) +
-    facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
-ggsave("../figs/cv-sim-slope-scatter.png", width = 8, height = 8)
+# p <- ggplot(cv_sim_mean_long, aes(bbmsy_true, bbmsy_est)) +
+#   geom_point(alpha = 0.01) +
+#     facet_wrap(~method) + ylim(0, 3) + xlim(0, 3)
+# ggsave("../figs/cv-sim-mean-scatter.png", width = 8, height = 8)
+#
+# p <- ggplot(cv_sim_slope_long, aes(bbmsy_true, bbmsy_est)) +
+#   geom_point(alpha = 0.01) +
+#     facet_wrap(~method) + xlim(-.5, .5) + ylim(-.5, .5)
+# ggsave("../figs/cv-sim-slope-scatter.png", width = 8, height = 8)
 
 cv_sim_long <- suppressWarnings(
   dplyr::bind_rows(cv_sim_mean_long, cv_sim_slope_long))
@@ -199,33 +198,33 @@ re <- cv_sim_long %>% mutate(
 re %>% saveRDS(file = "generated-data/cv_sim_long.rds")
 
 # make a data frame that summarizes all these performance metrics at once:
-re2 <- re %>% group_by(type, method) %>%
-  summarize(
-    performance = median(abs(re), na.rm = TRUE),
-    performance_l = quantile(abs(re), 0.25, na.rm = TRUE),
-    performance_u = quantile(abs(re), 0.75, na.rm = TRUE)) %>%
-  mutate(summary = "MARE")
-
-cors <- cv_sim_long %>% group_by(method, type) %>%
-  summarise(spearman = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
-    use = "pairwise.complete.obs")) %>% as.data.frame %>%
-  mutate(spearman = round(spearman, 4)) %>%
-  arrange(type, -spearman)
-
-cors2 <- cors %>% mutate(
-  summary = "spearman",
-  performance = spearman,
-  performance_l = spearman,
-  performance_u = spearman) %>%
-  select(-spearman)
-
-performance <- bind_rows(re2, cors2) %>% as.data.frame
-
-p <- performance %>%
-  reshape2::dcast(method + type ~ summary, value.var = c("performance")) %>%
-  ggplot(aes(MARE, spearman)) +
-  #geom_point() +
-  geom_text(aes(label = method), hjust = 0.2, size = 3) +
-  facet_wrap(~type, scales = "free") +
-  xlab("MARE within stocks") + ylab("Spearman correlation across stocks")
-ggsave("../figs/performance-sim-scatter.pdf", width = 8, height = 4)
+# re2 <- re %>% group_by(type, method) %>%
+#   summarize(
+#     performance = median(abs(re), na.rm = TRUE),
+#     performance_l = quantile(abs(re), 0.25, na.rm = TRUE),
+#     performance_u = quantile(abs(re), 0.75, na.rm = TRUE)) %>%
+#   mutate(summary = "MARE")
+#
+# cors <- cv_sim_long %>% group_by(method, type) %>%
+#   summarise(spearman = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
+#     use = "pairwise.complete.obs")) %>% as.data.frame %>%
+#   mutate(spearman = round(spearman, 4)) %>%
+#   arrange(type, -spearman)
+#
+# cors2 <- cors %>% mutate(
+#   summary = "spearman",
+#   performance = spearman,
+#   performance_l = spearman,
+#   performance_u = spearman) %>%
+#   select(-spearman)
+#
+# performance <- bind_rows(re2, cors2) %>% as.data.frame
+#
+# p <- performance %>%
+#   reshape2::dcast(method + type ~ summary, value.var = c("performance")) %>%
+#   ggplot(aes(MARE, spearman)) +
+#   #geom_point() +
+#   geom_text(aes(label = method), hjust = 0.2, size = 3) +
+#   facet_wrap(~type, scales = "free") +
+#   xlab("MARE within stocks") + ylab("Spearman correlation across stocks")
+# ggsave("../figs/performance-sim-scatter.pdf", width = 8, height = 4)

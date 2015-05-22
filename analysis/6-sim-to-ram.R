@@ -68,7 +68,7 @@ m_gbm <- gbm::gbm(
 
 m_lm <- lm(
   log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM +
-  max_catch + spec_freq_0.05 + spec_freq_0.2)^1, data = d_mean_sim)
+  max_catch + spec_freq_0.05 + spec_freq_0.2)^2, data = d_mean_sim)
 
 d_mean$rf_ensemble <- predict(m_rf, newdata = d_mean) %>% exp()
 d_mean$gbm_ensemble <- predict(m_gbm, newdata = d_mean, n.trees = m_gbm$n.trees) %>% exp()

@@ -99,7 +99,7 @@ performance_panel(d2, "mre", c(-0.1, 0.1), flip_yaxis = FALSE, xaxis = TRUE,
 mtext("Bias and\nprecision (MRE)", side = 2, line = 3, col = "grey40")
 dev.off()
 
-d2_long <- reshape2::melt(d2, id.vars = c("test_iter", "clean_method", "order",
+d2_long <- reshape2::melt(d2, id.vars = c("test_iter", "clean_method", "type", "order",
     "label_fudge_x", "label_fudge_y"))
 
 d3 <- d2_long %>% group_by(clean_method, order, variable, label_fudge_x, label_fudge_y) %>%
@@ -316,7 +316,7 @@ ram <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors=FALSE) %>%
   select(tsyear, Bbmsy_toUse) %>%
   rename(yr = tsyear, b_bmsy = Bbmsy_toUse)
 
-load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/CMSY/cmsy_rlegacy_output_v0.RData")
+load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/CMSY/cmsy_rlegacy_results_table_v0.RData")
 cmsy <- cmsy.rlegacy.df0 %>%
   filter(stock_id == "SBWHITACIR") %>%
   select(yr, b_bmsyiq25, b_bmsy, b_bmsyiq75) %>%
@@ -330,7 +330,7 @@ comsir <- comsir.rlegacy.df0 %>%
 
 load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/SSCOM/sscom_rlegacy_results_table_v0.RData")
 sscom <- sscom.rlegacy.df0 %>%
-  filter(stock_id == "") %>%
+  filter(stock_id == "SBWHITACIR") %>%
   select(yr, b_bmsy_iq25, b_bmsy, b_bmsy_iq75) %>%
   rename(b_bmsyiq25 = b_bmsy_iq25, b_bmsyiq75 = b_bmsy_iq75) %>%
   mutate(method = "SSCOM")
