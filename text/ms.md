@@ -84,22 +84,23 @@ real-world fish stocks and compare performance...
 # Methods
 
 We tested the ability of ensemble models to improve estimates of population
-status. Specifically, we applied ensemble models to a large-scale fully
-factorial dataset of simulated fisheries. We combined 
-
-Repeated three-fold cross-validation [@hastie2009] to test out-of-sample
-prediction error. Split into three, build models on two of the three, test on
-the third, repeat for all splits, repeat entire procedure N times.
+status when applied to both a large simulated dataset and a global database of
+assessed stock status. Here we describe the datasets, individual models of
+population status, and ensemble models to combine those estimates. We then
+describe how we evaluated the ability of the various models to estimate
+population status.
 
 ## Datasets
 
-<!--TODO: github flr repo not available-->
+<!--TODO: github flr repo not available--> 
+
 We developed and tested ensemble models with both a fully factorial simulated
 dataset [@rosenberg2014] and the RAM Legacy Stock Assessment Database
 [@ricard2012]. @rosenberg2014 provide a full description of the simulation
 model and the code to generate the simulations is available at
-<https://github.com/flr/StockSims>. To summarize, the model included all
-combinations of the following factors:
+<https://github.com/flr/StockSims>. To summarize, the model was built in the
+package FLR [@kell2007] for the statistical software \textsf{R} [@r2015]...
+included all combinations of the following factors:
 
 - Three life histories: small pelagic, demersal, large pelagic.
 - Two time series lengths: 20 and 60 years.
@@ -124,10 +125,24 @@ across XX taxonomic orders.
 
 ## Individual models of population status
 
-COM-SIR
-CMSY
-SSCOM
-mPRM
+We fit four individual data-limited models to estimate \bbmsy\\. Three of the
+models are mechanistic models based on Shaefer-like biomass dynamics of the
+form:
+
+TODO
+
+@rosenberg2014 provide a full summary of these methods. Code to carry out all
+methods is available in an accompanying package **datalimited** for the
+statistical software \textsf{R}.
+
+*COM-SIR* stands for catch-only-model with sample-importance-resampling [@vasconcellos2005] 
+
+*CMSY* stands for catch-MSY [@martell2013].
+
+*SSCOM* stands for state-space catch-only-model (REF). It is based on similar underlying dynamics to COM-SIR.
+
+*mPRM* stands for modified panel regression model and is a modified version of
+the panel-regression model used in [@costello2012].
 
 ## Additional covariates
 
@@ -198,8 +213,7 @@ regression trees. Each tree is built on a random subset of the data and random
 subset of the covariates of the model. By combining many of these
 stochastically generated models, random forests can provide good TODO... (REF).
 We fit the random forest models with the **randomForest** package [@liaw2002]
-for the statistical software \textsf{R} [@r2015] with the default argument
-values. 
+for \textsf{R} with the default argument values. 
 
 *Boosted regression models* are a machine learning method that, like random
 forests, combines a series of regression trees, but it adds a boosting
