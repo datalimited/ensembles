@@ -7,7 +7,7 @@
 trajectories of \bbmsy\\ estimated by four data-limited assessment methods
 (colours) and a TODO data-rich stock assessment (black). Lines indicate median
 fits and shaded regions interquartile ranges.}
-\label{fig:didactic}
+\label{fig:motivate}
 \end{center}
 \end{figure}
 
