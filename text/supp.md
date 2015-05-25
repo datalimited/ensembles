@@ -8,13 +8,43 @@ Brief description of the simulation model based on the FAO report
 
 # Assessment methods
 
-CMSY is...
+## CMSY --- catch maximum sustainable yield
 
-COMSIR is...
+## COMSIR --- catch only model with sample-importance-resampling
 
-mPRM is...
+\begin{equation}
+\hat{C}_{t+1} = P_{t+1} \left(B_t + r B_t \left(1 - \frac{B_t}{K}\right) - \hat{C}_t \right)
+\end{equation}
 
-SSCOM is...
+\begin{equation}
+P_{t+1} = P \left(1 + x\left(\frac{B_t}{aK}-1\right)\right)
+\end{equation}
+
+\begin{equation}
+P_0 = \frac{C_0}{B_0}
+\end{equation}
+
+\begin{equation}
+B_\mathrm{MSY} = \frac{K}{2}
+\end{equation}
+
+Priors: 
+
+$a \sim \mathrm{uniform}(0, 1)$, $x \sim \mathrm{uniform}(0.000001, 1)$, $\log K \sim \mathrm{uniform}(\mathrm{max catch}, \log (100 \cdot \mathrm{max catch}))$
+
+## mPRM --- modified panel regression model
+
+## SSCOM --- state space catch-only-model
+
+Harvest dynamics model:
+
+\begin{equation}
+\hat{E}_{t+1} = E_t \left( \frac{B_t}{a \cdot B_0 / 2} \right) ^ 2
+\end{equation}
+
+\begin{equation}
+\hat{C}_t = E_t \cdot B_t
+\end{equation}
 
 Table summarizing these based on FAO report
 
