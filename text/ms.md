@@ -115,48 +115,67 @@ included all combinations of the following factors:
 - Two levels of standard deviation of recruitment variability (0.2 and 0.6)
 - Two levels of autoregressive correlation on recruitment variability (0 and 0.6)
 
-\noindent
-Ten stochastic draws of recruitment and catch-recording variability were run
-for each combination for a total of 5760 stocks.
+\noindent @rosenberg2014 ran ten iterations for each combination of factors
+adding stochastic draws of recruitment and catch-recording variability each
+time to generate a total of 5760 stocks.
 
-Our analysis with the RAM Legacy Stock Assessment Database was based on a
-version downloaded on XX. This version includes XX stocks from XX countries
-across XX taxonomic orders.
+Our analysis of the RAM Legacy Stock Assessment Database was based on version
+XX downloaded on XX. This version includes XX stocks from XX countries across
+XX taxonomic orders.
 
 ## Individual models of population status
 
 We fit four individual data-limited models to estimate \bbmsy\\. Three of the
-models are mechanistic models based on Shaefer-like biomass dynamics of the
-form:
+models are mechanistic and based generally on Shaefer biomass dynamics
+[@schaefer1954] of the form:
 
-TODO
+\begin{equation}
+\hat{B}_{t+1} = B_t + r B_t \left(1 - B_t / B_0 \right) - C_t,
+\end{equation}
 
-@rosenberg2014 provide a full summary of these methods. Code to carry out all
-methods is available in an accompanying package **datalimited** for the
-statistical software \textsf{R}.
+\noindent where $B_t$ represents biomass at time $t$, $r$ represents the
+intrinsic population growth rate, $B_0$ represents unfished biomass, and $C$
+represents catch. One of the models is empirical instead of mechanistic.
+@rosenberg2014 provide a full summary of these four methods and we provide some
+further details in the Supporting Materials. Code to carry out all methods is
+available in an accompanying package **datalimited** for the statistical
+software \textsf{R}. In summary:
 
-*COM-SIR* stands for catch-only-model with sample-importance-resampling [@vasconcellos2005] 
+- *COM-SIR* (catch-only-model with sample-importance-resampling) is a coupled
+harvest-dynamics model developed by @vasconcellos2005. Biomass is assumed to
+follow a Schaefer model and harvest dynamics are assumed to follow a logistic
+model. The model is fit with a sample-importance-sampling algorithm developed
+in @rosenberg2014.
 
-*CMSY* stands for catch-MSY [@martell2013].
+- *CMSY* (catch-MSY) implements a stock-reduction analysis with Schaefer biomass
+dynamics [@martell2013]. It requires a prior distribution for $r$ and assigns
+a prior to the relative proportion of biomass at the end compared to unfished
+biomass (depletion) based on the percentage of maximum catch at the end of the
+time series.
 
-*SSCOM* stands for state-space catch-only-model (REF). It is based on similar underlying dynamics to COM-SIR.
 
-*mPRM* stands for modified panel regression model and is a modified version of
-the panel-regression model used in [@costello2012].
+- *SSCOM* (state-space catch-only-model) ...
+
+- *mPRM* (modified panel regression model) is a modified version of the
+panel-regression model used in @costello2012. Unlike the other models
+considered, mPRM is empirical and not mechanistic --- it fits a linear model to
+a series of characteristics of the catch time series and stock with \bbmsy\\ as
+the response. The model used in this paper and @rosenberg2014 is modified from
+the original in that it simplifies the life-history categories to be applicable
+to simulated data.
 
 ## Additional covariates
 
 Ensemble methods allow us to incorporate additional covariates into our models
 and potentially leverage interactions of how these covariates combine with the
-main individual model estimates to estimate population status.
-Examples might be life-history characteristics, additional information on
-exploitation patterns, or additional statistical properties of the data going
-into the individual models.
-For simplicity, and to allow us to apply models developed with the simulated
-dataset to the real-world dataset, we added only one set of additional
-covariates: spectral properties of the catch time series itself. We fit
-spectral models to the catch time series and recorded a representative
-short-term and long-term spectral density: 0.05 (corresponding to a 20-year
+main individual model estimates to estimate population status. Examples might
+be life-history characteristics, additional information on exploitation
+patterns, or additional statistical properties of the data going into the
+individual models. For simplicity, and to allow us to apply models developed
+with the simulated dataset to the real-world dataset, we added only one set of
+additional covariates: spectral properties of the catch time series itself. We
+fit spectral models to the catch time series and recorded representative
+short-term and long-term spectral densities of 0.05 (corresponding to a 20-year
 cycle) and 0.2 (corresponding to a 5-year cycle).
 
 ## Ensemble models
@@ -209,43 +228,33 @@ interactions but found better cross-validation predictive performance from all
 performance measures evaluated using the procedure outlined below.
 
 *Random forests* are a machine learning method that combines a series of
-regression trees. Each tree is built on a random subset of the data and random
-subset of the covariates of the model. By combining many of these
-stochastically generated models, random forests can provide good TODO... (REF).
-We fit the random forest models with the **randomForest** package [@liaw2002]
-for \textsf{R} with the default argument values. 
+regression trees. Regression trees sequentially determine what value of
+a predictor best splits the response data into two 'branches' based on
+a specified loss function. In random forests, a series of regression trees are
+built on a random subset of the data and random subset of the covariates of the
+model. By combining many of these stochastically generated models, random
+forests can provide good predictive performance and fit highly non-linear
+relationships TODO. We fit random forest models with the **randomForest**
+package [@liaw2002] for \textsf{R} with the default argument values. 
 
 *Boosted regression models* are a machine learning method that, like random
-forests, combines a series of regression trees, but it adds a boosting
-procedure. Boosting refers to fitting a series of models with each subsequent
-model fit to the residuals from the previous model; data points that are fit
-poorly in a given model are given more weight in the next model [@elith2008].
-Boosting can result in TODO and TODO and is a common and powerful machine
-learning technique (REF) [@elith2008]. We fit the boosted regression tree
-models with the **GBM** package [@ridgeway2015] for \textsf{R} with 10000
-trees, an interaction depth of $2$, a learning rate (shrinkage parameter) of
-$0.01$, and all other arguments at their default values. 
+forests, combines a series of regression trees built on random subsets of the
+data, but also add a boosting procedure. Boosting refers to fitting a series
+of models with each subsequent model fit to the residuals from the previous
+model; data points that are fit poorly in a given model are given more weight
+in the next model [@elith2008]. Boosting can result in TODO and TODO and is
+a common and powerful machine learning technique [@elith2008]. We fit boosted
+regression tree models with the **GBM** package [@ridgeway2015] for \textsf{R}
+with 10000 trees, an interaction depth of $2$, a learning rate (shrinkage
+parameter) of $0.01$, and all other arguments at their default values. 
 
-For all ensemble models, since \bbmsy\\ is bounded at zero, we log transformed
-all $\overline{B/B_\mathrm{MSY}}_{(ji)}$ and exponentiated the estimated $\log
+For all ensemble models of $\overline{B/B_\mathrm{MSY}}$, which is bounded at
+zero, we log transformed all $\overline{B/B_\mathrm{MSY}}_{(ji)}$ and
+exponentiated the estimated $\log
 \widehat{\overline{B/B_\mathrm{MSY}}}_\mathrm{ensemble}$ to derive a median
-estimate of $\widehat{\overline{B/B_\mathrm{MSY}}}_\mathrm{ensemble}$. We fit
-models to the slope of \bbmsy\\ on the natural scale.
-
-## Performance metrics
-
-When assessing the predictive ability of a model there are a number of
-dimensions that can be evaluated, which correspond to different goals. When the
-predicted variable is continuous these metrics typically measure some aspect of
-performance within populations such as bias, precision, or accuracy (a
-combination of bias and precision), or the ability to correctly rank or
-correlate across populations. Here, we measure proportional error (PE; also
-called 'relative error') defined as $(\hat{\theta} - \theta)/\theta$, where
-$\theta$ represents the true parameter value and $\hat{\theta}$ the estimate of
-that parameter ($\overline{B/B_\mathrm{BMSY}}$ or slope of \bbmsy\\). We summarize PE
-as median PE to measure bias, median absolute PE to measure accuracy, and
-Spearman's rank-order correlation to measure the ability to correctly rank
-population status.
+estimate of $\widehat{\overline{B/B_\mathrm{MSY}}}_\mathrm{ensemble}$. For the
+estimates of \bbmsy\\ slope, which are not bounded at zero, we fit ensemble
+models on the natural untransformed scale.
 
 ## Testing model performance
 
@@ -259,6 +268,18 @@ performance on the remaining third of the data. We repeated this across each of
 the three splits and then repeated the whole procedure XX times to account for
 bias that may result from any one set of validation splits.
 
+Predictive performance can be evaluated with metrics that represent a variety
+of modelling goals. For instance, a model may provide an unbiased but highly
+imprecise prediction. For continuous response variables such as those
+considered here performance metrics often measure some form of bias, precision,
+or accuracy (a combination of bias and precision), or the ability to correctly
+rank or correlate across populations. Here, we measure proportional error (PE;
+also called 'relative error') defined as $(\hat{\theta} - \theta)/\theta$,
+where $\theta$ represents the true parameter value and $\hat{\theta}$ the
+estimate of that parameter ($\overline{B/B_\mathrm{BMSY}}$ or slope of
+\bbmsy\\). We summarize median proportional error  to measure bias, median
+absolute proportional error to measure accuracy, and Spearman's rank-order
+correlation to measure the ability to correctly rank population status.
 
 # Results
 
