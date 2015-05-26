@@ -96,12 +96,13 @@ fish population status.
 We fit four data-limited models of population and exploitation dynamics and
 combine their estimates of the mean and slope of \bbmsy\\ (biomass at maximum
 sustainable yield) with four ensemble models: a simple average, a linear model,
-and two machine learning methods. We build our ensemble models on a large-scale
-fully factorial simulation experiment and test them on a cross-validated
-version of this dataset and on a global database of assessed fish stocks.
+and two machine learning methods. We build our ensemble models on a fully
+factorial simulated dataset of 5760 fish stocks and test them on
+a cross-validated version of this dataset and on a global database of XX assessed
+fish stocks.
 We find that ensemble models substantially improved estimates of population
 status and trajectory.
-Even a simple average ensemble model produced better performance than the best
+Even a simple average ensemble model outperformed the best
 individual model in terms of accuracy (XX%) and correlation (XX%). Machine
 learning ensemble models performed the best (XX--XX% improved accuracy, XX--XX%
 improved correlation, X% reduced bias compared to the best individual model).
@@ -111,7 +112,7 @@ over individual models (accuracy and correlation improved up to XX% and XX%).
 Ensemble models have great potential to improve estimates of population status
 and trajectory across many taxa. However, ensemble methods must be carefully
 tested, formed from a diverse set of accurate models, and built on a dataset
-sufficiently representative of populations they are applied to.
+sufficiently representative of the populations they are applied to.
 
 # Introduction
 
