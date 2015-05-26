@@ -106,7 +106,7 @@ partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
 
 # check colour pallete:
 zlim <- c(min(partial_2d$z), max(partial_2d$z))
-pal <- rev(colorRampPalette(c("blue", "white", "red"))(17)[-c(13:17)])
+pal <- rev(colorRampPalette(c("red", "white", "blue"))(17)[-c(13:17)])
 # white should line up with 1: (adjust the above line as needed)
 plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, col = pal)
 pdf("../figs/partial-sim-2d.pdf", width = 10, height = 10)
