@@ -8,24 +8,71 @@ OR
 
 # Combining data-limited fisheries models to derive robust estimates of stock status
 
-Sean C. Anderson^1^, 
-Jamie Afflerbach^n^, 
-Andrew B. Cooper^n^, 
-Mark Dickey-Collas^n^, 
-Olaf P. Jensen^n^, 
-Kristin M. Kleisner^n^, 
-Catherine Longo^n^, 
-C\'{o}il\'{i}n Minto^n^, 
-Giacomo Chato Osio^n^, 
-Dan Ovando^n^, 
-Andrew A. Rosenberg^n^, 
-Elizabeth R. Selig^n^, 
-James T. Thorson^n^
-(order to be determined and others may be added)
+OR
+
+# Improving estimates of population status with ensemble models
+
+OR 
+
+\noindent
+...
+
+\noindent
+Sean C. Anderson^1\*^, 
+Jamie Afflerbach^2^, 
+Mark Dickey-Collas^3^, 
+Olaf P. Jensen^4^, 
+Kristin M. Kleisner^5^, 
+Catherine Longo^2^, 
+C\'{o}il\'{i}n Minto^6^, 
+Giacomo Chato Osio^7^, 
+Dan Ovando^8^, 
+Andrew A. Rosenberg^9^, 
+Elizabeth R. Selig^10^, 
+James T. Thorson^11^,
+Andrew B. Cooper^1^
+*(order to be determined and others may be added)*
+
+\bigskip
 
 \noindent
 ^1^School of Resource and Environmental Management,
 Simon Fraser University, Burnaby, BC, V5A 1S6, Canada
+
+\noindent
+^2^National Center for Ecological Analysis and Synthesis
+
+\noindent
+^3^International Council for the Exploration of the Sea
+
+\noindent
+^5^NOAA/NMFS/NEFSC, Ecosystem Assessment Program, 
+Woods Hole, MA, 02543, USA
+
+\noindent
+^6^Galway-Mayo Institute of Technology, 
+Marine and Freshwater Research Centre, Galway, 00000, Ireland
+
+\noindent
+^7^EC JRC, IPSC, MAU, Italy
+
+\noindent
+^8^University of California Santa Barbara, 
+Bren School of Environmental Science and Management, 
+Santa Barbara, CA, 93106-5131, USA
+
+\noindent
+^9^Union of Concerned Scientists, Cambridge, MA, USA
+
+\noindent
+^10^Conservation International, Arlington, VA, USA
+
+\noindent
+^11^National Marine Fisheries Service, 
+National Oceanic and Atmospheric Administration, 
+Fisheries Resource Assessment and Monitoring Division, 
+Northwest Fisheries Science Center, Seattle, WA, 98112, USA
+
 
 \noindent
 ^\*^Corresponding author: Sean C. Anderson,
