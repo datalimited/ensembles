@@ -1,10 +1,12 @@
-# Robust estimates of population status from ensemble models
+# Ensemble models provide improved estimates of population status and trajectory
+
+OR
+
+# Combining population status estimates with ensemble models
+
+OR
 
 # Combining data-limited fisheries models to derive robust estimates of stock status
-
-# Improving estimates of ecological population status in the face of disparate models
-
-# Improving ecological decision making in the face of conflicting output with ensemble models
 
 Sean C. Anderson^1^, 
 Jamie Afflerbach^n^, 
@@ -34,16 +36,35 @@ E-mail: sean_anderson@sfu.ca
 
 \clearpage
 
-## Main messages
-
-Ensembles have great potential, but your training dataset needs to be diverse
-and representative of the data you're apply to or they can go very wrong.
-
-Will never do better than out-of-bag measures.
-
-Ensembles not formulaic --- need to keep digging.
-
 # Abstract
+
+What do we do when multiple ecological models give different impressions of
+population status?
+Any single model is unlikely to perform best across all populations.
+Ensemble methods from the fields of machine learning and climate science
+provide a powerful tool to optimally leverage the information contained in
+multiple ecological models.
+Here we evaluate the potential for ensemble methods to improve estimates of
+fish population status.
+We fit four data-limited models of population and exploitation dynamics and
+combine their estimates of the mean and slope of \bbmsy\\ (biomass at maximum
+sustainable yield) with four ensemble models: a simple average, a linear model,
+and two machine learning methods. We build our ensemble models on a large-scale
+fully factorial simulation experiment and test them on a cross-validated
+version of this dataset and on a global database of assessed fish stocks.
+We find that ensemble models substantially improved estimates of population
+status and trajectory
+Even a simple average ensemble model produced better performance than the best
+individual model in terms of accuracy (XX%) and correlation (XX%). Machine
+learning ensemble models performed the best (XX--XX% improved accuracy, XX--XX%
+improved correlation, X% reduced bias compared to the best individual model).
+When the same ensembles were applied to global fish stocks and compared to
+data-rich stock-assessed status, ensemble methods provided a modest improvement
+over individual models (accuracy and correlation improved up to XX% and XX%).
+Ensemble models have great potential to improve estimates of population status
+and trajectory across many taxa. However, ensemble methods must be carefully
+tested, formed from a diverse set of accurate models, and built on a dataset
+sufficiently representative of populations they are applied to.
 
 # Introduction
 
