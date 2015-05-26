@@ -58,15 +58,26 @@ d_slope <- reshape2::dcast(ram_sum, stockid + scientificname + habitat + max_cat
 # bring in the simulation formatted data to build the simulation-trained models:
 d_mean_sim <- readRDS("generated-data/sim-mean-dat.rds")
 m_rf <- randomForest::randomForest(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
-    max_catch + spec_freq_0.05 + spec_freq_0.2, data = d_mean_sim)
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM,
+    # max_catch + spec_freq_0.05 + spec_freq_0.2,
+  data = d_mean_sim)
 m_gbm <- gbm::gbm(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
-    max_catch + spec_freq_0.05 + spec_freq_0.2, data = d_mean_sim,
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM,
+    # max_catch + spec_freq_0.05 + spec_freq_0.2,
+  data = d_mean_sim,
   n.trees = 10000L, interaction.depth = 2, shrinkage = 0.001)
 m_lm <- lm(
-  log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM +
-      max_catch + spec_freq_0.05 + spec_freq_0.2)^2, data = d_mean_sim)
+  log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM)^2,
+      # max_catch + spec_freq_0.05 + spec_freq_0.2)^2,
+  data = d_mean_sim)
+
+library("mgcv")
+m_gam <- mgcv::gam(
+  log(bbmsy_true_mean) ~ s(CMSY) + s(COMSIR) + s(Costello) + s(SSCOM),
+    # + s(CMSY:COMSIR) + s(CMSY:Costello) + s(CMSY:SSCOM) + s(COMSIR:Costello) +
+    # s(COMSIR:SSCOM) + s(Costello:SSCOM) +
+      # s(max_catch) + s(spec_freq_0.05) + s(spec_freq_0.2),
+  data = d_mean_sim)
 
 # join in life-history data for Costello method
 # spp_categories is in the datalimited package as data:
@@ -146,12 +157,17 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
       d_test$mean_ensemble <- rowMeans(d_test[, individual_models])
     }
     d_test$lm_ensemble <- exp(predict(m_lm, newdata = d_test))
+    d_test$gam_ensemble <- exp(predict(m_gam, newdata = d_test))
     d_test$.n = .n # for identification purposes
 
     d_test
   })
 }
-qq <- plyr::ldply(seq_len(5L), function(i) cv_ensemble_ram(nfold = 3L, .n = i))
+
+library("doParallel")
+registerDoParallel(cores = 4L)
+qq <- plyr::ldply(seq_len(8L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
+  .parallel = TRUE)
 
 d_mean_long <- qq %>%
   select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -habitat) %>%
