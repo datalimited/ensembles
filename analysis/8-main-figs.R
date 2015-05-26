@@ -292,8 +292,9 @@ dev.off()
 # plot the ram extrapolations:
 d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
 d_ram <- suppressWarnings(inner_join(d_ram, clean_names))
+d_ram$bbmsy_est <- as.numeric(as.character(d_ram$bbmsy_est))
 
-pdf("../figs/hex-mean-ram.pdf", width = 8, height = 4)
+pdf("../figs/hex-mean-ram-cv.pdf", width = 8, height = 4)
 plot_hex_fig(d_ram, add_hex = FALSE, alpha = 80)
 dev.off()
 
@@ -301,10 +302,17 @@ re_ram <- d_ram %>% mutate(
   sq_er = (bbmsy_est - bbmsy_true)^2,
   re    = (bbmsy_est - bbmsy_true) / bbmsy_true)
 
-re_ram %>% group_by(clean_method) %>%
+re_ram_sum <- re_ram %>% group_by(clean_method) %>%
   summarise(mare = median(abs(re)),
   mre = median(re),
-  corr = cor(bbmsy_true, bbmsy_est, method = "spearman"))
+  corr = cor(bbmsy_true, bbmsy_est, method = "spearman")) %>%
+  as.data.frame()
+
+p <- re_ram_sum %>% filter(!clean_method %in% "LM Ensemble") %>%
+  ggplot(aes(mare, corr)) + geom_point(aes(colour = mre), size = 6) +
+  geom_text(aes(label = clean_method)) + scale_colour_gradient2() +
+  theme_bw() + xlab("Inaccuracy (MARE)") + ylab("Rank-order correlation")
+ggsave("../figs/ram-ensemble-performance-cv.pdf", width = 5, height = 4)
 
 # ----------------------------------------------
 # Example time series plot to motivate the study
