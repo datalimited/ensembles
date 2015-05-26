@@ -138,8 +138,13 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
     # now extrapolate with the ensemble models and return the whole data frame
     d_test$rf_ensemble <- exp(predict(m_rf, newdata = d_test))
     d_test$gbm_ensemble <- exp(predict(m_gbm, newdata = d_test, n.trees = m_gbm$n.trees))
-    d_test$mean_ensemble <- exp(log(d_test$COMSIR) + log(d_test$CMSY) +
-        log(d_test$Costello) + log(d_test$SSCOM))
+    geo_mean <- TRUE
+    individual_models <- c("CMSY", "COMSIR", "Costello", "SSCOM")
+    if (geo_mean) {
+      d_test$mean_ensemble <- exp(rowMeans(log(d_test[, individual_models])))
+    } else {
+      d_test$mean_ensemble <- rowMeans(d_test[, individual_models])
+    }
     d_test$lm_ensemble <- exp(predict(m_lm, newdata = d_test))
     d_test$.n = .n # for identification purposes
 
