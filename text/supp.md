@@ -106,7 +106,10 @@ Lifehistory & A categorical description of lifehistory.
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim.pdf}
-\caption{Partial dependence plots for simulation ensembles.}
+\caption{Partial dependence plots for GBM ensemble models fitted to the
+simulation data. Lines represent the marginal non-linear effect of each
+predictor on mean \bbmsy\\. TODO Add random forest model to this too if we keep
+both around.}
 \label{fig:partial-sim}
 \end{center}
 \end{figure}
@@ -114,7 +117,7 @@ Lifehistory & A categorical description of lifehistory.
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
-\caption{Partial dependence 2d plots for simulation ensembles.}
+\caption{COLOURS ARE INVERTED! TODO Partial dependence 2d plots for simulation ensembles.}
 \label{fig:partial-2d-sim}
 \end{center}
 \end{figure}
@@ -130,7 +133,8 @@ Lifehistory & A categorical description of lifehistory.
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/hex-slope-sim.pdf}
-\caption{Cross-validated simulation ensemble scatter plot --- slope B/Bmsy}
+\caption{Same as Fig.~\ref{fig:sim-hexagon} but with the slope of \bbmsy\\ in
+the last three years as the response variable.}
 \label{fig:scatter-sim-slope}
 \end{center}
 \end{figure}

@@ -17,9 +17,9 @@ fits and shaded regions interquartile ranges.}
 \begin{center}
 \includegraphics[width=0.9\textwidth]{../figs/didactic.pdf}
 \caption{Using an ensemble model to predict population status.
-Individual models are fit to a dataset with a number of populations with a good
-estimate of population status. These estimates, along with potential additional
-covariates, are then used as coviarates in an ensemble model fitted to known
+Individual models are fit to populations of known or assumed status. Estimates
+from these individual models, along with potential additional covariates, are
+then used as coviarates in an ensemble model fitted the known or assumed
 population status. Finally, the same individual models are fit to a population
 of interest and combined with the fitted ensemble model to derive the ensemble
 prediction of population status.}
@@ -50,15 +50,19 @@ greater density of data.}
 \begin{center}
 \includegraphics[width=3.7in]{../figs/fig3.pdf}
 \caption{Performance of individual and ensemble models fitted to a 
-dataset of known population status. The x-axis represents within-population
-innaccuracy: median absolute relative error. The y-axis
-represents across-population Spearman rank-order correlation. The colour
-shading represents bias in relative error: white points are unbiased, blue
-points methods that predict \bbmsy\\ values that are too high, red points
-represent methods that predict \bbmsy\\ values that are too low. The top-left
-corner contains methods with the best performance across the two metrics. These
-performance metrics are derived from the data in Fig.~\ref{fig:sim-hexagon} and
-based on repeated three-fold cross-validation testing.}
+dataset with known population statuses. 
+The x-axis represents within-population innaccuracy: median absolute relative
+error. 
+The y-axis represents across-population Spearman rank-order correlation. The
+top-left corner contains methods with the best performance across the two
+metrics. 
+The colour shading represents bias in relative error: white points are
+unbiased, blue points represent methods that predict \bbmsy\\ values that are
+too high, red points represent methods that predict \bbmsy\\ values that are
+too low. 
+These performance metrics are derived from the data in
+Fig.~\ref{fig:sim-hexagon} and based on repeated three-fold cross-validation
+testing.}
 \label{fig:performance-sim}
 \end{center}
 \end{figure}
@@ -67,7 +71,7 @@ based on repeated three-fold cross-validation testing.}
 \begin{center}
 \includegraphics[width=5in]{../figs/hex-mean-ram.pdf}
 \includegraphics[width=3in]{../figs/ram-ensemble-performance.pdf}
-\caption{RAM stocks fit with ensemble models built from the simulated dataset.}
+\caption{RAM stocks fit with ensemble models built from the simulated dataset. Early draft figures to be revised. Need to look into why linear model fails so badly.}
 \label{fig:performance-ram}
 \end{center}
 \end{figure}

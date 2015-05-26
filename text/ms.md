@@ -77,6 +77,18 @@ been proposed to derive population status based on limited information and a set
 of assumptions. However, we know that these models can give conflicting output
 and no one model is that accurate.
 
+Motivation: (Fig. \ref{fig:motivate}).
+
+Ensemble models combine estimates of individual models, potentially along with
+additional covariates, in an additional 'ensemble' model
+(Fig. \ref{fig:didactic}).
+
+Exploit interactions between individual models and relationships between other
+conditions of the data and the performance of the individual models.
+
+Fitted to populations of known or assumed status and this ensemble model is
+used to extrapolate to populations of interest.
+
 Here, we develop ensemble models for data-limited exploited fish populations. We
 explore a variety of ensemble approaches applied to both simulated and
 real-world fish stocks and compare performance...
@@ -202,16 +214,14 @@ the linear model with two-way interactions as:
 
 <!--\noindent-->
 <!--The geometric mean is calculated as-->
-
 <!--$$B/B_{\mathrm{MSY-ensemble}(i)} = \exp \left(\frac{\sum_{j=1}^{4} \log B/B_{\mathrm{MSY}(ji)}}{4}\right)$$-->
-
 
 <!--$$-->
 <!--\log B/B_{\mathrm{MSY-ensemble}(i)} = -->
   <!--\beta_0 + \beta_1 \log B/B_{\mathrm{MSY}(i)} -->
 <!--$$-->
 
-$$
+\begin{equation}
 \theta_{\mathrm{ensemble}(i)} = 
   \beta_0 + 
   \sum_{j=1}^m \beta_j \theta_{j(i)} + 
@@ -219,10 +229,10 @@ $$
             \beta_{kj} \theta_{k(i)} \theta_{j(i)} +
   \epsilon_i, \quad
   \epsilon_i \sim \mathrm{Normal}(0, \sigma),
-$$
+\end{equation}
 
 \noindent
-where $\beta$ represents coefficients and $\epsilon$ represents normally
+where the $\beta$ represent coefficients and $\epsilon$ represents normally
 distributed residual variation. We also tried fitting linear models without
 interactions but found better cross-validation predictive performance from all
 performance measures evaluated using the procedure outlined below.
@@ -283,13 +293,23 @@ correlation to measure the ability to correctly rank population status.
 
 # Results
 
+
+Individual model and ensemble model scatterplots:
+Fig. \ref{fig:sim-hexagon}
+
+Accuracy, rank correlation, and bias:
+Fig. \ref{fig:performance-sim}
+
+Applied to the RAM dataset:
+Fig. \ref{fig:performance-ram}
+
 # Discussion
 
 # Acknowledgements
 
 Funding...
 
-# Citation notes
+<!--# Citation notes-->
 
 <!--
 - @breiner2015 ensemble models of species distribution models for rare species
