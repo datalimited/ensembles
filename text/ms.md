@@ -87,7 +87,7 @@ E-mail: sean_anderson@sfu.ca
 
 What do we do when multiple ecological models give different impressions of
 population status?
-Any single model is unlikely to perform best across all populations.
+Any single model is unlikely to perform best across all species, exploitation dynamics, and statuses.
 Ensemble methods from the fields of machine learning and climate science
 provide a powerful tool to optimally leverage the information contained in
 multiple ecological models.
@@ -100,7 +100,7 @@ and two machine learning methods. We build our ensemble models on a large-scale
 fully factorial simulation experiment and test them on a cross-validated
 version of this dataset and on a global database of assessed fish stocks.
 We find that ensemble models substantially improved estimates of population
-status and trajectory
+status and trajectory.
 Even a simple average ensemble model produced better performance than the best
 individual model in terms of accuracy (XX%) and correlation (XX%). Machine
 learning ensemble models performed the best (XX--XX% improved accuracy, XX--XX%
