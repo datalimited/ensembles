@@ -70,6 +70,8 @@ d_mean <- na.omit(d_mean)
 d_slope <- na.omit(d_slope)
 saveRDS(d_mean, file = "generated-data/sim-mean-dat.rds")
 
+# Number of variables in the ensemble models
+# gets used to, for example, figure out how many panels to plot
 nvar <- 8L
 
 # run a model on all the data to generate data for partial dependence plots:
@@ -80,6 +82,7 @@ nvar <- 8L
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH +
   max_catch + spec_freq_0.05 + spec_freq_0.2,
   data = d_mean, n.trees = 10000L, interaction.depth = 2, shrinkage = 0.001)
+
 partial <- plyr::ldply(seq_len(nvar), function(i) {
   dd <- gbm::plot.gbm(m, i.var = i, return.grid = TRUE)
   dd$predictor <- names(dd)[1]
@@ -122,6 +125,7 @@ plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
 dev.off()
 message(paste("zlim were", round(zlim, 2), collapse = " "))
 
+# the base form of the ensemble models:
 eq <- paste0("CMSY + COMSIR + Costello + ",
   "SSCOM + LH + max_catch + spec_freq_0.05 + spec_freq_0.2")
 
