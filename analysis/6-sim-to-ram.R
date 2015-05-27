@@ -58,14 +58,16 @@ d_slope <- reshape2::dcast(ram_sum, stockid + scientificname + habitat + max_cat
 # bring in the simulation formatted data to build the simulation-trained models:
 d_mean_sim <- readRDS("generated-data/sim-mean-dat.rds")
 m_rf <- randomForest::randomForest(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM,
-    # max_catch + spec_freq_0.05 + spec_freq_0.2,
-  data = d_mean_sim)
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+    spec_freq_0.05 + spec_freq_0.2,
+  data = d_mean_sim, ntree = 1000L)
+
 m_gbm <- gbm::gbm(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM,
-    # max_catch + spec_freq_0.05 + spec_freq_0.2,
-  data = d_mean_sim,
-  n.trees = 10000L, interaction.depth = 2, shrinkage = 0.001)
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+    spec_freq_0.05 + spec_freq_0.2,
+  data = d_mean_sim, distribution = "gaussian",
+  n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
+
 m_lm <- lm(
   log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM)^2,
       # max_catch + spec_freq_0.05 + spec_freq_0.2)^2,

@@ -79,9 +79,32 @@ nvar <- 8L
 #   log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH +
 #   max_catch + spec_freq_0.05 + spec_freq_0.2, data = d_mean)
 
-m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH +
-  max_catch + spec_freq_0.05 + spec_freq_0.2,
-  data = d_mean, n.trees = 10000L, interaction.depth = 2, shrinkage = 0.001)
+# best.iter <- gbm::gbm.perf(m_gbm1, method="cv", oobag.curve = FALSE)
+# print(best.iter)
+library("caret")
+library("doParallel")
+registerDoParallel(cores = 4L)
+x <- dplyr::select(d_mean, CMSY, COMSIR, Costello, SSCOM, spec_freq_0.05, spec_freq_0.2)
+mm_gbm <- train(x = x , y = log(d_mean_sim$bbmsy_true_mean), method = "gbm",
+  trControl = trainControl(method = "cv", number = 3, repeats = 1),
+  tuneGrid =
+    expand.grid(
+      interaction.depth = c(1, 2, 4, 6),
+      n.trees = c(500, 2000, 4000, 8000),
+      shrinkage = c(0.1, 0.01, 0.005),
+      n.minobsinnode = 10),  # has little effect here, use default
+  verbose = FALSE)
+pdf("../figs/gbm-selection-rmse.pdf", width = 8, height = 6)
+plot(mm_gbm)
+dev.off()
+
+pdf("../figs/gbm-selection-rsq.pdf", width = 8, height = 6)
+plot(mm_gbm, metric = "Rsquared")
+dev.off()
+
+m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+  max_catch + spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
+  data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 
 partial <- plyr::ldply(seq_len(nvar), function(i) {
   dd <- gbm::plot.gbm(m, i.var = i, return.grid = TRUE)

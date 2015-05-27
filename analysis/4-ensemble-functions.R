@@ -36,7 +36,7 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
     test_dat  <- dplyr::filter(dat, cv_id %in% test_ids)
 
     m_gbm <- gbm::gbm(as.formula(gbm_formula),
-      data = train_dat, n.trees = 10000L, interaction.depth = 2, shrinkage = 0.01,
+      data = train_dat, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01,
       distribution = distribution)
     #saveRDS(m_gbm, file = paste0(cache_folder, id, "-", .n, "-gbm.rds"))
 
@@ -44,7 +44,7 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
       n.trees = m_gbm$n.trees, newdata = test_dat, type = "response")},
       error = function(e) rep(NA, nrow(test_dat)))
 
-    m_rf <- randomForest::randomForest(as.formula(gbm_formula), data = train_dat)
+    m_rf <- randomForest::randomForest(as.formula(gbm_formula), data = train_dat, ntree = 1000L)
     test_dat$rf_ensemble <- tryCatch({predict(m_rf, newdata = test_dat)},
       error = function(e) rep(NA, nrow(test_dat)))
 
