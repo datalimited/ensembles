@@ -24,6 +24,7 @@ ram_sum <- inner_join(ram_sum, ram_meta)
 
 spec_ram <- ram %>%
   arrange(stockid, tsyear) %>%
+  filter(method == "CMSY") %>% # pick one
   group_by(stockid) %>%
   do(train_spec_mat(.$catch)) %>%
   rename(spec_freq = x, spec_dens = y) %>%
