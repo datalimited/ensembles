@@ -1,7 +1,3 @@
-<!--# Ensemble models provide improved estimates of population status and trajectory-->
-
-# Improving estimates of population status and trajectory with ensemble models
-
 \noindent
 Sean C. Anderson^1\*^, 
 Jamie Afflerbach^2^, 
