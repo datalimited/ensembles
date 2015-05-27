@@ -1,21 +1,6 @@
-# Ensemble models provide improved estimates of population status and trajectory
+<!--# Ensemble models provide improved estimates of population status and trajectory-->
 
-OR
-
-# Combining population status estimates with ensemble models
-
-OR
-
-# Combining data-limited fisheries models to derive robust estimates of stock status
-
-OR
-
-# Improving estimates of population status with ensemble models
-
-OR 
-
-\noindent
-...
+# Improving estimates of population status and trajectory with ensemble models
 
 \noindent
 Sean C. Anderson^1\*^, 
