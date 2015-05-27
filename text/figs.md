@@ -69,9 +69,9 @@ testing.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=5in]{../figs/hex-mean-ram.pdf}
-\includegraphics[width=3in]{../figs/ram-ensemble-performance.pdf}
-\caption{RAM stocks fit with ensemble models built from the simulated dataset. Early draft figures to be revised. Need to look into why linear model fails so badly.}
+\includegraphics[width=5in]{../figs/hex-mean-ram-cv.pdf}
+\includegraphics[width=3in]{../figs/ram-ensemble-performance-cv.pdf}
+\caption{RAM stocks fit with ensemble models built from the simulated dataset. Early draft figures to be revised. Need to look into why linear model fails so badly. These are based on 3-fold cross-validation of the mPRM model.}
 \label{fig:performance-ram}
 \end{center}
 \end{figure}
