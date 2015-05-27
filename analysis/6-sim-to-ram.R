@@ -110,53 +110,67 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
     test_dat  <- dplyr::filter(ts_dat, stockid %in% test_ids)
 
     mprm <- datalimited::fit_prm(train_dat)
-    test_dat$b_bmsy_est <- datalimited::predict_prm(test_dat, model = mprm)
 
-    # not all years available because of lagged catches:
-    test_dat <- test_dat %>% dplyr::filter(!is.na(b_bmsy_est))
-    test_dat <- test_dat %>% dplyr::filter(!is.na(bbmsy))
+    # on rare occassions the testing dataset will have new factor levels on the
+    # species category
+    # if that's the case, we'll bypass this chunk and move on:
+    test_dat$b_bmsy_est <- tryCatch({datalimited::predict_prm(test_dat, model = mprm)},
+      error = function(e) rep(NA, nrow(test_dat)))
 
-    test_dat_sum <- test_dat %>%
-      rename(b_bmsy_true = bbmsy) %>%
-      group_by(stockid) %>%
-      do(mean_slope_bbmsy(.)) %>%
-      as.data.frame()
+    if (sum(is.na(test_dat$b_bmsy_est)) < nrow(test_dat)) {
+      # i.e. if there are all NA values then the mPRM prediction failed, move on...
+      # this happens extremely rarely
 
-    # check that these match, or we're in trouble:
-    aa <- dplyr::inner_join(
-      select(test_dat_sum, stockid, bbmsy_true_mean),
-      select(d_mean, stockid, bbmsy_true_mean) %>%
-        rename(bbmsy_true_mean_original = bbmsy_true_mean), by = "stockid")
-    identical(as.numeric(aa$bbmsy_true_mean),
-      as.numeric(aa$bbmsy_true_mean_original)) %>%
-      stopifnot()
+      test_dat$gbm_ensemble <- tryCatch({gbm::predict.gbm(m_gbm,
+        n.trees = m_gbm$n.trees, newdata = test_dat, type = "response")},
+        error = function(e) rep(NA, nrow(test_dat)))
 
-    # now substitute these in for the Costello values in the original d_mean:
-    # note that due to the inner_join this also accomplishes subsetting
-    # the full dataset to the cross-validation chunk level:
-    d_test <- test_dat_sum %>%
-      rename(Costello = bbmsy_est_mean) %>%
-      select(stockid, Costello) %>%
-      dplyr::inner_join(select(d_mean, -Costello), by = "stockid")
+      # not all years available because of lagged catches:
+      test_dat <- test_dat %>% dplyr::filter(!is.na(b_bmsy_est))
+      test_dat <- test_dat %>% dplyr::filter(!is.na(bbmsy))
 
-    # we're in trouble if these don't match:
-    stopifnot(identical(length(test_ids), nrow(d_test)))
+      test_dat_sum <- test_dat %>%
+        rename(b_bmsy_true = bbmsy) %>%
+        group_by(stockid) %>%
+        do(mean_slope_bbmsy(.)) %>%
+        as.data.frame()
 
-    # now extrapolate with the ensemble models and return the whole data frame
-    d_test$rf_ensemble <- exp(predict(m_rf, newdata = d_test))
-    d_test$gbm_ensemble <- exp(predict(m_gbm, newdata = d_test, n.trees = m_gbm$n.trees))
-    geo_mean <- TRUE
-    individual_models <- c("CMSY", "COMSIR", "Costello", "SSCOM")
-    if (geo_mean) {
-      d_test$mean_ensemble <- exp(rowMeans(log(d_test[, individual_models])))
-    } else {
-      d_test$mean_ensemble <- rowMeans(d_test[, individual_models])
+      # check that these match, or we're in trouble:
+      aa <- dplyr::inner_join(
+        select(test_dat_sum, stockid, bbmsy_true_mean),
+        select(d_mean, stockid, bbmsy_true_mean) %>%
+          rename(bbmsy_true_mean_original = bbmsy_true_mean), by = "stockid")
+      identical(as.numeric(aa$bbmsy_true_mean),
+        as.numeric(aa$bbmsy_true_mean_original)) %>%
+        stopifnot()
+
+      # now substitute these in for the Costello values in the original d_mean:
+      # note that due to the inner_join this also accomplishes subsetting
+      # the full dataset to the cross-validation chunk level:
+      d_test <- test_dat_sum %>%
+        rename(Costello = bbmsy_est_mean) %>%
+        select(stockid, Costello) %>%
+        dplyr::inner_join(select(d_mean, -Costello), by = "stockid")
+
+      # we're in trouble if these don't match:
+      stopifnot(identical(length(test_ids), nrow(d_test)))
+
+      # now extrapolate with the ensemble models and return the whole data frame
+      d_test$rf_ensemble <- exp(predict(m_rf, newdata = d_test))
+      d_test$gbm_ensemble <- exp(predict(m_gbm, newdata = d_test, n.trees = m_gbm$n.trees))
+      geo_mean <- TRUE
+      individual_models <- c("CMSY", "COMSIR", "Costello", "SSCOM")
+      if (geo_mean) {
+        d_test$mean_ensemble <- exp(rowMeans(log(d_test[, individual_models])))
+      } else {
+        d_test$mean_ensemble <- rowMeans(d_test[, individual_models])
+      }
+      d_test$lm_ensemble <- exp(predict(m_lm, newdata = d_test))
+      d_test$gam_ensemble <- exp(predict(m_gam, newdata = d_test))
+      d_test$.n = .n # for identification purposes
+
+      d_test
     }
-    d_test$lm_ensemble <- exp(predict(m_lm, newdata = d_test))
-    d_test$gam_ensemble <- exp(predict(m_gam, newdata = d_test))
-    d_test$.n = .n # for identification purposes
-
-    d_test
   })
 }
 
