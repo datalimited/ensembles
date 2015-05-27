@@ -26,7 +26,7 @@ spec_ram <- ram %>%
   arrange(stockid, tsyear) %>%
   filter(method == "CMSY") %>% # pick one
   group_by(stockid) %>%
-  do(train_spec_mat(.$catch)) %>%
+  do(train_spec_mat(.$catch, freq_vec = 1/c(5, 20))) %>%
   rename(spec_freq = x, spec_dens = y) %>%
   as.data.frame()
 
@@ -63,16 +63,16 @@ m_gbm <- gbm::gbm(
   n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 
 m_lm <- lm(
-  log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM)^2,
-      # max_catch + spec_freq_0.05 + spec_freq_0.2)^2,
+  log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM +
+      spec_freq_0.05 + spec_freq_0.2)^2,
   data = d_mean_sim)
 
 library("mgcv")
 m_gam <- mgcv::gam(
-  log(bbmsy_true_mean) ~ s(CMSY) + s(COMSIR) + s(Costello) + s(SSCOM),
-    # + s(CMSY:COMSIR) + s(CMSY:Costello) + s(CMSY:SSCOM) + s(COMSIR:Costello) +
-    # s(COMSIR:SSCOM) + s(Costello:SSCOM) +
-      # s(max_catch) + s(spec_freq_0.05) + s(spec_freq_0.2),
+  log(bbmsy_true_mean) ~ s(CMSY) + s(COMSIR) + s(Costello) + s(SSCOM) +
+    + (CMSY:COMSIR) + (CMSY:Costello) + (CMSY:SSCOM) + (COMSIR:Costello) +
+    (COMSIR:SSCOM) + (Costello:SSCOM) +
+    s(spec_freq_0.05) + s(spec_freq_0.2),
   data = d_mean_sim)
 
 # join in life-history data for Costello method
@@ -176,7 +176,7 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
 
 library("doParallel")
 registerDoParallel(cores = 4L)
-qq <- plyr::ldply(seq_len(8L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
+qq <- plyr::ldply(seq_len(16L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
   .parallel = TRUE)
 
 d_mean_long <- qq %>%
