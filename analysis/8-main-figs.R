@@ -34,55 +34,6 @@ d2$clean_method <- reorder(d2$clean_method, d2$order)
 d2_slope <- filter(d2, type == "slope")
 d2 <- filter(d2, type == "mean")
 
-performance_panel <- function(dat, column_id, ylim_adj = c(-0.1, 0.1), xaxis = FALSE,
-  flip_yaxis = FALSE, yticks = NULL, add_zero_line = TRUE) {
-
-  axis_col <- "grey50"
-  label_col <- "grey50"
-  cols_ii <- RColorBrewer::brewer.pal(8, "Blues")
-
-  ylim <- range(dat[,column_id][[1]]) + ylim_adj
-  if (flip_yaxis) ylim <- rev(ylim)
-
-  plot(1, 1, xlim = c(.8, nrow(clean_names)+0.2),
-    ylim = ylim, type = "n", axes = FALSE, ann = FALSE, yaxs = "i")
-  rect(4.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
-  rect(5.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
-  rect(6.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
-  rect(7.5, ylim[1], 9.5, ylim[2], col = "#00000010", border = FALSE)
-  if(add_zero_line)
-    abline(h = 0, col = "grey70", lty = 2, lwd = 1)
-  beanplot::beanplot(as.formula(paste(column_id, "~ clean_method")),
-    data = dat, add = TRUE,
-    border = NA, axes = FALSE, col = cols_ii[c(5, 3, 4, 8)], what =
-    c(0, 1, 1, 0), log = FALSE)
-  points(jitter(as.numeric(dat$clean_method), amount = 0.09),
-    dat[,column_id][[1]], col = "#D0D0D0", pch = 20, cex = 0.37)
-  if (is.null(yticks))
-    axis(2, las = 1, col = axis_col, col.axis = axis_col)
-  else
-    axis(2, las = 1, at = yticks, col = axis_col, col.axis = axis_col)
-
-  if (xaxis)
-    axis(1, col = axis_col, col.axis = label_col, at = 1:length(unique(dat$clean_method)),
-      labels = levels(dat$clean_method), las = 3)
-  box(col = axis_col)
-
-}
-
-pdf("../figs/performance-beanplots-sim.pdf", width = 5, height = 5)
-par(mfrow = c(3, 1))
-par(mar = c(0, 3, 0, 0), cex = 0.8, oma = c(8, 3, 1.5, .5), tck = -0.03, mgp = c(2, 0.5, 0))
-performance_panel(d2, "corr", c(-0.1, 0.1), flip_yaxis = FALSE, yticks = c(0, 0.2, 0.4))
-mtext("Correlation\nacross populations", side = 2, line = 3, col = "grey40")
-performance_panel(d2, "mare", c(-0.05, 0.05), xaxis = FALSE, flip_yaxis = FALSE,
-  yticks = c(0.3, 0.4, 0.5, 0.6))
-mtext("Inaccuracy\n(MARE)", side = 2, line = 3, col = "grey40")
-performance_panel(d2, "mre", c(-0.1, 0.1), flip_yaxis = FALSE, xaxis = TRUE,
-  yticks = c(0, 0.2, 0.4))
-mtext("Bias and\nprecision (MRE)", side = 2, line = 3, col = "grey40")
-dev.off()
-
 d2_long <- reshape2::melt(d2, id.vars = c("test_iter", "clean_method", "type", "order",
     "label_fudge_x", "label_fudge_y"))
 
