@@ -34,22 +34,6 @@ d2$clean_method <- reorder(d2$clean_method, d2$order)
 d2_slope <- filter(d2, type == "slope")
 d2 <- filter(d2, type == "mean")
 
-# ------------------------------------
-# Performance distributions simulation
-# ------------------------------------
-
-# ggplot(d2, aes(clean_method, corr)) + geom_violin()
-# ggplot(d2, aes(clean_method, mare)) + geom_violin()
-# ggplot(d2, aes(clean_method, mre)) + geom_violin()
-# d %>% filter(re < 4, re > -4) %>%
-#   ggplot(aes(re)) + geom_histogram() + facet_wrap(~clean_method) +
-#   geom_vline(xintercept = 0)
-
-#bg_plot <- function(colour = "#00000009") {
-  #rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4],
-    #col = colour, border = FALSE)
-#}
-
 performance_panel <- function(dat, column_id, ylim_adj = c(-0.1, 0.1), xaxis = FALSE,
   flip_yaxis = FALSE, yticks = NULL, add_zero_line = TRUE) {
 
