@@ -22,13 +22,6 @@ ram_meta <- ram %>%
     total_catch = sum(catch))
 ram_sum <- inner_join(ram_sum, ram_meta)
 
-# join in spectral values:
-train_spec_mat <- function(x, freq_vec = 1/c(5, 20)) {
-  # using AR as smoother, empirical didn't seem to confer much more benefit
-  sp <- spec.ar(x, plot = FALSE)
-  # approximate at fixed frequencies - necessary as series of different length
-  approx(x = sp$freq, y = sp$spec, xout = freq_vec) %>% as.data.frame
-}
 spec_ram <- ram %>%
   arrange(stockid, tsyear) %>%
   group_by(stockid) %>%

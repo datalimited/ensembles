@@ -2,13 +2,7 @@
 
 library("dplyr")
 
-train_spec_mat <- function(x, freq_vec = 1/c(2, 5, 10, 20)) {
-  # using AR as smoother, empirical didn't seem to confer much more benefit
-  sp <- spec.ar(x, plot = FALSE)
-  # approximate at fixed frequencies - necessary as series of different length
-  approx(x = sp$freq, y = sp$spec, xout = freq_vec) %>% as.data.frame
-}
-
+source("4-ensemble-functions.R")
 # raw data from:
 # ~/Dropbox/FisheriesWorkingGroupPhaseII/Decision_trees/harvest_dynamics_classification/StochasticSimFullFactorial_2013-06-21_no_status.RData
 

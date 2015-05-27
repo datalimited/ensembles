@@ -1,5 +1,12 @@
 # General purpose functions to be used throughout
 
+train_spec_mat <- function(x, freq_vec = 1/c(2, 5, 10, 20)) {
+  # using AR as smoother, empirical didn't seem to confer much more benefit
+  sp <- spec.ar(x/max(x), plot = FALSE)
+  # approximate at fixed frequencies - necessary as series of different length
+  approx(x = sp$freq, y = sp$spec, xout = freq_vec) %>% as.data.frame
+}
+
 mean_slope_bbmsy <- function(dat, years_window = 3) {
   # chunk of data must have columns: b_bmsy_true, b_bmsy_est
   .n <- nrow(dat)
@@ -53,6 +60,13 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
       test_dat$lm_ensemble <- tryCatch({predict(m_lm, newdata = test_dat)},
         error = function(e) rep(NA, nrow(test_dat)))
     }
+
+    # if (lm_formula != "") {
+      # library("mgcv")
+      # m_gam <- mgcv::gam(as.formula(lm_formula), data = train_dat)
+      # test_dat$lm_ensemble <- tryCatch({predict(m_lm, newdata = test_dat)},
+        # error = function(e) rep(NA, nrow(test_dat)))
+    # }
 
     if (glm_formula != "") {
       m_glm <- glm(as.formula(glm_formula), data = train_dat, family = binomial(link = logit))
