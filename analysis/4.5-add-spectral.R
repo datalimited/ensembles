@@ -5,7 +5,6 @@ library("dplyr")
 source("4-ensemble-functions.R")
 # raw data from:
 # ~/Dropbox/FisheriesWorkingGroupPhaseII/Decision_trees/harvest_dynamics_classification/StochasticSimFullFactorial_2013-06-21_no_status.RData
-
 load("raw-data/StochasticSimFullFactorial_2013-06-21_no_status.RData")
 
 spec <- simsStoch %>%
@@ -16,7 +15,7 @@ spec <- simsStoch %>%
   as.data.frame()
 
 library("ggplot2")
-p <- ggplot(spec, aes(spec_freq, log(spec_dens), group = spec_freq)) +
+p <- ggplot(spec, aes(spec_freq, spec_dens, group = spec_freq)) +
   geom_boxplot() + facet_wrap(~ED)
 ggsave("../figs/spectral-distributions.pdf", width = 8, height = 7)
 
