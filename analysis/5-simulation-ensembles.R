@@ -72,7 +72,7 @@ saveRDS(d_mean, file = "generated-data/sim-mean-dat.rds")
 
 # Number of variables in the ensemble models
 # gets used to, for example, figure out how many panels to plot
-nvar <- 8L
+nvar <- 7L
 
 # run a model on all the data to generate data for partial dependence plots:
 # m_rf <- randomForest::randomForest(
@@ -150,7 +150,7 @@ message(paste("zlim were", round(zlim, 2), collapse = " "))
 
 # the base form of the ensemble models:
 eq <- paste0("CMSY + COMSIR + Costello + ",
-  "SSCOM + LH + max_catch + spec_freq_0.05 + spec_freq_0.2")
+  "SSCOM + max_catch + spec_freq_0.05 + spec_freq_0.2")
 
 # work through cross validation of ensemble models:
 cv_sim_mean <- plyr::ldply(seq_len(4), .parallel = TRUE,
