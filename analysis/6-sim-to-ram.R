@@ -175,8 +175,9 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
 }
 
 library("doParallel")
-registerDoParallel(cores = 4L)
-qq <- plyr::ldply(seq_len(16L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
+registerDoParallel(cores = 2L)
+set.seed(123)
+qq <- plyr::ldply(seq_len(40L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
   .parallel = TRUE)
 
 d_mean_long <- qq %>%
