@@ -13,11 +13,11 @@ clean_names <- dplyr::data_frame(
     "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"),
   order = c(1, 2, 4, 3, 8, 7, 6, 5),
   label_fudge_x = c(
-    0, -0.06,0,-0.06,
-    0, 0,0,0),
+    0, -0.03,0,-0.04,
+    0, 0,0,-0.05),
   label_fudge_y = c(
-    0, 0,0.03,0,
-    0, 0,0,0))
+    0, -0.02,0.03,0.04,
+    0, 0.02,0,-0.02))
 
 d <- suppressWarnings(inner_join(d, clean_names))
 
@@ -58,31 +58,42 @@ pal <- data_frame(
   mre = seq(-max(m$mre)*1.05, max(m$mre)*1.05, length.out = 11))
 m$col <- pal$col[findInterval(m$mre, pal$mre)]
 
-xlim <- filter(d3, variable == "mare") %>% select(l, u) %>% range
-ylim <- filter(d3, variable == "corr") %>% select(l, u) %>% range
+xlim <- filter(d3, variable == "mare") %>% select(l, u) %>% range +
+  c(-0.01, 0.01)
+ylim <- filter(d3, variable == "corr") %>% select(l, u) %>% range +
+  c(-0.02, 0.01)
 
 pdf("../figs/fig3.pdf", width = 4, height = 3.1)
 par(mfrow = c(1, 1), mgp = c(1.5, 0.4, 0), las = 1, tck = -0.012,
-  oma = c(3, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
+  oma = c(2.7, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
   xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
 par(xpd = NA)
 plot(m$mare, m$corr, xlim = xlim, ylim = ylim, pch = 21, bg = m$col, col = "grey50",
   axes = FALSE, xlab = "", ylab = "", type = "n")
 segments(m$mare, l$corr, m$mare, u$corr, col = "#00000050", lwd = 1.4)
 segments(l$mare, m$corr, u$mare, m$corr, col = "#00000050", lwd = 1.4)
-points(m$mare, m$corr, pch = 21, bg = m$col, col = "grey50", cex = 1.5)
-text(
-  m$mare + fudge_x$mare,
-  m$corr + fudge_y$corr - 0.015,
-  m$clean_method, cex = 0.90, pos = 4, col = m$text_col)
+points(m$mare, m$corr, pch = 21, bg = m$col, col = "grey50", cex = 1.5,
+  lwd = 1.4)
+xtext <- m$mare + fudge_x$mare
+ytext <- m$corr + fudge_y$corr - 0.015
+text(xtext, ytext, m$clean_method, cex = 0.90, pos = 4, col = m$text_col,
+  bg = "red")
+bg_cols <- c(rep(NA, 4), rep("#00000020", 4))
+rect(xtext + 0.007, ytext -0.015, xtext + strwidth(m$clean_method),
+  ytext + 0.02, col = bg_cols, border = NA)
 box(col = "grey50")
-axis(2, col = "grey50", cex.axis = par()[["cex"]], at = seq(0.1, 0.5, 0.1))
+axis(2, col = "grey50", cex.axis = 1, at = seq(0.1, 0.6, 0.1))
 par(mgp = par()[["mgp"]] + c(0, -0.25, 0))
-axis(1, col = "grey50", cex.axis = par()[["cex"]], at = seq(0.3, 0.6, 0.1))
-mtext("Within population inaccuracy (MARE)", side = 1, line = 1.7, col = "grey40", cex = 0.8)
+axis(1, col = "grey50", cex.axis = 1, at = seq(0.3, 0.6, 0.1))
+mtext("Within population inaccuracy (MAPE)", side = 1, line = 1.4, col = "grey40", cex = 0.8)
 mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las = 0, cex = 0.8)
-#legend("bottomright", bty = "n", pch = c(21, 21, 21), bg = c("red", "red", "blue"),
-  #legend = c(4, 0, -1))
+legend("topright", bty = "n",
+  fill =
+  c(pal[pal$mre < 0.21 & pal$mre > 0.19,]$col,
+    "white",
+    pal[pal$mre > -0.21 & pal$mre < -0.19,]$col), border = rep("grey50", 3),
+  legend = c("  0.2", "  0", "-0.2"), text.col = "grey40", title = "Bias (MPE)")
+#text(0.54, 0.5, "Bias (MPE)", col = "grey30", pos = 4)
 dev.off()
 
 #mtext(LETTERS[ii], adj = 0.05, line = -1.5, col = "grey40", cex = 0.8)
@@ -126,20 +137,45 @@ hexagon <- function (x, y, unitcell = 1, ...) {
 #' @param label The text to label with.
 #' @param pos Position to pass to text()
 #' @param ... Anything extra to pass to text(), e.g. cex, col.
-add_label <- function(xfrac, yfrac, label, pos = 4, ...) {
-  u <- par("usr")
-  x <- u[1] + xfrac * (u[2] - u[1])
-  y <- u[4] - yfrac * (u[4] - u[3])
+add_label <- function(xfrac, yfrac, label, pos = 4, add_bg = FALSE, ...) {
+
+  u_ <- par("usr")
+  width <- u_[2] - u_[1]
+  height <- u_[4] - u_[3]
+  x <- u_[1] + xfrac * width
+  y <- u_[4] - yfrac * height
   text(x, y, label, pos = pos, ...)
+
+  if (add_bg) {
+    bg_col <- "#00000015"
+    rect(x + width*0.04,                   y - height*0.04,
+         x + strwidth(label) + width*0.07, y + strheight(label) - height * 0.01,
+         col = bg_col, border = NA)
+  }
 }
+
 
 plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   ylab = expression(widehat(B/B[MSY])), lims_hex = c(0, max(dat$bbmsy_est)),
-  xlim_plot = c(0, 2.5), ylim_plot = c(0, 2.7), axis_ticks = c(0, 1, 2),
+  xlim_plot = c(0, 3.4), ylim_plot = c(0, 3.4), axis_ticks = c(0, 1, 2, 3),
   add_hex = TRUE, alpha = 50) {
   par(mfrow = c(2, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
     oma = c(3.5, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
     xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+
+  hexcol1 <- RColorBrewer::brewer.pal(9, "Blues")
+  #hexcol1 <- c("#FFFFFF", "#6A4A3C")
+  hexcol2 <- RColorBrewer::brewer.pal(9, "Oranges")
+  hexcol2 <- RColorBrewer::brewer.pal(9, "YlOrRd")
+  #hexcol2 <- c("#FFFFFF", "#CC333F")
+  hexcol3 <- RColorBrewer::brewer.pal(9, "Greens")
+  hexcol4 <- RColorBrewer::brewer.pal(9, "Purples")
+  hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Greys")
+
+  hexcol1 <- hexcol2
+  hexcol3 <- hexcol2
+  hexcol4 <- hexcol2
+  hexcol_ensemble <- RColorBrewer::brewer.pal(9, "YlGnBu")
 
   #if (max(dat$order) == 8)
     #panels <- c(1:4, 8, 7, 6, 5)
@@ -164,24 +200,24 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     #alternative power transformation:
     #counts <- round((counts)^0.30)
     if (m %in% 1)
-      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))
+      pal_function <- colorRampPalette(hexcol1)
     if (m %in% 2)
-      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Oranges"))
+      pal_function <- colorRampPalette(hexcol2)
     if (m %in% 3)
-      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greens"))
+      pal_function <- colorRampPalette(hexcol3)
     if (m %in% 4)
-      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Purples"))
+      pal_function <- colorRampPalette(hexcol4)
     if (m %in% 5:8)
-      pal_function <- colorRampPalette(RColorBrewer::brewer.pal(9, "Greys"))
+      pal_function <- colorRampPalette(hexcol_ensemble)
     if (add_hex) {
       pal <- pal_function(max(counts))
     } else {
       pal <- pal_function(10)
     }
     #add transparency to de-emphasize fist colour bins:
-    #pal[1:10] <- paste0(pal[1:10], round(seq(50, 99, length.out = 10)))
+    pal[1:2] <- paste0(pal[1:2], round(seq(80, 99, length.out = 2)))
     plot(1, 1, xlim = xlim_plot, ylim = ylim_plot, type = "n", asp = 1,
-      xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+      xlab = "", ylab = "", xaxt = "n", yaxt = "n", xaxs = "i")
     if (add_hex) {
       for (i in 1:nrow(dxy)) {
         hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
@@ -196,7 +232,8 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
     abline(a = 0, b = 1, lty = "22", col = "#33333350", lwd = 1.5)
     box(col = "grey50")
-    add_label(-0.01, 0.08, unique(filter(dat, order == m)$clean_method), col = "grey20")
+    add_label(-0.01, 0.08, unique(filter(dat, order == m)$clean_method),
+      col = "grey20", add_bg = ifelse(m %in% 1:4, FALSE, TRUE))
     if (m %in% c(1, 5)) axis(2, at = axis_ticks, col = "grey50")
     if (m %in% 5:8) axis(1, at = axis_ticks, col = "grey50")
     })
@@ -205,12 +242,11 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     las = 0, col = "grey20")
 }
 
-
 d_mean_plot <- filter(d, type == "mean")
 d_mean_plot$bbmsy_est[d_mean_plot$bbmsy_est > 10] <- NA
 d_mean_plot <- na.omit(d_mean_plot)
 
-pdf("../figs/fig2.pdf", width = 8, height = 4)
+pdf("../figs/fig2.pdf", width = 7, height = 3.9)
 plot_hex_fig(d_mean_plot, xbins = 100L)
 dev.off()
 
@@ -218,7 +254,7 @@ d_slope_plot <- filter(d, type == "slope")
 d_slope_plot$bbmsy_est[d_slope_plot$bbmsy_est > 10] <- NA
 d_slope_plot <- na.omit(d_slope_plot)
 
-pdf("../figs/hex-slope-sim.pdf", width = 8, height = 4)
+pdf("../figs/hex-slope-sim.pdf", width = 7, height = 3.9)
 plot_hex_fig(d_slope_plot, xbins = 80L, lims_hex = range(d_slope_plot$bbmsy_est),
   xlim_plot = c(-0.5, 0.5), ylim_plot = c(-0.5, 0.5), axis_ticks = c(-0.4, 0, 0.4),
   xlab = expression(B/B[BMSY]~slope), ylab = expression(widehat(B/B[BMSY])~slope))
@@ -234,8 +270,11 @@ clean_names_ram <- clean_names
 d_ram <- suppressWarnings(inner_join(d_ram, clean_names_ram))
 d_ram$bbmsy_est <- as.numeric(as.character(d_ram$bbmsy_est))
 
+d_ram <- filter(d_ram, bbmsy_true < 4, bbmsy_est < 4)
+
 pdf("../figs/hex-mean-ram-cv.pdf", width = 8, height = 4)
-plot_hex_fig(d_ram, add_hex = FALSE, alpha = 80)
+plot_hex_fig(d_ram, add_hex = TRUE, alpha = 80, lims_hex = c(0, 4.01),
+  xbins = 35L)
 dev.off()
 
 re_ram <- d_ram %>% mutate(
@@ -345,3 +384,67 @@ text(xlim[1]-0.5, ylim[2]-0.1,
   cex = 0.9, pos = 4, col = "grey20")
 
 dev.off()
+
+####################
+# now look at above/below b/bmsy=1 classification success
+####################
+
+# # continuous case:
+# abovebelow_sim <- d %>% group_by(clean_method, order) %>%
+#   summarise(
+#     true_above =  sum(bbmsy_est >  1 & bbmsy_true >  1) / length(bbmsy_est),
+#     true_below =  sum(bbmsy_est <= 1 & bbmsy_true <= 1) / length(bbmsy_est),
+#     false_below = sum(bbmsy_est <= 1 & bbmsy_true >  1) / length(bbmsy_est),
+#     false_above = sum(bbmsy_est >  1 & bbmsy_true <= 1) / length(bbmsy_est)) %>%
+#   as.data.frame()
+
+# we're in trouble if all rows don't add to 1:
+# all(rowSums(abovebelow_sim[,-c(1, 2)]) == 1) %>% stopifnot()
+#
+# abovebelow_sim$Ensemble <- ifelse(grepl("Ensemble", abovebelow_sim$clean_method),
+#   TRUE, FALSE)
+# abovebelow_sim <- abovebelow_sim %>%
+#   mutate(clean_method = paste(order, clean_method, sep = "-"))
+#
+# p <- ggplot(abovebelow_sim) +
+#   geom_segment(aes(x = true_above, xend = 0 , y = 0, yend = 0), lwd = 1.5, col = "darkgreen") +
+#   geom_segment(aes(x = 0, xend = -false_above , y = 0, yend = 0), lwd = 1.5, col = "red") +
+#   geom_segment(aes(x = 0, xend = 0 , y = true_below, yend = 0), lwd = 1.5, col = "darkgreen") +
+#   geom_segment(aes(x = 0, xend = 0 , y = 0, yend = -false_below), lwd = 1.5, col = "red") +
+#   facet_wrap(~clean_method, nrow = 2) + xlab("Above") + ylab("Below") + theme_bw()
+# print(p)
+
+get_roc <- function(true, est) {
+  library("pROC") # required or pROC:: will generate errors
+  y <- pROC::roc(response = true, predictor = est, 5)
+  data.frame(sens = y$sensitivities, spec = y$specificities,
+    auc = as.numeric(y$auc))
+}
+
+dbin <- readRDS("generated-data/cv_sim_binary.rds")
+clean_names_bin <- clean_names
+clean_names_bin$clean_method <- sub("LM Ensemble", "GLM Ensemble", clean_names_bin$clean_method)
+clean_names_bin$method <- sub("lm_ensemble", "glm_ensemble", clean_names_bin$method)
+dbin <- suppressWarnings(inner_join(dbin, clean_names_bin))
+
+
+rocs_sim <- dbin %>% group_by(clean_method, order, Ensemble) %>%
+  do({get_roc(true = .$bbmsy_true, est = .$bbmsy_est)})
+rocs_sim <- rocs_sim %>% as.data.frame() %>%
+  mutate(clean_method = paste(order, clean_method, sep = "-"))
+rocs_sim$Ensemble <- ifelse(grepl("Ensemble", rocs_sim$clean_method), "Ensemble", "Individual")
+#hexcol1 <- RColorBrewer::brewer.pal(9, "YlOrRd")
+#hexcol2 <- RColorBrewer::brewer.pal(9, "YlGnBu")
+
+p <- ggplot(rocs_sim, aes(spec, sens, colour = clean_method, group = clean_method)) +
+  geom_line() + coord_equal() +
+  geom_abline(intercept = 1, slope = 1, lty = 2, col = "darkgrey") +
+  xlim(1, 0) +
+  xlab("Specificity") + ylab("Sensitivity") + theme_bw() +
+  theme(plot.background = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()) + facet_wrap(~Ensemble) +
+  scale_colour_brewer(palette="Spectral", guide = guide_legend(title = "Model"))
+  print(p)
+ggsave("../figs/roc-sim.pdf", width = 8, height = 5)
+
