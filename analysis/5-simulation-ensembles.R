@@ -172,17 +172,23 @@ cv_sim_slope <- plyr::ldply(seq_len(4), .parallel = TRUE,
 cv_sim_slope$cv_id <- NULL
 cv_sim_slope$dummy <- rnorm(nrow(cv_sim_slope), 0, 0.2)
 
-# TODO: update formula here or cut out:
-# cv_sim_binary <- plyr::ldply(seq_len(4), .parallel = TRUE,
-#   .fun = function(.n)
-#     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE,
-#       id = "sim-mean", distribution = "bernoulli",
-#       gbm_formula = "above_bbmsy1_true ~ CMSY + COMSIR + Costello + SSCOM + LH",
-#       glm_formula = "above_bbmsy1_true ~ (CMSY + COMSIR + Costello + SSCOM + LH)^2"))
-# cv_sim_binary$cv_id <- NULL
-# saveRDS(cv_sim_binary, file = "generated-data/cv_sim_binary.rds") # used in 5-roc.R
+cv_sim_binary <- plyr::ldply(seq_len(4), .parallel = TRUE,
+  .fun = function(.n)
+    cross_val_ensembles(.n = .n, dat = d_mean,
+      id = "sim-binary", distribution = "bernoulli",
+      gbm_formula = paste0("above_bbmsy1_true ~ ", eq),
+      glm_formula = paste0("above_bbmsy1_true ~ (", eq, ")^2")))
+cv_sim_binary$cv_id <- NULL
 
 # now switch to long format data, summarize, and compare:
+cv_sim_binary_long <- cv_sim_binary %>%
+  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -bbmsy_true_mean) %>%
+  reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "above_bbmsy1_true"),
+  variable.name = "method", value.name = "bbmsy_est") %>%
+  rename(bbmsy_true = above_bbmsy1_true) %>%
+  mutate(type = "binary")
+saveRDS(cv_sim_binary_long, file = "generated-data/cv_sim_binary.rds") # used in 5-roc.R
+
 cv_sim_mean_long <- cv_sim_mean %>%
   select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_mean"),
