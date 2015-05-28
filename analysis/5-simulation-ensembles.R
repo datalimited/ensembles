@@ -72,7 +72,7 @@ saveRDS(d_mean, file = "generated-data/sim-mean-dat.rds")
 
 # Number of variables in the ensemble models
 # gets used to, for example, figure out how many panels to plot
-nvar <- 7L
+nvar <- 6L
 
 # run a model on all the data to generate data for partial dependence plots:
 # m_rf <- randomForest::randomForest(
@@ -103,7 +103,7 @@ plot(mm_gbm, metric = "Rsquared")
 dev.off()
 
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
-  max_catch + spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
+  spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
   data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 
 partial <- plyr::ldply(seq_len(nvar), function(i) {
@@ -132,9 +132,9 @@ partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
 
 # check colour pallete:
 zlim <- c(min(partial_2d$z), max(partial_2d$z))
-pal <- rev(colorRampPalette(c("red", "white", "blue"))(15)[-c(13:15)])
+pal <- rev(colorRampPalette(c("red", "white", "blue"))(13)[-1]) #[-c(13:13)])
 # white should line up with 1: (adjust the above line as needed)
-#plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, col = pal)
+plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, col = pal);abline(v = 1)
 pdf("../figs/partial-sim-2d.pdf", width = 10, height = 10)
 par(mfrow = c(nvar, nvar), mar = c(3,3,1,1), oma = c(4, 4, 1, 1), cex = 0.5)
 par(xpd = NA, mgp = c(1.5, 0.5, 0))
