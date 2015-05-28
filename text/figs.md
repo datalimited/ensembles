@@ -48,8 +48,9 @@ greater density of data.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=3.7in]{../figs/fig3.pdf}
-\caption{Performance of individual and ensemble models fitted to a 
+\includegraphics[width=3.1in]{../figs/fig3.pdf}
+\includegraphics[width=5.7in]{../figs/roc-sim.pdf}
+\caption{(Upper) Performance of individual and ensemble models fitted to a 
 dataset with known population statuses. 
 The x-axis represents within-population innaccuracy: median absolute relative
 error. 
@@ -62,7 +63,9 @@ too high, red points represent methods that predict \bbmsy\\ values that are
 too low. 
 These performance metrics are derived from the data in
 Fig.~\ref{fig:sim-hexagon} and based on repeated three-fold cross-validation
-testing.}
+testing.
+(Lower) A quick draft figure of ROC curves for an above/below \bbmsy\\ model.
+}
 \label{fig:performance-sim}
 \end{center}
 \end{figure}
@@ -71,7 +74,7 @@ testing.}
 \begin{center}
 \includegraphics[width=5in]{../figs/hex-mean-ram-cv.pdf}
 \includegraphics[width=3in]{../figs/ram-ensemble-performance-cv.pdf}
-\caption{RAM stocks fit with ensemble models built from the simulated dataset. Early draft figures to be revised. Need to look into why linear model fails so badly. These are based on 3-fold cross-validation of the mPRM model.}
+\caption{RAM stocks fit with ensemble models built from the simulated dataset. Lower figure is a draft in ggplot. These are based on 3-fold cross-validation of the mPRM model.}
 \label{fig:performance-ram}
 \end{center}
 \end{figure}

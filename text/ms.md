@@ -65,7 +65,7 @@ E-mail: sean_anderson@sfu.ca
 
 # Abstract
 
-What do we do when multiple ecological models give different impressions of
+What can we do when multiple ecological models give different impressions of
 population status? Any single model is unlikely to perform best across all
 species, exploitation dynamics, and statuses. Ensemble methods from the fields
 of machine learning and climate science provide a powerful tool to optimally
