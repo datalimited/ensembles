@@ -117,7 +117,7 @@ both around.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
-\caption{COLOURS ARE INVERTED! TODO Partial dependence 2d plots for simulation ensembles.}
+\caption{Partial dependence two-dimensional plots for simulation GBM ensembles. Red is above one and blue is below one.}
 \label{fig:partial-2d-sim}
 \end{center}
 \end{figure}
