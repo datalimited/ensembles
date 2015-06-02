@@ -2,7 +2,7 @@
 
 library("dplyr")
 
-source("4-ensemble-functions.R")
+source("0-ensemble-functions.R")
 # raw data from:
 # ~/Dropbox/FisheriesWorkingGroupPhaseII/Decision_trees/harvest_dynamics_classification/StochasticSimFullFactorial_2013-06-21_no_status.RData
 load("raw-data/StochasticSimFullFactorial_2013-06-21_no_status.RData")
