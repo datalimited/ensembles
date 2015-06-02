@@ -7,17 +7,22 @@ train_spec_mat <- function(x, freq_vec = 1/c(2, 5, 10, 20)) {
   approx(x = sp$freq, y = sp$spec, xout = freq_vec) %>% as.data.frame
 }
 
-mean_slope_bbmsy <- function(dat, years_window = 3) {
+mean_slope_bbmsy <- function(dat, years_window = 5L) {
   # chunk of data must have columns: b_bmsy_true, b_bmsy_est
-  .n <- nrow(dat)
-  i <- seq(.n-(years_window-1), .n)
-  bbmsy_true_mean = mean(dat$b_bmsy_true[i])
-  bbmsy_est_mean = mean(dat$b_bmsy_est[i])
-  ytrue <- dat$b_bmsy_true[i]
-  yest <- dat$b_bmsy_est[i]
-  bbmsy_true_slope <- coef(mblm::mblm(ytrue ~ i))[[2]]
-  bbmsy_est_slope <- coef(mblm::mblm(yest ~ i))[[2]]
-  data.frame(bbmsy_true_mean, bbmsy_est_mean, bbmsy_true_slope, bbmsy_est_slope)
+  # message(paste(unique(dat$stockid), unique(dat$iter), sep = "-"))
+  if (ncol(dat) > 0) { # not sure what's happening here, but some chunks can have zero columns
+    if (nrow(dat) > years_window) { # some have 3 years??
+      .n <- nrow(dat)
+      i <- seq(.n-(years_window-1), .n)
+      bbmsy_true_mean = mean(dat$b_bmsy_true[i])
+      bbmsy_est_mean = mean(dat$b_bmsy_est[i])
+      ytrue <- dat$b_bmsy_true[i]
+      yest <- dat$b_bmsy_est[i]
+      bbmsy_true_slope <- coef(mblm::mblm(ytrue ~ i))[[2]]
+      bbmsy_est_slope <- coef(mblm::mblm(yest ~ i))[[2]]
+      data.frame(bbmsy_true_mean, bbmsy_est_mean, bbmsy_true_slope, bbmsy_est_slope)
+    }
+  }
 }
 
 # A general function for cross-validation testing ensemble models:
@@ -62,10 +67,10 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
     }
 
     # if (lm_formula != "") {
-      # library("mgcv")
-      # m_gam <- mgcv::gam(as.formula(lm_formula), data = train_dat)
-      # test_dat$lm_ensemble <- tryCatch({predict(m_lm, newdata = test_dat)},
-        # error = function(e) rep(NA, nrow(test_dat)))
+    # library("mgcv")
+    # m_gam <- mgcv::gam(as.formula(lm_formula), data = train_dat)
+    # test_dat$lm_ensemble <- tryCatch({predict(m_lm, newdata = test_dat)},
+    # error = function(e) rep(NA, nrow(test_dat)))
     # }
 
     if (glm_formula != "") {
