@@ -345,7 +345,6 @@ dl_dat <- bind_rows(cmsy, comsir, sscom, costello) %>%
   #geom_ribbon(aes(ymax = b_bmsyiq75, ymin = b_bmsyiq25, fill = method), alpha = 0.2) +
   #geom_line(data = ram, aes(yr, b_bmsy), colour = "black", fill = "black")
 
-
 col_df <- data_frame(col = paste0(RColorBrewer::brewer.pal(4, "Dark2")),
   method = c("CMSY", "COM-SIR", "SSCOM", "mPRM"))
 dl_dat$col <- NULL # for re-running
@@ -423,18 +422,17 @@ get_roc <- function(true, est) {
 
 dbin <- readRDS("generated-data/cv_sim_binary.rds")
 clean_names_bin <- clean_names
-clean_names_bin$clean_method <- sub("LM Ensemble", "GLM Ensemble", clean_names_bin$clean_method)
+clean_names_bin$clean_method <- sub("LM Ensemble", "GLM Ensemble",
+  clean_names_bin$clean_method)
 clean_names_bin$method <- sub("lm_ensemble", "glm_ensemble", clean_names_bin$method)
 dbin <- suppressWarnings(inner_join(dbin, clean_names_bin))
-
 
 rocs_sim <- dbin %>% group_by(clean_method, order, Ensemble) %>%
   do({get_roc(true = .$bbmsy_true, est = .$bbmsy_est)})
 rocs_sim <- rocs_sim %>% as.data.frame() %>%
   mutate(clean_method = paste(order, clean_method, sep = "-"))
-rocs_sim$Ensemble <- ifelse(grepl("Ensemble", rocs_sim$clean_method), "Ensemble", "Individual")
-#hexcol1 <- RColorBrewer::brewer.pal(9, "YlOrRd")
-#hexcol2 <- RColorBrewer::brewer.pal(9, "YlGnBu")
+rocs_sim$Ensemble <- ifelse(grepl("Ensemble", rocs_sim$clean_method),
+  "Ensemble", "Individual")
 
 p <- ggplot(rocs_sim, aes(spec, sens, colour = clean_method, group = clean_method)) +
   geom_line() + coord_equal() +
@@ -447,4 +445,3 @@ p <- ggplot(rocs_sim, aes(spec, sens, colour = clean_method, group = clean_metho
   scale_colour_brewer(palette="Spectral", guide = guide_legend(title = "Model"))
   print(p)
 ggsave("../figs/roc-sim.pdf", width = 8, height = 5)
-
