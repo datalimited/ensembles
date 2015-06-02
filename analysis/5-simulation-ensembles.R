@@ -2,8 +2,6 @@
 
 library("dplyr")
 library("ggplot2")
-
-if (!file.exists("generated-data/cv-sim/")) system("mkdir generated-data/cv-sim")
 source("0-ensemble-functions.R")
 
 dsim <- readRDS("generated-data/dsim.rds")
@@ -82,8 +80,6 @@ nvar <- 6L
 # best.iter <- gbm::gbm.perf(m_gbm1, method="cv", oobag.curve = FALSE)
 # print(best.iter)
 library("caret")
-library("doParallel")
-registerDoParallel(cores = 4L)
 x <- dplyr::select(d_mean, CMSY, COMSIR, Costello, SSCOM, spec_freq_0.05, spec_freq_0.2)
 mm_gbm <- train(x = x , y = log(d_mean_sim$bbmsy_true_mean), method = "gbm",
   trControl = trainControl(method = "cv", number = 3, repeats = 1),
