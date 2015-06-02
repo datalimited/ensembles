@@ -1,4 +1,4 @@
-# Make the main figures
+# Mak the main figures
 library(dplyr)
 library(ggplot2)
 
@@ -255,7 +255,8 @@ d_slope_plot$bbmsy_est[d_slope_plot$bbmsy_est > 10] <- NA
 d_slope_plot <- na.omit(d_slope_plot)
 
 pdf("../figs/hex-slope-sim.pdf", width = 7, height = 3.9)
-plot_hex_fig(d_slope_plot, xbins = 80L, lims_hex = range(d_slope_plot$bbmsy_est),
+plot_hex_fig(d_slope_plot, xbins = 80L,
+  lims_hex = range(c(d_slope_plot$bbmsy_est, d_slope_plot$bbmsy_true)),
   xlim_plot = c(-0.5, 0.5), ylim_plot = c(-0.5, 0.5), axis_ticks = c(-0.4, 0, 0.4),
   xlab = expression(B/B[BMSY]~slope), ylab = expression(widehat(B/B[BMSY])~slope))
 dev.off()
@@ -273,8 +274,8 @@ d_ram$bbmsy_est <- as.numeric(as.character(d_ram$bbmsy_est))
 d_ram <- filter(d_ram, bbmsy_true < 4, bbmsy_est < 4)
 
 pdf("../figs/hex-mean-ram-cv.pdf", width = 8, height = 4)
-plot_hex_fig(d_ram, add_hex = TRUE, alpha = 80, lims_hex = c(0, 4.01),
-  xbins = 35L)
+plot_hex_fig(d_ram, add_hex = TRUE, alpha = 80,
+  lims_hex = range(c(d_ram$bbmsy_est, d_ram$bbmsy_true)), xbins = 25L)
 dev.off()
 
 re_ram <- d_ram %>% mutate(
@@ -427,7 +428,7 @@ clean_names_bin$clean_method <- sub("LM Ensemble", "GLM Ensemble",
 clean_names_bin$method <- sub("lm_ensemble", "glm_ensemble", clean_names_bin$method)
 dbin <- suppressWarnings(inner_join(dbin, clean_names_bin))
 
-rocs_sim <- dbin %>% group_by(clean_method, order, Ensemble) %>%
+rocs_sim <- dbin %>% group_by(clean_method, order) %>%
   do({get_roc(true = .$bbmsy_true, est = .$bbmsy_est)})
 rocs_sim <- rocs_sim %>% as.data.frame() %>%
   mutate(clean_method = paste(order, clean_method, sep = "-"))
