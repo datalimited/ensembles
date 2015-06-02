@@ -15,11 +15,7 @@ ram_sum <- ram %>%
 
 ram_meta <- ram %>%
   group_by(stockid) %>%
-  summarise(
-    scientificname = scientificname[1],
-    habitat = habitat[1],
-    max_catch = max(catch),
-    total_catch = sum(catch))
+  summarise(scientificname = scientificname[1])
 ram_sum <- inner_join(ram_sum, ram_meta)
 
 spec_ram <- ram %>%
@@ -40,11 +36,11 @@ trues <- select(ram_sum, stockid, bbmsy_true_mean, bbmsy_true_slope)
 trues <- trues[!duplicated(trues), ] # one value per operating model stockid
 
 # switch from long to wide format for modelling:
-d_mean <- reshape2::dcast(ram_sum, stockid + scientificname + habitat + max_catch ~ method,
+d_mean <- reshape2::dcast(ram_sum, stockid + scientificname  ~ method,
   value.var = "bbmsy_est_mean")  %>%
   inner_join(select(trues, stockid, bbmsy_true_mean)) %>%
   inner_join(spec_ram_wide)
-d_slope <- reshape2::dcast(ram_sum, stockid + scientificname + habitat + max_catch ~ method,
+d_slope <- reshape2::dcast(ram_sum, stockid + scientificname ~ method,
   value.var = "bbmsy_est_slope") %>%
   inner_join(select(trues, stockid, bbmsy_true_slope)) %>%
   inner_join(spec_ram_wide)
@@ -177,11 +173,11 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
 library("doParallel")
 registerDoParallel(cores = 2L)
 set.seed(123)
-qq <- plyr::ldply(seq_len(40L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
+qq <- plyr::ldply(seq_len(30L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
   .parallel = TRUE)
 
 d_mean_long <- qq %>%
-  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -habitat) %>%
+  select(-spec_freq_0.05, -spec_freq_0.2) %>%
   reshape2::melt(id.vars = c("stockid", "bbmsy_true_mean"),
     variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_mean)
