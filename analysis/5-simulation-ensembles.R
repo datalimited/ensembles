@@ -79,24 +79,57 @@ nvar <- 6L
 
 # best.iter <- gbm::gbm.perf(m_gbm1, method="cv", oobag.curve = FALSE)
 # print(best.iter)
-library("caret")
-x <- dplyr::select(d_mean, CMSY, COMSIR, Costello, SSCOM, spec_freq_0.05, spec_freq_0.2)
-mm_gbm <- train(x = x , y = log(d_mean_sim$bbmsy_true_mean), method = "gbm",
-  trControl = trainControl(method = "cv", number = 3, repeats = 1),
-  tuneGrid =
-    expand.grid(
-      interaction.depth = c(1, 2, 4, 6),
-      n.trees = c(500, 2000, 4000, 8000),
-      shrinkage = c(0.1, 0.01, 0.005),
-      n.minobsinnode = 10),  # has little effect here, use default
-  verbose = FALSE)
-pdf("../figs/gbm-selection-rmse.pdf", width = 8, height = 6)
-plot(mm_gbm)
-dev.off()
+# library("caret")
+# x <- dplyr::select(d_mean, CMSY, COMSIR, Costello, SSCOM, spec_freq_0.05, spec_freq_0.2)
+# mm_gbm <- train(x = x , y = log(d_mean_sim$bbmsy_true_mean), method = "gbm",
+#   trControl = trainControl(method = "cv", number = 3, repeats = 1),
+#   tuneGrid =
+#     expand.grid(
+#       interaction.depth = c(1, 2, 4, 6),
+#       n.trees = c(500, 2000, 4000, 8000),
+#       shrinkage = c(0.1, 0.01, 0.005),
+#       n.minobsinnode = 10),  # has little effect here, use default
+#   verbose = FALSE)
+# pdf("../figs/gbm-selection-rmse.pdf", width = 8, height = 6)
+# plot(mm_gbm)
+# dev.off()
+#
+# pdf("../figs/gbm-selection-rsq.pdf", width = 8, height = 6)
+# plot(mm_gbm, metric = "Rsquared")
+# dev.off()
 
-pdf("../figs/gbm-selection-rsq.pdf", width = 8, height = 6)
-plot(mm_gbm, metric = "Rsquared")
-dev.off()
+# -----------------
+# # try and avoid positive bias at low bbmsy with weights:
+# library(randomForest)
+# library(gbm)
+# m1 <- randomForest(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+#     spec_freq_0.05 + spec_freq_0.2, data = d_mean)
+# d_mean$rf1 <- exp(predict(m1, n.trees = 1000))
+# ggplot(d_mean, aes(bbmsy_true_mean, rf1)) + geom_point() +
+#   geom_abline(slope = 1, intercept = 0, col = "red")
+#
+# m2 <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+#     spec_freq_0.05 + spec_freq_0.2, data = d_mean, distribution = "gaussian",
+#   n.trees = 1000L, interaction.depth = 4, shrinkage = 0.01)
+# d_mean$gbm2 <- exp(predict(m2, n.trees = 1000))
+# ggplot(d_mean, aes(bbmsy_true_mean, gbm2)) + geom_point() +
+#   geom_abline(slope = 1, intercept = 0, col = "red")
+#
+# # try with weights inverse to true b/bmsy
+# m2_weights <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+#     spec_freq_0.05 + spec_freq_0.2, data = d_mean, distribution = "gaussian",
+#   n.trees = 1000L, interaction.depth = 4, shrinkage = 0.01,
+#   weights = 1/d_mean$bbmsy_true_mean)
+# d_mean$gbm2_weights <- exp(predict(m2_weights, n.trees = 1000))
+# ggplot(d_mean, aes(bbmsy_true_mean, gbm2_weights)) + geom_point() +
+#   geom_abline(slope = 1, intercept = 0, col = "red")
+#
+# d_mean_long <- reshape2::melt(d_mean, id.vars = c("stockid", "iter", "bbmsy_true_mean"), measure.vars = c("gbm2", "gbm2_weights"), variable.name = "model", value.name = "bbmsy_hat")
+#
+# ggplot(d_mean_long, aes(bbmsy_true_mean, bbmsy_hat)) + facet_wrap(~model, ncol = 1) +
+#   geom_abline(slope = 1, intercept = 0, col = "red") + geom_point(alpha = 0.1)
+
+# -------------------
 
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
   spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
