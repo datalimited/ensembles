@@ -155,7 +155,7 @@ cv_sim_mean <- plyr::ldply(seq_len(4), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq),
-      lm_formula = paste0("log(bbmsy_true_mean) ~ (", eq, ")^2")))
+      lm_formula = paste0("log(bbmsy_true_mean) ~ (", eq, ")^2")), weighted = TRUE)
 cv_sim_mean$gbm_ensemble <- exp(cv_sim_mean$gbm_ensemble)
 cv_sim_mean$rf_ensemble <- exp(cv_sim_mean$rf_ensemble)
 cv_sim_mean$lm_ensemble <- exp(cv_sim_mean$lm_ensemble)

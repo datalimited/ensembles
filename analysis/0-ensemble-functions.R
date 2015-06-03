@@ -31,7 +31,7 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
   geo_mean = TRUE,
   individual_models = c("CMSY", "COMSIR", "Costello", "SSCOM"),
   id = "mean", cache_folder = "generated-data/cv-sim/", distribution = "gaussian",
-  lm_formula = "", glm_formula = "", nfold = 3L) {
+  lm_formula = "", glm_formula = "", nfold = 3L, weighted = FALSE) {
 
   ids <- unique(dat$cv_id)
   ids_scrambled <- base::sample(ids)
@@ -47,16 +47,22 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
     train_dat <- dplyr::filter(dat, cv_id %in% train_ids)
     test_dat  <- dplyr::filter(dat, cv_id %in% test_ids)
 
-    m_gbm <- gbm::gbm(as.formula(gbm_formula),
-      data = train_dat, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01,
-      distribution = distribution)
-    #saveRDS(m_gbm, file = paste0(cache_folder, id, "-", .n, "-gbm.rds"))
-
+    if (weighted) {
+      # with weights inverse to true B/BMSY to focus on low values:
+      m_gbm <- gbm::gbm(as.formula(gbm_formula),
+        data = train_dat, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01,
+        distribution = distribution, weights = 1/train_dat$bbmsy_true_mean)
+    } else {
+      m_gbm <- gbm::gbm(as.formula(gbm_formula),
+        data = train_dat, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01,
+        distribution = distribution)
+    }
     test_dat$gbm_ensemble <- tryCatch({gbm::predict.gbm(m_gbm,
       n.trees = m_gbm$n.trees, newdata = test_dat, type = "response")},
       error = function(e) rep(NA, nrow(test_dat)))
 
-    m_rf <- randomForest::randomForest(as.formula(gbm_formula), data = train_dat, ntree = 1000L)
+    m_rf <- randomForest::randomForest(as.formula(gbm_formula), data = train_dat,
+      ntree = 1000L)
     test_dat$rf_ensemble <- tryCatch({predict(m_rf, newdata = test_dat)},
       error = function(e) rep(NA, nrow(test_dat)))
 
