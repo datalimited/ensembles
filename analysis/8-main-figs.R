@@ -1,4 +1,4 @@
-# Mak the main figures
+# Make the main figures
 library(dplyr)
 library(ggplot2)
 
