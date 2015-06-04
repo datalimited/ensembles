@@ -118,6 +118,16 @@ both around.}
 
 \begin{figure}[htbp]
 \begin{center}
+\includegraphics[width=\textwidth]{../figs/gbm-partial-residuals.pdf}
+\caption{Partial residuals plot from the GBM model. The dots represent the residuals when predicting from the model with the predictor set to its mean value. The lines represent the prediction when all other predictors are set to their mean value. Note that these are on a scale of $\log$ \bbmsy\\ residuals.}
+\label{fig:partial-residuals-sim-gbm}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
 \caption{Partial dependence two-dimensional plots for simulation GBM ensembles. Red is above one and blue is below one.}
 \label{fig:partial-2d-sim}
@@ -139,8 +149,18 @@ both around.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=5in]{../figs/hex-mean-ram-cv.pdf}
-\caption{RAM stocks fit with ensemble models built from the simulated dataset. Lower figure is a draft in ggplot. These are based on 3-fold cross-validation of the mPRM model.}
+\caption{RAM stocks fit with ensemble models built from the simulated dataset. These are based on 3-fold cross-validation of the mPRM model.}
 \label{fig:hexagon-ram}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=5in]{../figs/hex-mean-sim-basic-cv.pdf}
+\caption{Same as Fig.~\ref{fig:hexagon} but with simulation ensembles that have no covariates.}
+\label{fig:hexagon-sim-basic}
 \end{center}
 \end{figure}
 
