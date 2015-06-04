@@ -160,7 +160,7 @@ ram_third_row_lims <- filter(d_ram, grepl("Ensemble", clean_method)) %>%
 # dev.off()
 
 # Same as above but add the RAM ensembles as a third row:
-pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.7, height = 4.1)
+pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.9, height = 4.2)
 plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 25L,
   lims_hex3 = ram_third_row_lims, count_transform3 = 18,
   oma = c(3.5, 3.5, .5, 2.5), count_transform = 1,
@@ -169,7 +169,7 @@ par(xpd = NA)
 mtext("Simulated data", side = 4, outer = TRUE, line = 0.4, las = 0, col = "grey20",
   adj = 0.8)
 mtext("Stock assessment", side = 4, outer = TRUE, line = 0.4, las = 0,
-  col = "grey20", adj = -0.05)
+  col = "grey20", adj = 0)
 mtext("database", side = 4, outer = TRUE, line = 1.4, las = 0,
   col = "grey20", adj = 0.1)
 dev.off()
@@ -232,7 +232,7 @@ perf <- function(dat, xlim = range(dat$mare) + c(-0.07, 0.025),
   par(xpd = FALSE)
   axis(1, at = seq(0.2, 0.6, .1))
   axis(2, at = seq(0, 0.6, .1))
-  box()
+  box(col = "grey50")
 
 }
 pdf("../figs/performance.pdf", width = 6.9, height = 3.3)

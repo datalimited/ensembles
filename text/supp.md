@@ -166,7 +166,7 @@ both around.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/hex-slope-sim.pdf}
+\includegraphics[width=5in]{../figs/hex-slope-sim.pdf}
 \caption{Same as Fig.~\ref{fig:hexagon} but with the slope of \bbmsy\\ in
 the last three years as the response variable.}
 \label{fig:scatter-sim-slope}

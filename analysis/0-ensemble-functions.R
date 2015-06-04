@@ -238,9 +238,10 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
       points(dd$bbmsy_true, dd$bbmsy_est, col = paste0(pal[8], alpha), pch = 21,
         bg = paste0(pal[4], alpha), cex = 0.7)
     }
-    abline(v = 1, lty = "22", col = "#33333350", lwd = 1.5)
-    abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
-    abline(a = 0, b = 1, lty = "22", col = "#33333350", lwd = 1.5)
+    line_col <- "#33333360"
+    abline(v = 1, lty = "22", col = line_col, lwd = 1.3)
+    abline(h = 1, lty = "22", col = line_col, lwd = 1.3)
+    abline(a = 0, b = 1, lty = "22", col = line_col, lwd = 1.3)
     box(col = "grey50")
     add_label(-0.01, 0.08, paste0("(", letters[m], ") ", unique(filter(dat, order == m)$clean_method)),
       #col = "grey20", add_bg = ifelse(m %in% 1:4, FALSE, TRUE))
