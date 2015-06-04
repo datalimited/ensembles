@@ -121,8 +121,9 @@ add_label <- function(xfrac, yfrac, label, pos = 4, add_bg = FALSE, ...) {
 plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   ylab = expression(widehat(B/B[MSY])), lims_hex = c(0, max(dat$bbmsy_est)),
   xlim_plot = c(0, 3.9), ylim_plot = c(0, 3.2), axis_ticks = c(0, 1, 2, 3),
-  add_hex = TRUE, alpha = 50, xbins3 = xbins, lims_hex3 = lims_hex,
-  count_transform = 1.5, count_transform3 = 30, oma = c(3.5, 3.5, .5, .5)) {
+  add_hex = TRUE, alpha = 30, xbins3 = xbins, lims_hex3 = lims_hex,
+  count_transform = 1.5, count_transform3 = 30, oma = c(3.5, 3.5, .5, .5),
+  bias = c(rep(4, 12))) {
 
   rows <- max(dat$order) / 4
   par(mfrow = c(rows, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
@@ -141,9 +142,31 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   hexcol1 <- hexcol2
   hexcol3 <- hexcol2
   hexcol4 <- hexcol2
-  hexcol_ensemble <- RColorBrewer::brewer.pal(9, "YlGnBu")
+  library("RColorBrewer")
+  # hexcol1 <- c("#F9F9F9", brewer.pal(4, "Dark2")[1])
+  # hexcol2 <- c("#F9F9F9", brewer.pal(4, "Dark2")[2])
+  # hexcol3 <- c("#F9F9F9", brewer.pal(4, "Dark2")[3])
+  # hexcol4 <- c("#F9F9F9", brewer.pal(4, "Dark2")[4])
+
+  # hexcol1 <- c(paste0(brewer.pal(4, "Dark2")[1], "FF"), paste0(brewer.pal(4, "Dark2")[1], "00")) %>% rev
+  # hexcol2 <- c(paste0(brewer.pal(4, "Dark2")[2], "FF"), paste0(brewer.pal(4, "Dark2")[2], "00")) %>% rev
+  # hexcol3 <- c(paste0(brewer.pal(4, "Dark2")[3], "FF"), paste0(brewer.pal(4, "Dark2")[3], "00")) %>% rev
+  # hexcol4 <- c(paste0(brewer.pal(4, "Dark2")[4], "FF"), paste0(brewer.pal(4, "Dark2")[4], "00")) %>% rev
+
+  hexcol1 <- brewer.pal(9, "BuGn")
+  hexcol2 <- brewer.pal(9, "BuPu")
+  hexcol3 <- brewer.pal(9, "GnBu")
+  hexcol4 <- brewer.pal(9, "OrRd")
+
+  hexcol1 <- brewer.pal(9, "Reds")
+  hexcol2 <- brewer.pal(9, "Greens")
+  hexcol3 <- brewer.pal(9, "Blues")
+  hexcol4 <- brewer.pal(9, "Purples")
+  # hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Spectral") %>% rev
+  hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Greys")
 
   hexcol_third_row <- RColorBrewer::brewer.pal(9, "Greys")
+  # hexcol_third_row <- RColorBrewer::brewer.pal(9, "RdPu")
 
   panels <- seq_len(length(unique(dat$order)))
 
@@ -161,7 +184,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
         dy <- hexbin::hcell2xy(bin)$y
         dxy <- data.frame(x = dx, y = dy)
         counts <- bin@count
-        counts <- round(log(counts*count_transform))
+        # counts <- round(log(counts*count_transform))
         xbins_plot <- xbins
       } else { # the optional third row:
         xlim <- lims_hex3
@@ -174,31 +197,34 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
         dy <- hexbin::hcell2xy(bin)$y
         dxy <- data.frame(x = dx, y = dy)
         counts <- bin@count
-        counts <- round(log(counts*count_transform3))
+        # counts <- round(log(counts*count_transform3))
         xbins_plot <- xbins3
       }
     }
     #alternative power transformation:
     #counts <- round((counts)^0.30)
+    space = "rgb"
     if (m %in% 1)
-      pal_function <- colorRampPalette(hexcol1)
+      pal_function <- colorRampPalette(hexcol1, space = space, bias = bias[1])
     if (m %in% 2)
-      pal_function <- colorRampPalette(hexcol2)
+      pal_function <- colorRampPalette(hexcol2, space = space, bias = bias[2])
     if (m %in% 3)
-      pal_function <- colorRampPalette(hexcol3)
+      pal_function <- colorRampPalette(hexcol3, space = space, bias = bias[3])
     if (m %in% 4)
-      pal_function <- colorRampPalette(hexcol4)
+      pal_function <- colorRampPalette(hexcol4, space = space, bias = bias[4])
     if (m %in% 5:8)
-      pal_function <- colorRampPalette(hexcol_ensemble)
-    if (m %in% 9:12)
-      pal_function <- colorRampPalette(hexcol_third_row)
+      pal_function <- colorRampPalette(hexcol_ensemble, space = space, bias = bias[5])
+    if (m %in% 9:12) {
+      pal_function <- colorRampPalette(hexcol_third_row, space = space, bias = bias[9])
+      add_hex <- FALSE
+    }
     if (add_hex) {
       pal <- pal_function(max(counts))
     } else {
       pal <- pal_function(10)
     }
     #add transparency to de-emphasize fist colour bins:
-    pal[1:2] <- paste0(pal[1:2], round(seq(80, 99, length.out = 2)))
+    # pal[1:2] <- paste0(pal[1:2], round(seq(80, 99, length.out = 2)))
     plot(1, 1, xlim = xlim_plot, ylim = ylim_plot, type = "n", asp = 1,
       xlab = "", ylab = "", xaxt = "n", yaxt = "n", xaxs = "i")
     if (add_hex) {
@@ -209,7 +235,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     } else {
       dd <- dat %>% filter(order == m)
       points(dd$bbmsy_true, dd$bbmsy_est, col = paste0(pal[8], alpha), pch = 21,
-        bg = paste0(pal[5], alpha))
+        bg = paste0(pal[4], alpha), cex = 0.7)
     }
     abline(v = 1, lty = "22", col = "#33333350", lwd = 1.5)
     abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)

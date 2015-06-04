@@ -164,8 +164,9 @@ dev.off()
 # Same as above but add the RAM ensembles as a third row:
 pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.7, height = 4.1)
 plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 25L,
-  lims_hex3 = ram_third_row_lims, count_transform3 = 20,
-  oma = c(3.5, 3.5, .5, 2.5))
+  lims_hex3 = ram_third_row_lims, count_transform3 = 18,
+  oma = c(3.5, 3.5, .5, 2.5), count_transform = 1,
+  alpha = 15)
 par(xpd = NA)
 mtext("Simulated data", side = 4, outer = TRUE, line = 0.4, las = 0, col = "grey20",
   adj = 0.8)
@@ -187,7 +188,8 @@ dev.off()
 
 pdf("../figs/hex-mean-ram-cv.pdf", width = 8, height = 4)
 plot_hex_fig(d_ram, add_hex = TRUE, alpha = 80,
-  lims_hex = range(c(d_ram$bbmsy_est, d_ram$bbmsy_true)), xbins = 25L)
+  lims_hex = range(c(d_ram$bbmsy_est, d_ram$bbmsy_true)), xbins = 25L,
+  count_transform = 20)
 dev.off()
 
 pdf("../figs/hex-mean-sim-basic-cv.pdf", width = 8, height = 4)

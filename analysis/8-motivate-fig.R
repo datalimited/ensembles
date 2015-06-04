@@ -47,14 +47,24 @@ dl_dat <- bind_rows(cmsy, comsir, sscom, costello) %>%
 #geom_ribbon(aes(ymax = b_bmsyiq75, ymin = b_bmsyiq25, fill = method), alpha = 0.2) +
 #geom_line(data = ram, aes(yr, b_bmsy), colour = "black", fill = "black")
 
-col_df <- data_frame(col = paste0(RColorBrewer::brewer.pal(4, "Dark2")),
+pal <- paste0(RColorBrewer::brewer.pal(4, "Dark2")) # colour-blind proof
+pal <- c("#728905", "#2075C7", "#465A61", "#D01B24") # solarized
+pal <- c("#BD1550", "#E97F02", "#F8CA00", "#8A9B0F") # http://www.colourlovers.com/palette/848743/(◕_”_◕)
+pal <- c("#00A0B0", "#6A4A3C", "#CC333F", "#EDC951") #"EDC951" #http://www.colourlovers.com/palette/1473/Ocean_Five
+pal <- paste0(RColorBrewer::brewer.pal(4, "Set2"))
+library(RColorBrewer)
+pals <- c("BuGn", "BuPu", "GnBu", "OrRd")
+pals <- c("Reds", "Greens", "Blues", "Purples")
+pal <- sapply(pals, function(x) brewer.pal(9, x)[7]) %>% as.character
+
+col_df <- data_frame(col = pal,
   method = c("CMSY", "COM-SIR", "SSCOM", "mPRM"))
 dl_dat$col <- NULL # for re-running
 dl_dat <- inner_join(dl_dat, col_df)
 
 plot_method <- function(dat) {
   polygon(c(dat$yr, rev(dat$yr)), c(dat$b_bmsyiq25, rev(dat$b_bmsyiq75)), border = NA,
-    col = paste0(dat$col, 70))
+    col = paste0(dat$col, 20))
   lines(dat$yr, dat$b_bmsy, col = dat$col, lwd = 2.5)
 }
 
@@ -67,7 +77,7 @@ par(mar = c(3, 3.4, .5, 4.5), cex = 0.8, oma = c(0, 0, 0, 0), tck = -0.015,
 plot(1, 1, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", axes = FALSE)
 abline(h = 1, lty = 2, col = "grey40", lwd = 2)
 plyr::d_ply(dl_dat, "method", plot_method)
-lines(ram$yr, ram$b_bmsy, lwd = 3.5, col = "grey20")
+lines(ram$yr, ram$b_bmsy, lwd = 3.5, col = "grey30")
 axis(2, col = "grey40", cex.axis = 0.9)
 par(mgp = par()[["mgp"]] + c(0, -0.25, 0))
 axis(1, col = "grey40", cex.axis = 0.9)
