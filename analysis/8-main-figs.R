@@ -274,3 +274,47 @@ par(xpd = NA)
 mtext("Rank-order correlation", cex = 1, side = 2, outer = TRUE, line = -0.9,
   col = "grey20", las = 0)
 dev.off()
+
+# error metrics for slope:
+d_slope_error <- d_slope_plot %>%
+  mutate(
+    re = bbmsy_est - bbmsy_true,
+    are = abs(re)) %>%
+  group_by(clean_method) %>%
+  summarise(
+    mre = median(re),
+    mare = median(are),
+    corr = cor(bbmsy_true, bbmsy_est, method = "spearman",
+      use = "pairwise.complete.obs")) %>%
+  as.data.frame
+
+pdf("../figs/performance-slope-sim.pdf", width = 5, height = 4)
+par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
+  oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
+  xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+par(family="serif")
+
+pal_df <- data_frame(mre = seq(-max(abs(d_slope_error$mre)+0.02),
+  max(abs(d_slope_error$mre)+0.02),
+  length.out = 100), col = pal(100))
+d_slope_error$col <- pal_df$col[findInterval(d_slope_error$mre, pal_df$mre)]
+perf(d_slope_error, label = "", xlim = c(0.02, 0.065), ylim = c(-0.05, 0.65))
+axis(1, at = seq(0, 0.1, 0.02), col = "grey50")
+# colour legend:
+blocks <- seq(0, 0.2, length.out = 100)
+leg_x <- 0.025
+for(i in 1:99) {
+  rect(leg_x, blocks[i], leg_x + 0.002, blocks[i+1]+0.001, border = NA, col = pal(100)[i])
+}
+tick1 <- findInterval(-0.02, pal_df$mre)
+tick3 <- findInterval(0.02, pal_df$mre)
+text(rep(leg_x + 0.002, 3),
+  blocks[c(tick1, 50, tick3)], labels = c("-0.02", "  0", "  0.02"), pos = 4,
+  col = "grey50", cex = 0.9)
+text(leg_x - 0.001, 0.22, "Bias (MRE)", col = "grey20", pos = 4)
+mtext("Inaccuracy (MARE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
+  cex = 1)
+par(xpd = NA)
+mtext("Rank-order correlation", cex = 1, side = 2, outer = TRUE, line = -0.9,
+  col = "grey20", las = 0)
+dev.off()
