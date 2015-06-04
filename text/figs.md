@@ -49,7 +49,7 @@ greater density of data.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=6in]{../figs/performance-gg.pdf}
+\includegraphics[width=6in]{../figs/performance.pdf}
 \caption{Performance of individual and ensemble models fitted to a dataset with
 known population statuses (left panel) and the RAM Legacy stock assessment
 database (right panel). The x-axis represents within-population innaccuracy:
@@ -59,7 +59,7 @@ best performance across the two metrics. The colour shading represents bias in
 relative error: white points are unbiased, blue points represent methods that
 predict \bbmsy\\ values that are too high, red points represent methods that
 predict \bbmsy\\ values that are too low. These performance metrics are derived
-from the data in Fig.~\ref{fig:sim-hexagon} and based on repeated three-fold
+from the data in Fig.~\ref{fig:hexagon} and based on repeated three-fold
 cross-validation testing.
 }
 \label{fig:performance}
