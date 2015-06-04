@@ -96,3 +96,186 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
   })
   out
 }
+
+add_label <- function(xfrac, yfrac, label, pos = 4, add_bg = FALSE, ...) {
+# xfrac The fraction over from the left side.
+# yfrac The fraction down from the top.
+# label The text to label with.
+# pos Position to pass to text()
+# ... Anything extra to pass to text(), e.g. cex, col.
+  u_ <- par("usr")
+  width <- u_[2] - u_[1]
+  height <- u_[4] - u_[3]
+  x <- u_[1] + xfrac * width
+  y <- u_[4] - yfrac * height
+  text(x, y, label, pos = pos, ...)
+  if (add_bg) {
+    bg_col <- "#00000015"
+    rect(x + width*0.04,                   y - height*0.04,
+      x + strwidth(label) + width*0.07, y + strheight(label) - height * 0.01,
+      col = bg_col, border = NA)
+  }
+}
+
+
+plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
+  ylab = expression(widehat(B/B[MSY])), lims_hex = c(0, max(dat$bbmsy_est)),
+  xlim_plot = c(0, 3.9), ylim_plot = c(0, 3.2), axis_ticks = c(0, 1, 2, 3),
+  add_hex = TRUE, alpha = 50, xbins3 = xbins, lims_hex3 = lims_hex,
+  count_transform = 1.5, count_transform3 = 30) {
+
+  rows <- max(dat$order) / 4
+  par(mfrow = c(rows, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
+    oma = c(3.5, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
+    xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+
+  hexcol1 <- RColorBrewer::brewer.pal(9, "Blues")
+  #hexcol1 <- c("#FFFFFF", "#6A4A3C")
+  hexcol2 <- RColorBrewer::brewer.pal(9, "Oranges")
+  hexcol2 <- RColorBrewer::brewer.pal(9, "YlOrRd")
+  #hexcol2 <- c("#FFFFFF", "#CC333F")
+  hexcol3 <- RColorBrewer::brewer.pal(9, "Greens")
+  hexcol4 <- RColorBrewer::brewer.pal(9, "Purples")
+  hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Greys")
+
+  hexcol1 <- hexcol2
+  hexcol3 <- hexcol2
+  hexcol4 <- hexcol2
+  hexcol_ensemble <- RColorBrewer::brewer.pal(9, "YlGnBu")
+
+  hexcol_third_row <- RColorBrewer::brewer.pal(9, "Greys")
+
+  panels <- seq_len(length(unique(dat$order)))
+
+  plyr::l_ply(panels, function(m) {
+
+    if (add_hex) {
+      if (m <= 8) {
+        xlim <- lims_hex
+        ylim <- lims_hex
+        bin <- hexbin::hexbin(
+          filter(dat, order == m)$bbmsy_true,
+          filter(dat, order == m)$bbmsy_est,
+          xbnds = xlim, ybnds = ylim, xbins = xbins)
+        dx <- hexbin::hcell2xy(bin)$x
+        dy <- hexbin::hcell2xy(bin)$y
+        dxy <- data.frame(x = dx, y = dy)
+        counts <- bin@count
+        counts <- round(log(counts*count_transform))
+        xbins_plot <- xbins
+      } else { # the optional third row:
+        xlim <- lims_hex3
+        ylim <- lims_hex3
+        bin <- hexbin::hexbin(
+          filter(dat, order == m)$bbmsy_true,
+          filter(dat, order == m)$bbmsy_est,
+          xbnds = xlim, ybnds = ylim, xbins = xbins3)
+        dx <- hexbin::hcell2xy(bin)$x
+        dy <- hexbin::hcell2xy(bin)$y
+        dxy <- data.frame(x = dx, y = dy)
+        counts <- bin@count
+        counts <- round(log(counts*count_transform3))
+        xbins_plot <- xbins3
+      }
+    }
+    #alternative power transformation:
+    #counts <- round((counts)^0.30)
+    if (m %in% 1)
+      pal_function <- colorRampPalette(hexcol1)
+    if (m %in% 2)
+      pal_function <- colorRampPalette(hexcol2)
+    if (m %in% 3)
+      pal_function <- colorRampPalette(hexcol3)
+    if (m %in% 4)
+      pal_function <- colorRampPalette(hexcol4)
+    if (m %in% 5:8)
+      pal_function <- colorRampPalette(hexcol_ensemble)
+    if (m %in% 9:12)
+      pal_function <- colorRampPalette(hexcol_third_row)
+    if (add_hex) {
+      pal <- pal_function(max(counts))
+    } else {
+      pal <- pal_function(10)
+    }
+    #add transparency to de-emphasize fist colour bins:
+    pal[1:2] <- paste0(pal[1:2], round(seq(80, 99, length.out = 2)))
+    plot(1, 1, xlim = xlim_plot, ylim = ylim_plot, type = "n", asp = 1,
+      xlab = "", ylab = "", xaxt = "n", yaxt = "n", xaxs = "i")
+    if (add_hex) {
+      for (i in 1:nrow(dxy)) {
+        hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
+          unitcell = diff(xlim)/xbins_plot/2, border = NA)
+      }
+    } else {
+      dd <- dat %>% filter(order == m)
+      points(dd$bbmsy_true, dd$bbmsy_est, col = paste0(pal[8], alpha), pch = 21,
+        bg = paste0(pal[5], alpha))
+    }
+    abline(v = 1, lty = "22", col = "#33333350", lwd = 1.5)
+    abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
+    abline(a = 0, b = 1, lty = "22", col = "#33333350", lwd = 1.5)
+    box(col = "grey50")
+    add_label(-0.01, 0.08, unique(filter(dat, order == m)$clean_method),
+      #col = "grey20", add_bg = ifelse(m %in% 1:4, FALSE, TRUE))
+      col = "grey20", add_bg = FALSE)
+    if (m %in% c(1, 5, 9)) axis(2, at = axis_ticks[-length(axis_ticks)], col = "grey50")
+    if (m %in% (rows * 4 - 3):(rows * 4)) axis(1, at = axis_ticks, col = "grey50")
+  })
+  mtext(xlab, side = 1, line = 2.1, outer = TRUE, col = "grey20")
+  mtext(ylab, side = 2, line = 1.6, outer = TRUE,
+    las = 0, col = "grey20")
+}
+
+hexagon <- function (x, y, unitcell = 1, ...) {
+  polygon(
+    hexbin::hexcoords(unitcell)$x + x,
+    hexbin::hexcoords(unitcell)$y + y, ...)
+}
+
+performance_panel <- function(dat, xlim = NULL, ylim = NULL) {
+
+  l <- reshape2::dcast(dat, clean_method ~ variable, value.var = "l")
+  u <- reshape2::dcast(dat, clean_method ~ variable, value.var = "u")
+  m <- reshape2::dcast(dat, clean_method + text_col ~ variable, value.var = "m")
+  fudge_x <- reshape2::dcast(dat, clean_method ~ variable, value.var = "label_fudge_x")
+  fudge_y <- reshape2::dcast(dat, clean_method ~ variable, value.var = "label_fudge_y")
+
+  pal <- data_frame(
+    col = RColorBrewer::brewer.pal(11, "RdBu"),
+    mre = seq(-max(m$mre)*1.05, max(m$mre)*1.05, length.out = 11))
+  m$col <- pal$col[findInterval(m$mre, pal$mre)]
+
+  if (is.null(xlim))
+  xlim <- filter(dat, variable == "mare") %>% select(l, u) %>% range +
+    c(-0.01, 0.01)
+  if (is.null(ylim))
+  ylim <- filter(dat, variable == "corr") %>% select(l, u) %>% range +
+    c(-0.02, 0.01)
+
+  plot(m$mare, m$corr, xlim = xlim, ylim = ylim, pch = 21, bg = m$col, col = "grey50",
+    axes = FALSE, xlab = "", ylab = "", type = "n")
+  # segments(m$mare, l$corr, m$mare, u$corr, col = "#00000050", lwd = 1.4)
+  # segments(l$mare, m$corr, u$mare, m$corr, col = "#00000050", lwd = 1.4)
+  points(m$mare, m$corr, pch = 21, bg = m$col, col = "grey50", cex = 1.5,
+    lwd = 1.4)
+  xtext <- m$mare + fudge_x$mare
+  ytext <- m$corr + fudge_y$corr - 0.015
+  # xtext <- m$mare
+  # ytext <- m$corr - 0.015
+  text(xtext, ytext, m$clean_method, cex = 0.90, pos = 4, col = m$text_col,
+    bg = "red")
+  bg_cols <- c(rep(NA, 4), rep("#00000020", 4))
+  rect(xtext + 0.007, ytext -0.015, xtext + strwidth(m$clean_method),
+    ytext + 0.02, col = bg_cols, border = NA)
+  box(col = "grey50")
+  axis(2, col = "grey50", cex.axis = 1, at = seq(0.1, 0.6, 0.1))
+#  par(mgp = par()[["mgp"]] + c(0, -0.25, 0))
+  axis(1, col = "grey50", cex.axis = 1, at = seq(0.3, 0.6, 0.1))
+  legend("topright", bty = "n",
+    fill =
+      c(pal[pal$mre < 0.21 & pal$mre > 0.19,]$col,
+        "white",
+        pal[pal$mre > -0.21 & pal$mre < -0.19,]$col), border = rep("grey50", 3),
+    legend = c("  0.2", "  0", "-0.2"), text.col = "grey40", title = "Bias (MPE)")
+}
+
