@@ -208,16 +208,17 @@ mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las
 dev.off()
 
 
-performance_ggplot <- function(dat, show_legend = TRUE) {
+performance_ggplot <- function(dat, show_legend = TRUE, label = "") {
   p <- dat %>% ggplot(aes(mare, corr)) + geom_point(aes(fill = mre), pch = 21, size = 5, col = "grey50") +
   geom_text(aes(label = clean_method), size = 2.7, vjust = 2) +
   scale_fill_gradient2(
-    low = RColorBrewer::brewer.pal(6, "PRGn")[1],
-    high = RColorBrewer::brewer.pal(6, "PRGn")[6],
-    space = "rgb", guide = "colourbar", limits=c(-0.23, 0.51)) +
+    low = RColorBrewer::brewer.pal(6, "RdBu")[1],
+    high = RColorBrewer::brewer.pal(6, "RdBu")[6],
+    space = "Lab", guide = "colourbar", limits=c(-0.23, 0.51)) +
   theme_bw() + xlab("Inaccuracy (MARE)") + ylab("Rank-order correlation") +
   xlim(range(dat$mare) + c(-0.03, 0.01)) +
   ylim(range(dat$corr) + c(-0.01, 0.00)) +
+    # xlim(0.25, 0.65) + ylim(0, 0.5) +
   theme(panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
@@ -225,7 +226,8 @@ performance_ggplot <- function(dat, show_legend = TRUE) {
     labs(fill="Bias (MRE)") +
     theme(legend.title = element_text(colour = "black", face = "plain"),
       legend.text = element_text(colour = "grey30"),
-      axis.text = element_text(colour = "grey30"))
+      axis.text = element_text(colour = "grey30")) +
+    annotate("text", label = label, x = min(dat$mare), y = max(dat$corr))
   if (show_legend) {
     p <- p + theme(legend.position = c(0.15, 0.3))
   } else {
@@ -233,10 +235,75 @@ performance_ggplot <- function(dat, show_legend = TRUE) {
   }
   p
 }
-p1 <- performance_ggplot(d_sim_perf_wide)
-p2 <- performance_ggplot(re_ram_sum, show_legend = FALSE)
+p1 <- performance_ggplot(d_sim_perf_wide, label = "Simulated data")
+p2 <- performance_ggplot(re_ram_sum, show_legend = FALSE, label = "Stock assessment\ndatabase")
 pdf("../figs/performance-gg.pdf", width = 8, height = 4)
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 dev.off()
 
+# base:
 
+all <- bind_rows(d_sim_perf_wide, re_ram_sum)
+pal <- RColorBrewer::brewer.pal(11, "RdBu") %>% colorRampPalette
+pal_df <- data_frame(mre = seq(-max(abs(all$mre)+0.05), max(abs(all$mre)+0.05), length.out = 100),
+  col = pal(100))
+d_sim_perf_wide$col <- pal_df$col[findInterval(d_sim_perf_wide$mre, pal_df$mre)]
+re_ram_sum$col <- pal_df$col[findInterval(re_ram_sum$mre, pal_df$mre)]
+
+perf <- function(dat, xlim = range(dat$mare) + c(-0.07, 0.025),
+  ylim = range(dat$corr) + c(-0.05, 0.02),
+  label = "") {
+
+  plot(1, 1, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", las = 1,
+    axes = FALSE, yaxs = "i", xaxs = "i")
+  points(dat$mare, dat$corr, pch = 21, cex = 2, bg = dat$col, lwd = 0.7,
+    col = "grey40")
+  text(dat$mare, dat$corr, labels = dat$clean_method, adj = c(0.5, 2),
+    col = ifelse(grepl("Ensemble", dat$clean_method), "grey10", "grey50"),
+    cex = 0.9)
+  par(xpd = NA)
+  add_label(0.01, -0.04, label, cex = 1.1)
+  par(xpd = FALSE)
+  axis(1, at = seq(0.2, 0.6, .1))
+  axis(2, at = seq(0, 0.6, .1))
+  box()
+
+}
+pdf("../figs/performance.pdf", width = 6.9, height = 3.3)
+par(mfrow = c(1, 2))
+par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
+  oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
+  xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+
+perf(d_sim_perf_wide, label = "(a) Simulation")
+
+# colour legend:
+blocks <- seq(0, 0.2, length.out = 100)
+leg_x <- 0.25
+
+for(i in 1:99) {
+  rect(leg_x, blocks[i], leg_x + 0.03, blocks[i+1]+0.001, border = NA, col = pal(100)[i])
+}
+tick1 <- findInterval(-0.5, pal_df$mre)
+tick3 <- findInterval(0.5, pal_df$mre)
+
+text(rep(leg_x + 0.025, 3),
+  blocks[c(tick1, 50, tick3)], labels = c("-0.5", "  0", "  0.5"), pos = 4,
+  col = "grey50", cex = 0.9)
+text(leg_x - 0.01, 0.22, "Bias (MRE)", col = "grey20", pos = 4)
+
+segments(
+  x0 = rep(leg_x + 0.025, 3),
+  y0 = blocks[c(tick1, 50, tick3)],
+  x1 = rep(leg_x + 0.030, 3),
+  y1 = blocks[c(tick1, 50, tick3)], col = "grey80")
+# end colour legend
+
+perf(re_ram_sum, label = "(b) Stock assessment database")
+
+mtext("Inaccuracy (MARE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
+  cex = 1)
+par(xpd = NA)
+mtext("Rank-order correlation", cex = 1, side = 2, outer = TRUE, line = -0.9,
+  col = "grey20", las = 0)
+dev.off()
