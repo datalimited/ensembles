@@ -67,7 +67,7 @@ Boosted regression ensemble:
 
 Table of the predictors
 
-\begin{longtable}{>{\RaggedRight}m{3.2cm}>{\RaggedRight}p{8.5cm}}
+\begin{longtable}{>{\RaggedRight}m{4.5cm}>{\RaggedRight}p{8.5cm}}
 \toprule
 Variable & Description \\ 
 \midrule
@@ -83,14 +83,9 @@ SSCOM & Median estimated $B/B_{\mathrm{MSY}}$
 mPRM & Median estimated $B/B_{\mathrm{MSY}}$ 
   from modified panel regression method \citep{costello2012} \\ 
 
-Maximum catch & Maximum observed catch\\
+Spectral density 0.05 & Spectral density (of fraction of maximum catch) at 20 years\\
 
-Spectral density 0.05 & Spectral density at 20 years\\
-
-Spectral density 0.20 & Spectral density at 5 years\\
-
-Lifehistory & A categorical description of lifehistory. 
-  One of three values in the simulated dataset.\\
+Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 years\\
 
 \bottomrule
 \label{tab:predictors}
@@ -108,8 +103,7 @@ Lifehistory & A categorical description of lifehistory.
 \includegraphics[width=\textwidth]{../figs/partial-sim.pdf}
 \caption{Partial dependence plots for GBM ensemble models fitted to the
 simulation data. Lines represent the marginal non-linear effect of each
-predictor on mean \bbmsy\\. TODO Add random forest model to this too if we keep
-both around.}
+predictor on \bbmsy\\ after integrating out the other predictor values.}
 \label{fig:partial-sim}
 \end{center}
 \end{figure}
@@ -129,7 +123,7 @@ both around.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
-\caption{Partial dependence two-dimensional plots for simulation GBM ensembles. Red is above one and blue is below one.}
+\caption{Two-dimensional partial dependence plots for GBM ensemble models fitted to the simulated dataset of known status. Red shading indicates an expected \bbmsy\\ above one and blue shading an expected value below one. White shading represents an expected value of 1.}
 \label{fig:partial-2d-sim}
 \end{center}
 \end{figure}
@@ -139,7 +133,7 @@ both around.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/roc-sim.pdf}
-\caption{ROC curves for the simulated data.}
+\caption{Receiver-operating-characteristic (ROC) curves from repeated three-fold cross-validation of the simulated data of known status. Shown are ROC curves for (a) ensemble models and (b) individual data-limited model estimates based on estimates of \bbmsy\\ with the response variable representing whether true \bbmsy\\ was above or below one. The diagonal dashed line represents performance that is no better than flipping a coin. The area under the curve represents the probability that the model would correctly rank two randomly chosen stocks in terms of their mean \bbmsy\\ in the last five years. Sensitivity represents the true positive rate (correctly categorizing a stock as having a \bbmsy\\ greater than one). Specificity refers to the true negative rate (correctly categorizing a stock as having a \bbmsy\\ less than one). The sensitivity and sensitivity values are shown across all possible splits (values of \bbmsy\\) at which one could divide the stocks into these two categories.}
 \label{fig:roc-sim}
 \end{center}
 \end{figure}
@@ -148,8 +142,8 @@ both around.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=5in]{../figs/hex-mean-ram-cv.pdf}
-\caption{RAM stocks fit with ensemble models built from the simulated dataset. These are based on 3-fold cross-validation of the mPRM model.}
+\includegraphics[width=6.5in]{../figs/hex-mean-ram-cv.pdf}
+\caption{RAM stocks fit with individual data-limited assessment methods (a--d) and ensemble models (e--h) that were trained on the simulated dataset. These are based on 3-fold cross-validation of the mPRM model. Panels e--h duplicate the lower row in Fig.~\ref{fig:hexagon}.}
 \label{fig:hexagon-ram}
 \end{center}
 \end{figure}
@@ -158,17 +152,28 @@ both around.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=5in]{../figs/hex-mean-sim-basic-cv.pdf}
-\caption{Same as Fig.~\ref{fig:hexagon} but with simulation ensembles that have no covariates.}
+\includegraphics[width=6.5in]{../figs/hex-mean-sim-basic-cv.pdf}
+\caption{Same as Fig.~\ref{fig:hexagon} but with simulation ensembles that have no additional covariates (spectral densities were not included in these models).}
 \label{fig:hexagon-sim-basic}
 \end{center}
 \end{figure}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=5in]{../figs/hex-slope-sim.pdf}
-\caption{Same as Fig.~\ref{fig:hexagon} but with the slope of \bbmsy\\ in
-the last three years as the response variable.}
+\includegraphics[width=6.5in]{../figs/hex-slope-sim.pdf}
+\caption{Same as Fig.~\ref{fig:hexagon} but with the slope (Theil-Sen median slope) of \bbmsy\\ in the last five years as the response variable.}
 \label{fig:scatter-sim-slope}
 \end{center}
 \end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=5in]{../figs/performance-slope-sim.pdf}
+\caption{Same as Fig.~\ref{fig:performance} but with the slope of \bbmsy\\ in
+the last five years as the response variable. This is based on the data shown in Fig.~\ref{fig:scatter-sim-slope}.}
+\label{fig:scatter-sim-slope}
+\end{center}
+\end{figure}
+
