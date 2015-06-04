@@ -114,6 +114,8 @@ both around.}
 \end{center}
 \end{figure}
 
+\clearpage
+
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
@@ -122,79 +124,31 @@ both around.}
 \end{center}
 \end{figure}
 
-<!--\begin{figure}[htbp]-->
-<!--\begin{center}-->
-<!--\includegraphics[width=\textwidth]{../figs/cv-sim-mean-scatter.png}-->
-<!--\caption{Cross-validated simulation ensemble scatter plot --- mean B/Bmsy}-->
-<!--\label{fig:scatter-sim-mean}-->
-<!--\end{center}-->
-<!--\end{figure}-->
+\clearpage
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/hex-slope-sim.pdf}
-\caption{Same as Fig.~\ref{fig:sim-hexagon} but with the slope of \bbmsy\\ in
-the last three years as the response variable.}
-\label{fig:scatter-sim-slope}
-\end{center}
-\end{figure}
-
-<!--
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/performance-sim-scatter.pdf}
-\caption{Performance for simulation ensembles.}
-\label{fig:performance-sim}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../figs/roc-sim.pdf}
-\caption{ROC for simulation data ensembles.}
+\includegraphics[width=\textwidth]{../figs/roc-sim.pdf}
+\caption{ROC curves for the simulated data.}
 \label{fig:roc-sim}
 \end{center}
 \end{figure}
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/partial-ram.pdf}
-\caption{Partial dependence plots for RAM ensembles.}
-\label{fig:partial-ram}
-\end{center}
-\end{figure}
--->
+\clearpage
 
-<!--
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-ram-mean-scatter.png}
-\caption{Cross-validated RAM ensemble scatter plot --- mean B/Bmsy}
-\label{fig:scatter-ram-mean}
+\includegraphics[width=5in]{../figs/hex-mean-ram-cv.pdf}
+\caption{RAM stocks fit with ensemble models built from the simulated dataset. Lower figure is a draft in ggplot. These are based on 3-fold cross-validation of the mPRM model.}
+\label{fig:hexagon-ram}
 \end{center}
 \end{figure}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/cv-ram-slope-scatter.png}
-\caption{Cross-validated RAM ensemble scatter plot --- slope B/Bmsy}
-\label{fig:scatter-ram-slope}
+\includegraphics[width=\textwidth]{../figs/hex-slope-sim.pdf}
+\caption{Same as Fig.~\ref{fig:hexagon} but with the slope of \bbmsy\\ in
+the last three years as the response variable.}
+\label{fig:scatter-sim-slope}
 \end{center}
 \end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/performance-ram-scatter.pdf}
-\caption{Performance for RAM ensembles.}
-\label{fig:performance-ram}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../figs/roc-ram.pdf}
-\caption{ROC for RAM data ensembles.}
-\label{fig:roc-ram}
-\end{center}
-\end{figure}
--->

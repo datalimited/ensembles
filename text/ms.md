@@ -342,13 +342,10 @@ correlation to measure the ability to correctly rank population status.
 
 
 Individual model and ensemble model scatterplots:
-Fig. \ref{fig:sim-hexagon}
+Fig. \ref{fig:hexagon}
 
 Accuracy, rank correlation, and bias:
-Fig. \ref{fig:performance-sim}
-
-Applied to the RAM dataset:
-Fig. \ref{fig:performance-ram}
+Fig. \ref{fig:performance}
 
 # Discussion
 
