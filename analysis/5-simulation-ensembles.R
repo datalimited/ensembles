@@ -37,9 +37,7 @@ dsim_meta <- dsim %>%
     spec_freq_0.05 = spec_freq_0.05[1],
     spec_freq_0.1 = spec_freq_0.1[1],
     spec_freq_0.2 = spec_freq_0.2[1],
-    spec_freq_0.5 = spec_freq_0.5[1],
-    max_catch = max(catch),
-    total_catch = sum(catch))
+    spec_freq_0.5 = spec_freq_0.5[1])
 dsim_sum <- inner_join(dsim_sum, dsim_meta)
 dsim_sum$LH <- as.factor(dsim_sum$LH)
 
@@ -54,11 +52,11 @@ trues <- trues[!duplicated(trues), ] # one value per operating model stockid
 
 # switch from long to wide format for modelling:
 d_mean <- reshape2::dcast(dsim_sum,
-  stockid + cv_id + iter + LH + max_catch + spec_freq_0.05 + spec_freq_0.2 ~ method,
+  stockid + cv_id + iter + LH + spec_freq_0.05 + spec_freq_0.2 ~ method,
   value.var = "bbmsy_est_mean")  %>%
   inner_join(select(trues, -bbmsy_true_slope))
 d_slope <- reshape2::dcast(dsim_sum,
-  stockid + cv_id + iter + LH + max_catch + spec_freq_0.05 + spec_freq_0.2 ~ method,
+  stockid + cv_id + iter + LH + spec_freq_0.05 + spec_freq_0.2 ~ method,
   value.var = "bbmsy_est_slope") %>%
   inner_join(select(trues, -bbmsy_true_mean))
 
@@ -75,7 +73,7 @@ nvar <- 6L
 # run a model on all the data to generate data for partial dependence plots:
 # m_rf <- randomForest::randomForest(
 #   log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH +
-#   max_catch + spec_freq_0.05 + spec_freq_0.2, data = d_mean)
+#   spec_freq_0.05 + spec_freq_0.2, data = d_mean)
 
 # best.iter <- gbm::gbm.perf(m_gbm1, method="cv", oobag.curve = FALSE)
 # print(best.iter)
@@ -160,11 +158,11 @@ partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
 }))
 
 # check colour pallete:
-zlim <- c(min(partial_2d$z), max(partial_2d$z))
-pal <- rev(colorRampPalette(c("red", "white", "blue"))(13)[-1]) #[-c(13:13)])
+zlim <- c(min(partial_2d$z)+0.1, max(partial_2d$z))
+pal <- rev(colorRampPalette(c("red", "white", "blue"))(13))[-c(1:1)]
 # white should line up with 1: (adjust the above line as needed)
 pdf("../figs/partial-2d-col-check.pdf", width = 6, height = 4)
-plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, col = pal, pch = 20, cex = 3);abline(v = 1)
+plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, bg = pal, pch = 21, cex = 3);abline(v = 1)
 dev.off()
 pdf("../figs/partial-sim-2d.pdf", width = 10, height = 10)
 par(mfrow = c(nvar, nvar), mar = c(3,3,1,1), oma = c(4, 4, 1, 1), cex = 0.5)
@@ -181,29 +179,40 @@ message(paste("zlim were", round(zlim, 2), collapse = " "))
 
 # the base form of the ensemble models:
 eq <- paste0("CMSY + COMSIR + Costello + ",
-  "SSCOM + max_catch + spec_freq_0.05 + spec_freq_0.2")
+  "SSCOM + spec_freq_0.05 + spec_freq_0.2")
+eq_basic <- paste0("CMSY + COMSIR + Costello + SSCOM")
 
 # work through cross validation of ensemble models:
 cv_sim_mean <- plyr::ldply(seq_len(4), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq),
-      lm_formula = paste0("log(bbmsy_true_mean) ~ (", eq, ")^2")), weighted = TRUE)
-cv_sim_mean$gbm_ensemble <- exp(cv_sim_mean$gbm_ensemble)
-cv_sim_mean$rf_ensemble <- exp(cv_sim_mean$rf_ensemble)
-cv_sim_mean$lm_ensemble <- exp(cv_sim_mean$lm_ensemble)
+      lm_formula = paste0("log(bbmsy_true_mean) ~ (", eq, ")^2"), weighted = TRUE))
+cv_sim_mean <- cv_sim_mean %>% mutate(
+  gbm_ensemble = exp(gbm_ensemble),
+  rf_ensemble  = exp(rf_ensemble),
+  lm_ensemble  = exp(lm_ensemble))
 cv_sim_mean$cv_id <- NULL
-cv_sim_mean$dummy <- rnorm(nrow(cv_sim_mean), 1, 0.2)
 
-cv_sim_slope <- plyr::ldply(seq_len(4), .parallel = TRUE,
+cv_sim_mean_basic <- plyr::ldply(seq_len(4), .parallel = TRUE,
+  .fun = function(.n)
+    cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
+      gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq_basic),
+      lm_formula = paste0("log(bbmsy_true_mean) ~ (", eq_basic, ")^2"), weighted = TRUE))
+cv_sim_mean_basic <- cv_sim_mean_basic %>% mutate(
+  gbm_ensemble = exp(gbm_ensemble),
+  rf_ensemble  = exp(rf_ensemble),
+  lm_ensemble  = exp(lm_ensemble))
+cv_sim_mean_basic$cv_id <- NULL
+
+cv_sim_slope <- plyr::ldply(seq_len(2), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
       gbm_formula = paste0("bbmsy_true_slope ~ ", eq),
       lm_formula = paste0("bbmsy_true_slope ~ (", eq, ")^2")))
 cv_sim_slope$cv_id <- NULL
-cv_sim_slope$dummy <- rnorm(nrow(cv_sim_slope), 0, 0.2)
 
-cv_sim_binary <- plyr::ldply(seq_len(4), .parallel = TRUE,
+cv_sim_binary <- plyr::ldply(seq_len(2), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean,
       id = "sim-binary", distribution = "bernoulli",
@@ -213,15 +222,25 @@ cv_sim_binary$cv_id <- NULL
 
 # now switch to long format data, summarize, and compare:
 cv_sim_binary_long <- cv_sim_binary %>%
-  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -bbmsy_true_mean) %>%
+  select(-spec_freq_0.05, -spec_freq_0.2, -bbmsy_true_mean) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "above_bbmsy1_true"),
   variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = above_bbmsy1_true) %>%
   mutate(type = "binary")
 saveRDS(cv_sim_binary_long, file = "generated-data/cv_sim_binary.rds") # used in 5-roc.R
 
+cv_sim_mean_basic_long <- cv_sim_mean_basic %>%
+  select(-spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
+  reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_mean"),
+  variable.name = "method", value.name = "bbmsy_est") %>%
+  rename(bbmsy_true = bbmsy_true_mean) %>%
+  mutate(
+    type = "mean",
+    bbmsy_true_trans = log(bbmsy_true),
+    bbmsy_est_trans = log(bbmsy_est))
+
 cv_sim_mean_long <- cv_sim_mean %>%
-  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
+  select(-spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_mean"),
   variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_mean) %>%
@@ -231,7 +250,7 @@ cv_sim_mean_long <- cv_sim_mean %>%
     bbmsy_est_trans = log(bbmsy_est))
 
 cv_sim_slope_long <- cv_sim_slope %>%
-  select(-max_catch, -spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
+  select(-spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_slope"),
   variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_slope) %>%
@@ -249,3 +268,5 @@ re <- cv_sim_long %>% mutate(
   re    = (bbmsy_est - bbmsy_true) / bbmsy_true)
 
 re %>% saveRDS(file = "generated-data/cv_sim_long.rds")
+
+saveRDS(cv_sim_mean_basic_long, file = "generated-data/cv_sim_mean_basic_long.rds")
