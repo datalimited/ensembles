@@ -82,8 +82,6 @@ re_ram_sum_long$clean_method <- reorder(re_ram_sum_long$clean_method, re_ram_sum
 re_ram_sum_long$label_fudge_x <- 0
 re_ram_sum_long$label_fudge_y <- 0
 
-
-
 get_roc <- function(true, est) {
   library("pROC") # required or pROC:: will generate errors
   y <- pROC::roc(response = true, predictor = est, 5)
@@ -98,7 +96,7 @@ rocs_sim_mean <- d_sim_mean %>% group_by(clean_method, order) %>%
   do({get_roc(true = .$above1, est = .$bbmsy_est)}) %>%
   as.data.frame
 rocs_sim_mean$Ensemble <- ifelse(grepl("Ensemble", rocs_sim_mean$clean_method),
-  "(A) Ensemble", "(B) Individual")
+  "(a) Ensemble", "(b) Individual")
 auc_sim_mean <- rocs_sim_mean %>%
   group_by(clean_method) %>%
   summarise(auc = auc[1])
@@ -157,9 +155,9 @@ ram_third_row_lims <- filter(d_ram, grepl("Ensemble", clean_method)) %>%
   as.numeric
 
 # Basic hexagon plot for simulation mean bbmsy:
-pdf("../figs/hex-mean-sim-cv.pdf", width = 7, height = 3.9)
-plot_hex_fig(d_mean_plot, xbins = 100L)
-dev.off()
+# pdf("../figs/hex-mean-sim-cv.pdf", width = 7, height = 3.9)
+# plot_hex_fig(d_mean_plot, xbins = 100L)
+# dev.off()
 
 # Same as above but add the RAM ensembles as a third row:
 pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.7, height = 4.1)
@@ -242,6 +240,7 @@ par(mfrow = c(1, 2))
 par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
   oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
   xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+par(family="serif")
 
 perf(d_sim_perf_wide, label = "(a) Simulation")
 

@@ -129,6 +129,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   par(mfrow = c(rows, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
     oma = oma, cex = 0.8, mar = c(0, 0, 0, 0),
     xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+  par(family="serif")
 
   hexcol1 <- RColorBrewer::brewer.pal(9, "Blues")
   #hexcol1 <- c("#FFFFFF", "#6A4A3C")
@@ -241,7 +242,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     abline(h = 1, lty = "22", col = "#33333350", lwd = 1.5)
     abline(a = 0, b = 1, lty = "22", col = "#33333350", lwd = 1.5)
     box(col = "grey50")
-    add_label(-0.01, 0.08, unique(filter(dat, order == m)$clean_method),
+    add_label(-0.01, 0.08, paste0("(", letters[m], ") ", unique(filter(dat, order == m)$clean_method)),
       #col = "grey20", add_bg = ifelse(m %in% 1:4, FALSE, TRUE))
       col = "grey20", add_bg = FALSE)
     if (m %in% c(1, 5, 9)) axis(2, at = axis_ticks[-length(axis_ticks)], col = "grey50")
