@@ -179,7 +179,9 @@ partial <- plyr::ldply(seq_len(nvar), function(i) {
 
 # partial dependence plot:
 p <- ggplot(partial, aes(predictor_value, y)) + geom_line() +
-  facet_wrap(~predictor, scales = "free_x") + ylim(0.3, 1.6)
+  facet_wrap(~predictor, scales = "free_x") + ylim(0.3, 1.6) + theme_bw() +
+  ylab("Expected B/B_MSY integrating out other predictors") +
+  xlab("Predictor value")
 ggsave("../figs/partial-sim.pdf", width = 7, height = 5)
 
 partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
