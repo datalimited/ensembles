@@ -209,40 +209,6 @@ mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las
 #text(0.54, 0.5, "Bias (MPE)", col = "grey30", pos = 4)
 dev.off()
 
-
-performance_ggplot <- function(dat, show_legend = TRUE, label = "") {
-  p <- dat %>% ggplot(aes(mare, corr)) + geom_point(aes(fill = mre), pch = 21, size = 5, col = "grey50") +
-  geom_text(aes(label = clean_method), size = 2.7, vjust = 2) +
-  scale_fill_gradient2(
-    low = RColorBrewer::brewer.pal(6, "RdBu")[1],
-    high = RColorBrewer::brewer.pal(6, "RdBu")[6],
-    space = "Lab", guide = "colourbar", limits=c(-0.23, 0.51)) +
-  theme_bw() + xlab("Inaccuracy (MARE)") + ylab("Rank-order correlation") +
-  xlim(range(dat$mare) + c(-0.03, 0.01)) +
-  ylim(range(dat$corr) + c(-0.01, 0.00)) +
-    # xlim(0.25, 0.65) + ylim(0, 0.5) +
-  theme(panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank(),
-    strip.background = element_blank()) +
-    labs(fill="Bias (MRE)") +
-    theme(legend.title = element_text(colour = "black", face = "plain"),
-      legend.text = element_text(colour = "grey30"),
-      axis.text = element_text(colour = "grey30")) +
-    annotate("text", label = label, x = min(dat$mare), y = max(dat$corr))
-  if (show_legend) {
-    p <- p + theme(legend.position = c(0.15, 0.3))
-  } else {
-    p <- p + guides(fill=FALSE)
-  }
-  p
-}
-p1 <- performance_ggplot(d_sim_perf_wide, label = "Simulated data")
-p2 <- performance_ggplot(re_ram_sum, show_legend = FALSE, label = "Stock assessment\ndatabase")
-pdf("../figs/performance-gg.pdf", width = 8, height = 4)
-gridExtra::grid.arrange(p1, p2, ncol = 2)
-dev.off()
-
 # base:
 
 all <- bind_rows(d_sim_perf_wide, re_ram_sum)
