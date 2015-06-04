@@ -16,7 +16,7 @@ dsim <- rename(dsim, stockid = stock_id, method = method_id) # to match RAM fits
 dsim <- dsim %>%
   mutate(cv_id = paste0(stockid, "_lh_", LH)) %>%
   mutate(stockid =
-    paste0(stockid, "_sigmaC_", sigmaC, "_sigmaR_", sigmaR, "_lh_", LH)) %>%
+      paste0(stockid, "_sigmaC_", sigmaC, "_sigmaR_", sigmaR, "_lh_", LH)) %>%
   arrange(stockid, iter, year) # critical since not all in order
 
 # summarise the mean and slope in the last N years:
@@ -130,8 +130,44 @@ nvar <- 6L
 # -------------------
 
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
-  spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
+    spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
   data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
+
+make_partial_resid_gbm <- function(var = "SSCOM") {
+  d_temp <- d_mean
+  d_temp$x <- d_mean[,var]
+  d_temp[,var] <- mean(d_temp[,var])
+  d_temp$p <- predict(m, n.trees = m$n.trees, type = "response",
+    newdata = d_temp)
+  d_temp$res <- log(d_temp$bbmsy_true_mean) - d_temp$p
+  # ggplot(d_temp, aes(x, exp(res))) + geom_point() + stat_smooth(se = FALSE, col = "red", method = "loess")
+
+  d_temp2 <- d_mean
+  all_vars <- c("CMSY", "COMSIR", "Costello", "spec_freq_0.05", "spec_freq_0.2", "SSCOM")
+  other_vars <- all_vars[which(!var == all_vars)]
+  d_temp2[,other_vars] <-
+    matrix(apply(
+      d_temp2[,other_vars], 2, mean),
+      ncol = 5, nrow = nrow(d_temp), byrow = TRUE)
+  d_temp2$p <- predict(m, n.trees = m$n.trees, type = "response",
+    newdata = d_temp2)
+
+  p <- ggplot(d_temp, aes(x, res)) + geom_point(alpha = 0.1) +
+    geom_line(data = d_temp2, aes_string(var, "p"), col = "red", lwd = 1)+
+    # geom_line(data = subset(partial, predictor == var),
+      # aes(predictor_value, y), col = "red", lwd = 1) +
+    xlab(var) + ylab("Partial residual")
+  p
+}
+p1 <- make_partial_resid_gbm("CMSY")
+p2 <- make_partial_resid_gbm("SSCOM")
+p3 <- make_partial_resid_gbm("COMSIR")
+p4 <- make_partial_resid_gbm("Costello")
+p5 <- make_partial_resid_gbm("spec_freq_0.05")
+p6 <- make_partial_resid_gbm("spec_freq_0.2")
+pdf("../figs/gbm-partial-residuals.pdf", width = 10, height = 5)
+gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+dev.off()
 
 partial <- plyr::ldply(seq_len(nvar), function(i) {
   dd <- gbm::plot.gbm(m, i.var = i, return.grid = TRUE)
@@ -161,18 +197,30 @@ partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
 zlim <- c(min(partial_2d$z)+0.1, max(partial_2d$z))
 pal <- rev(colorRampPalette(c("red", "white", "blue"))(13))[-c(1:1)]
 # white should line up with 1: (adjust the above line as needed)
+
 pdf("../figs/partial-2d-col-check.pdf", width = 6, height = 4)
 plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, bg = pal, pch = 21, cex = 3);abline(v = 1)
 dev.off()
-pdf("../figs/partial-sim-2d.pdf", width = 10, height = 10)
-par(mfrow = c(nvar, nvar), mar = c(3,3,1,1), oma = c(4, 4, 1, 1), cex = 0.5)
-par(xpd = NA, mgp = c(1.5, 0.5, 0))
+
+ii <<- 0
+panels <- matrix(NA, ncol = nvar, nrow = nvar, byrow = TRUE) %>% upper.tri %>%
+  t %>% as.vector
+
+pdf("../figs/partial-sim-2d.pdf", width = 10, height = 8.5)
+par(mfrow = c(nvar-1, nvar), mar = c(3,3,1,1), oma = c(1, 1, 0.5, 0.5), cex = 0.7)
+par(xpd = NA, mgp = c(2.1, 0.5, 0), tck = -0.03, las = 1)
 plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
-  xx <- reshape2::dcast(x, x ~ y, value.var = "z")
-  image(xx[,1], as.numeric(colnames(xx)[-1]), as.matrix(xx[,-1]), main = "",
-    xlab = unique(x$var1), ylab = unique(x$var2),
-    zlim = zlim,
-    col = pal)
+  ii <<- ii + 1
+  if (panels[ii]) {
+    xx <- reshape2::dcast(x, x ~ y, value.var = "z")
+    image(xx[,1], as.numeric(colnames(xx)[-1]), as.matrix(xx[,-1]), main = "",
+      xlab = unique(x$var1), ylab = unique(x$var2),
+      zlim = zlim,
+      col = pal)
+  } else {
+    if (ii < nvar^2 - nvar)
+      plot(1, 1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  }
 })
 dev.off()
 message(paste("zlim were", round(zlim, 2), collapse = " "))
@@ -224,7 +272,7 @@ cv_sim_binary$cv_id <- NULL
 cv_sim_binary_long <- cv_sim_binary %>%
   select(-spec_freq_0.05, -spec_freq_0.2, -bbmsy_true_mean) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "above_bbmsy1_true"),
-  variable.name = "method", value.name = "bbmsy_est") %>%
+    variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = above_bbmsy1_true) %>%
   mutate(type = "binary")
 saveRDS(cv_sim_binary_long, file = "generated-data/cv_sim_binary.rds") # used in 5-roc.R
@@ -232,7 +280,7 @@ saveRDS(cv_sim_binary_long, file = "generated-data/cv_sim_binary.rds") # used in
 cv_sim_mean_basic_long <- cv_sim_mean_basic %>%
   select(-spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_mean"),
-  variable.name = "method", value.name = "bbmsy_est") %>%
+    variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_mean) %>%
   mutate(
     type = "mean",
@@ -242,7 +290,7 @@ cv_sim_mean_basic_long <- cv_sim_mean_basic %>%
 cv_sim_mean_long <- cv_sim_mean %>%
   select(-spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_mean"),
-  variable.name = "method", value.name = "bbmsy_est") %>%
+    variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_mean) %>%
   mutate(
     type = "mean",
@@ -252,7 +300,7 @@ cv_sim_mean_long <- cv_sim_mean %>%
 cv_sim_slope_long <- cv_sim_slope %>%
   select(-spec_freq_0.05, -spec_freq_0.2, -above_bbmsy1_true) %>%
   reshape2::melt(id.vars = c("stockid", "iter", "test_iter", "LH", "bbmsy_true_slope"),
-  variable.name = "method", value.name = "bbmsy_est") %>%
+    variable.name = "method", value.name = "bbmsy_est") %>%
   rename(bbmsy_true = bbmsy_true_slope) %>%
   mutate(
     type = "slope",
