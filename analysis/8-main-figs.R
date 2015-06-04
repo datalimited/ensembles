@@ -162,9 +162,17 @@ plot_hex_fig(d_mean_plot, xbins = 100L)
 dev.off()
 
 # Same as above but add the RAM ensembles as a third row:
-pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.0, height = 3.9)
-plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 30L, lims_hex3 = ram_third_row_lims,
-  count_transform3 = 10)
+pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.7, height = 4.1)
+plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 25L,
+  lims_hex3 = ram_third_row_lims, count_transform3 = 20,
+  oma = c(3.5, 3.5, .5, 2.5))
+par(xpd = NA)
+mtext("Simulated data", side = 4, outer = TRUE, line = 0.4, las = 0, col = "grey20",
+  adj = 0.8)
+mtext("Stock assessment", side = 4, outer = TRUE, line = 0.4, las = 0,
+  col = "grey20", adj = -0.05)
+mtext("database", side = 4, outer = TRUE, line = 1.4, las = 0,
+  col = "grey20", adj = 0.1)
 dev.off()
 
 d_slope_plot <- filter(d_sim, type == "slope")

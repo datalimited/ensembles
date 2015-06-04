@@ -122,11 +122,11 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   ylab = expression(widehat(B/B[MSY])), lims_hex = c(0, max(dat$bbmsy_est)),
   xlim_plot = c(0, 3.9), ylim_plot = c(0, 3.2), axis_ticks = c(0, 1, 2, 3),
   add_hex = TRUE, alpha = 50, xbins3 = xbins, lims_hex3 = lims_hex,
-  count_transform = 1.5, count_transform3 = 30) {
+  count_transform = 1.5, count_transform3 = 30, oma = c(3.5, 3.5, .5, .5)) {
 
   rows <- max(dat$order) / 4
   par(mfrow = c(rows, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
-    oma = c(3.5, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
+    oma = oma, cex = 0.8, mar = c(0, 0, 0, 0),
     xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
 
   hexcol1 <- RColorBrewer::brewer.pal(9, "Blues")
