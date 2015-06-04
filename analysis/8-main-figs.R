@@ -48,6 +48,12 @@ d_sim_perf_summ$text_col <- ifelse(grepl("Ensemble", d_sim_perf_summ$clean_metho
 d_sim_perf_wide <- reshape2::dcast(d_sim_perf_summ, clean_method + order ~ variable,
   value.var = "m")
 
+# Format basic simulation ensemble without covariates for plotting:
+d_sim_basic <- readRDS("generated-data/cv_sim_mean_basic_long.rds")
+d_sim_basic$bbmsy_est[d_sim_basic$bbmsy_est > 10] <- NA
+d_sim_basic <- na.omit(d_sim_basic)
+d_sim_basic <- suppressWarnings(inner_join(d_sim_basic, clean_names))
+
 # Format the RAM ensemble data for plotting:
 d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
 clean_names_ram <- clean_names
@@ -176,9 +182,11 @@ plot_hex_fig(d_ram, add_hex = TRUE, alpha = 80,
   lims_hex = range(c(d_ram$bbmsy_est, d_ram$bbmsy_true)), xbins = 25L)
 dev.off()
 
+pdf("../figs/hex-mean-sim-basic-cv.pdf", width = 8, height = 4)
+plot_hex_fig(d_sim_basic, xbins = 100L)
+dev.off()
+
 ## Performance panel figures:
-# TODO: add in RAM performance panel to right
-# TODO: add in AUC values in parentheses
 pdf("../figs/performance.pdf", width = 6, height = 3.1)
 par(mfrow = c(1, 2), mgp = c(1.5, 0.4, 0), las = 1, tck = -0.012,
   oma = c(2.7, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
