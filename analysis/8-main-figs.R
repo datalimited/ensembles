@@ -200,22 +200,34 @@ mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las
 dev.off()
 
 
-performance_ggplot <- function(dat) {
-  p <- dat %>% ggplot(aes(mare, corr)) + geom_point(aes(colour = mre), size = 5) +
+performance_ggplot <- function(dat, show_legend = TRUE) {
+  p <- dat %>% ggplot(aes(mare, corr)) + geom_point(aes(fill = mre), pch = 21, size = 5, col = "grey50") +
   geom_text(aes(label = clean_method), size = 2.7, vjust = 2) +
-  scale_colour_gradient2(guide = guide_legend(title = "Bias\n(MRE)")) +
+  scale_fill_gradient2(
+    low = RColorBrewer::brewer.pal(6, "PRGn")[1],
+    high = RColorBrewer::brewer.pal(6, "PRGn")[6],
+    space = "rgb", guide = "colourbar", limits=c(-0.23, 0.51)) +
   theme_bw() + xlab("Inaccuracy (MARE)") + ylab("Rank-order correlation") +
   xlim(range(dat$mare) + c(-0.03, 0.01)) +
-  ylim(range(dat$corr) + c(-0.05, 0.00)) +
+  ylim(range(dat$corr) + c(-0.01, 0.00)) +
   theme(panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
-    strip.background = element_blank())
+    strip.background = element_blank()) +
+    labs(fill="Bias (MRE)") +
+    theme(legend.title = element_text(colour = "black", face = "plain"),
+      legend.text = element_text(colour = "grey30"),
+      axis.text = element_text(colour = "grey30"))
+  if (show_legend) {
+    p <- p + theme(legend.position = c(0.15, 0.3))
+  } else {
+    p <- p + guides(fill=FALSE)
+  }
   p
 }
 p1 <- performance_ggplot(d_sim_perf_wide)
-p2 <- performance_ggplot(re_ram_sum)
-pdf("../figs/performance-gg.pdf", width = 10, height = 4)
+p2 <- performance_ggplot(re_ram_sum, show_legend = FALSE)
+pdf("../figs/performance-gg.pdf", width = 8, height = 4)
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 dev.off()
 
