@@ -48,6 +48,8 @@ d_sim_perf_summ$text_col <- ifelse(grepl("Ensemble", d_sim_perf_summ$clean_metho
 d_sim_perf_wide <- reshape2::dcast(d_sim_perf_summ, clean_method + order ~ variable,
   value.var = "m")
 
+saveRDS(d_sim_perf_wide, "generated-data/d_sim_perf_wide.rds")
+
 # Format basic simulation ensemble without covariates for plotting:
 d_sim_basic <- readRDS("generated-data/cv_sim_mean_basic_long.rds")
 d_sim_basic$bbmsy_est[d_sim_basic$bbmsy_est > 10] <- NA
@@ -71,6 +73,7 @@ re_ram_sum <- re_ram %>% group_by(clean_method) %>%
     mre = median(re),
     corr = cor(bbmsy_true, bbmsy_est, method = "spearman")) %>%
   as.data.frame()
+saveRDS(re_ram_sum, file = "generated-data/re_ram_sum.rds")
 
 # now make these data match the simulation data in format:
 re_ram_sum_long <- reshape2::melt(re_ram_sum, id.vars = "clean_method") %>%
@@ -102,6 +105,7 @@ auc_sim_mean <- rocs_sim_mean %>%
   summarise(auc = auc[1])
 rocs_sim_mean <- rocs_sim_mean %>% as.data.frame() %>%
   mutate(clean_method = paste(order, clean_method, sep = "-"))
+saveRDS(auc_sim_mean, file = "generated-data/auc_sim_mean.rds")
 
 # and do the same for the RAM data:
 d_ram_mean <- d_ram %>%
@@ -287,6 +291,7 @@ d_slope_error <- d_slope_plot %>%
     corr = cor(bbmsy_true, bbmsy_est, method = "spearman",
       use = "pairwise.complete.obs")) %>%
   as.data.frame
+saveRDS(d_slope_error, file = "generated-data/d_slope_error.rds")
 
 pdf("../figs/performance-slope-sim.pdf", width = 5, height = 4)
 par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
