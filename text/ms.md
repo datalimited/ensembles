@@ -254,6 +254,18 @@ to a weighted average, to a complex non-linear model. Here we choose four
 ensemble models to compare: an average, a linear model with two-way
 interactions, a random forest, and boosted regression tree. 
 
+General form:
+
+\begin{equation}
+\hat{\theta} = \mathrm{argmin}_\theta(L(b \, | \, \hat{b}_{\mathrm{ensemble}}))
+\end{equation}
+
+\begin{equation}
+\hat{b}_\mathrm{ensemble} = f(\hat{b}_\mathrm{CMSY}, \hat{b}_\mathrm{COM-SIR}, \hat{b}_\mathrm{SSCOM}, \hat{b}_\mathrm{mPRM}, \mathrm{other~covariates} \, | \, \theta)
+\end{equation}
+
+\noindent where $L$ is a generalized loss function, $f$ is some generalized regression function, $\hat{b}_\mathrm{COM-SIR}$ is the prediction from COM-SIR, etc., and $\theta$ is the set of parameters for the regression function.
+
 *Linear model*: For populations $i$ $1$ through $n$, individual models and
 covariates $j$ $1$ through $m$, and allowing $\theta$ to refer to both
 quantities estimated from individual models and additional covariates, we fit
