@@ -2,10 +2,13 @@ TEXT = anderson-etal-ensembles
 MS = ms
 SOM = supp
 FIGS = figs
-VERSION = 0.1
+VERSION = 0.2
 REFS = fisheries-ensembles
 
 all: $(TEXT).pdf
+
+%.md: %.Rmd
+	Rscript -e "knitr::knit('$<')"
 
 %.tex: %.md
 	pandoc -S --no-wrap --bibliography=$(REFS).bib --natbib -fmarkdown-all_symbols_escapable $< -o $@
@@ -17,6 +20,10 @@ all: $(TEXT).pdf
 
 $(TEXT).pdf: $(MS).tex $(SOM).tex $(FIGS).tex $(TEXT).tex $(REFS).bib
 	latexmk $(TEXT)
+	#pdflatex $(TEXT)
+	#bibtex $(TEXT)
+	#pdflatex $(TEXT)
+	#pdflatex $(TEXT)
 
 dropbox: $(TEXT).pdf rtf
 	cp $(TEXT).pdf ~/Dropbox/Public/$(TEXT)-v$(VERSION).pdf
