@@ -3,7 +3,7 @@
 # `../text/values.rda` and are input through knitr in `../text/ms.Rmd`.
 
 get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
-  label = "") {
+  collapse = "--") {
 
   dat <- dat %>%
     mutate(ensemble = ifelse(grepl("Ensemble", clean_method), TRUE, FALSE)) %>%
@@ -18,7 +18,12 @@ get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
   x$mach_vs_ind_mare_fold <- c(
     round(min(ind$mare) / max(mach$mare), digits_fold),
     round(max(ind$mare) / min(mach$mare), digits_fold)
-  )
+  ) * 100
+
+#   x$mach_vs_ind_bias <- c(
+#     (ind$mre %>% abs %>% max) / (mach$mre %>% abs %>% min) %>% round(digits_fold),
+#     (ind$mre %>% abs %>% min) / (mach$mre %>% abs %>% max) %>% round(digits_fold)
+#   ) * 100
 
   x$ind_corr_range <- round(range(ind$corr), digits_raw)
   x$mach_corr_range <- round(range(mach$corr), digits_raw)
@@ -27,11 +32,10 @@ get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
   x$mach_mare_range <- round(range(mach$mare), digits_raw)
 
   x$ensemble_mre_range <- ensemble$mre %>% range %>% round(digits_raw)
+  x$mach_mre_range <- mach$mre %>% range %>% round(digits_raw)
   x$ind_mre_range <- ind$mre %>% range %>% round(digits_raw)
 
-  # names(x) <- paste(names(x), label, sep = "_")
-
-  x
+  lapply(x, paste, collapse = collapse)
 }
 
 d_sim_perf_wide <- readRDS("generated-data/d_sim_perf_wide.rds")
@@ -52,4 +56,7 @@ auc_sim$mach_range <- auc_sim_mean %>% filter(grepl("GBM|RF", clean_method)) %>%
 auc_sim$ind_range <- auc_sim_mean %>% filter(grepl("Ensemble", clean_method) == FALSE) %>%
   select(auc) %>% range %>% as.numeric() %>% round(2)
 
-save(mean_sim, mean_ram, slope_sim, auc_sim, file = "../text/values.rda")
+d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
+ram_stocks_n <- length(unique(d_ram$stockid))
+
+save(mean_sim, mean_ram, slope_sim, auc_sim, ram_stocks_n, file = "../text/values.rda")
