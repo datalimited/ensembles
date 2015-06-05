@@ -3,7 +3,7 @@
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=3.7in]{../figs/motivate.pdf}
-\caption{Different models can suggest conflicting population statuses and trends. Shown here are trajectories of estimated \bbmsy\\ from four data-limited assessment methods (colours) and a data-rich stock assessment (black). Lines indicate median fits and shaded regions interquartile ranges.}
+\caption{Different models can suggest conflicting population statuses and trends. Shown here are trajectories of estimated \bbmsy\\ from four data-limited assessment methods (colours) and a data-rich stock assessment (black). Lines indicate median fits and shaded regions interquartile ranges. (\textit{TODO: could add a panel with a simulated stock and/or change the stock that is shown and/or show a number of small panels with different conflicting patterns but without the confidence intervals.})}
 \label{fig:motivate}
 \end{center}
 \end{figure}
@@ -46,7 +46,7 @@ The x-axis represents within-population innaccuracy: median absolute relative er
 The y-axis represents across-population Spearman rank-order correlation. 
 The top-left corner contains methods with the best performance across the two metrics. 
 The colour shading represents bias (median relative error): white points are unbiased, blue points represent methods that predict $\widehat{B/B_\mathrm{MSY}}$ values that are too high, red points represent methods that predict $\widehat{B/B_\mathrm{MSY}}$ values that are too low. 
-These performance metrics are derived from the data in Fig.~\ref{fig:hexagon} and based on repeated three-fold cross-validation testing.
+These performance metrics are derived from the data in Fig.~\ref{fig:hexagon} and based on repeated three-fold cross-validation testing. \textit{(TODO: I'll tweak the labels to avoid overlap near the end. Otherwise, they move slightly with every little thing we tweak in the analysis.)}.
 }
 \label{fig:performance}
 \end{center}
