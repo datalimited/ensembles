@@ -27,9 +27,9 @@ mean_slope_bbmsy <- function(dat, years_window = 5L) {
 
 # A general function for cross-validation testing ensemble models:
 cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
-  gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH",
+  gbm_formula = "log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM + LH",
   geo_mean = TRUE,
-  individual_models = c("CMSY", "COMSIR", "Costello", "SSCOM"),
+  individual_models = c("CMSY", "COMSIR", "mPRM", "SSCOM"),
   id = "mean", cache_folder = "generated-data/cv-sim/", distribution = "gaussian",
   lm_formula = "", glm_formula = "", nfold = 3L, weighted = FALSE) {
 

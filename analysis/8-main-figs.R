@@ -7,7 +7,7 @@ source("0-ensemble-functions.R")
 d_sim <- readRDS("generated-data/cv_sim_long.rds")
 
 clean_names <- dplyr::data_frame(
-  method = c("CMSY", "COMSIR", "Costello", "SSCOM",
+  method = c("CMSY", "COMSIR", "mPRM", "SSCOM",
     "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
   clean_method = c("CMSY", "COM-SIR", "mPRM", "SSCOM",
     "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"),

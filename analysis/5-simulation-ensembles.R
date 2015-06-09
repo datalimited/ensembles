@@ -73,13 +73,13 @@ nvar <- 6L
 
 # run a model on all the data to generate data for partial dependence plots:
 # m_rf <- randomForest::randomForest(
-#   log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM + LH +
+#   log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM + LH +
 #   spec_freq_0.05 + spec_freq_0.2, data = d_mean)
 
 # best.iter <- gbm::gbm.perf(m_gbm1, method="cv", oobag.curve = FALSE)
 # print(best.iter)
 # library("caret")
-# x <- dplyr::select(d_mean, CMSY, COMSIR, Costello, SSCOM, spec_freq_0.05, spec_freq_0.2)
+# x <- dplyr::select(d_mean, CMSY, COMSIR, mPRM, SSCOM, spec_freq_0.05, spec_freq_0.2)
 # mm_gbm <- train(x = x , y = log(d_mean_sim$bbmsy_true_mean), method = "gbm",
 #   trControl = trainControl(method = "cv", number = 3, repeats = 1),
 #   tuneGrid =
@@ -101,13 +101,13 @@ nvar <- 6L
 # # try and avoid positive bias at low bbmsy with weights:
 # library(randomForest)
 # library(gbm)
-# m1 <- randomForest(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+# m1 <- randomForest(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
 #     spec_freq_0.05 + spec_freq_0.2, data = d_mean)
 # d_mean$rf1 <- exp(predict(m1, n.trees = 1000))
 # ggplot(d_mean, aes(bbmsy_true_mean, rf1)) + geom_point() +
 #   geom_abline(slope = 1, intercept = 0, col = "red")
 #
-# m2 <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+# m2 <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
 #     spec_freq_0.05 + spec_freq_0.2, data = d_mean, distribution = "gaussian",
 #   n.trees = 1000L, interaction.depth = 4, shrinkage = 0.01)
 # d_mean$gbm2 <- exp(predict(m2, n.trees = 1000))
@@ -115,7 +115,7 @@ nvar <- 6L
 #   geom_abline(slope = 1, intercept = 0, col = "red")
 #
 # # try with weights inverse to true b/bmsy
-# m2_weights <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+# m2_weights <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
 #     spec_freq_0.05 + spec_freq_0.2, data = d_mean, distribution = "gaussian",
 #   n.trees = 1000L, interaction.depth = 4, shrinkage = 0.01,
 #   weights = 1/d_mean$bbmsy_true_mean)
@@ -130,7 +130,7 @@ nvar <- 6L
 
 # -------------------
 
-m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
     spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
   data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 
@@ -144,7 +144,7 @@ make_partial_resid_gbm <- function(var = "SSCOM") {
   # ggplot(d_temp, aes(x, exp(res))) + geom_point() + stat_smooth(se = FALSE, col = "red", method = "loess")
 
   d_temp2 <- d_mean
-  all_vars <- c("CMSY", "COMSIR", "Costello", "spec_freq_0.05", "spec_freq_0.2", "SSCOM")
+  all_vars <- c("CMSY", "COMSIR", "mPRM", "spec_freq_0.05", "spec_freq_0.2", "SSCOM")
   other_vars <- all_vars[which(!var == all_vars)]
   d_temp2[,other_vars] <-
     matrix(apply(
@@ -163,7 +163,7 @@ make_partial_resid_gbm <- function(var = "SSCOM") {
 p1 <- make_partial_resid_gbm("CMSY")
 p2 <- make_partial_resid_gbm("SSCOM")
 p3 <- make_partial_resid_gbm("COMSIR")
-p4 <- make_partial_resid_gbm("Costello")
+p4 <- make_partial_resid_gbm("mPRM")
 p5 <- make_partial_resid_gbm("spec_freq_0.05")
 p6 <- make_partial_resid_gbm("spec_freq_0.2")
 pdf("../figs/gbm-partial-residuals.pdf", width = 10, height = 5)
@@ -229,9 +229,9 @@ dev.off()
 message(paste("zlim were", round(zlim, 2), collapse = " "))
 
 # the base form of the ensemble models:
-eq <- paste0("CMSY + COMSIR + Costello + ",
+eq <- paste0("CMSY + COMSIR + mPRM + ",
   "SSCOM + spec_freq_0.05 + spec_freq_0.2")
-eq_basic <- paste0("CMSY + COMSIR + Costello + SSCOM")
+eq_basic <- paste0("CMSY + COMSIR + mPRM + SSCOM")
 
 # work through cross validation of ensemble models:
 cv_sim_mean <- plyr::ldply(seq_len(4), .parallel = TRUE,
