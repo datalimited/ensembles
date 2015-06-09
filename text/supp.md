@@ -1,5 +1,6 @@
 # Supporting Material
 
+<!--
 # Simulation model
 
 Brief description of the simulation model based on the FAO report
@@ -59,7 +60,7 @@ Linear model ensemble:
 Random forest ensemble:
 
 Boosted regression ensemble:
-
+-->
 
 \clearpage
 
