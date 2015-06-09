@@ -235,16 +235,17 @@ perf(d_sim_perf_wide, label = "(a) Simulation")
 
 # colour legend:
 blocks <- seq(0, 0.2, length.out = 100)
-leg_x <- 0.25
+leg_x <- 0.26
 
 for(i in 1:99) {
   rect(leg_x, blocks[i], leg_x + 0.03, blocks[i+1]+0.001, border = NA, col = pal(100)[i])
 }
-tick1 <- findInterval(-0.5, pal_df$mre)
-tick3 <- findInterval(0.5, pal_df$mre)
+if(0.4 >= max(pal_df$mre)) stop("Colour ticks are too wide for the observed MPE.")
+tick1 <- findInterval(-0.4, pal_df$mre)
+tick3 <- findInterval(0.4, pal_df$mre)
 
 text(rep(leg_x + 0.025, 3),
-  blocks[c(tick1, 50, tick3)], labels = c("-0.5", "  0", "  0.5"), pos = 4,
+  blocks[c(tick1, 50, tick3)], labels = c("-0.4", "  0", "  0.4"), pos = 4,
   col = "grey50", cex = 0.9)
 text(leg_x - 0.01, 0.22, "Bias (MPE)", col = "grey20", pos = 4)
 

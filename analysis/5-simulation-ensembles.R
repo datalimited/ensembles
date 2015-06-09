@@ -234,7 +234,7 @@ eq <- paste0("CMSY + COMSIR + mPRM + ",
 eq_basic <- paste0("CMSY + COMSIR + mPRM + SSCOM")
 
 # work through cross validation of ensemble models:
-cv_sim_mean <- plyr::ldply(seq_len(4), .parallel = TRUE,
+cv_sim_mean <- plyr::ldply(seq_len(4), .parallel = FALSE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq),
@@ -256,14 +256,14 @@ cv_sim_mean_basic <- cv_sim_mean_basic %>% mutate(
   lm_ensemble  = exp(lm_ensemble))
 cv_sim_mean_basic$cv_id <- NULL
 
-cv_sim_slope <- plyr::ldply(seq_len(2), .parallel = TRUE,
+cv_sim_slope <- plyr::ldply(seq_len(4), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
       gbm_formula = paste0("bbmsy_true_slope ~ ", eq),
       lm_formula = paste0("bbmsy_true_slope ~ (", eq, ")^2")))
 cv_sim_slope$cv_id <- NULL
 
-cv_sim_binary <- plyr::ldply(seq_len(2), .parallel = TRUE,
+cv_sim_binary <- plyr::ldply(seq_len(1), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean,
       id = "sim-binary", distribution = "bernoulli",
