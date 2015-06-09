@@ -173,7 +173,7 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \includegraphics[width=5in]{../figs/performance-slope-sim.pdf}
 \caption{Same as Fig.~\ref{fig:performance} but with the slope of \bbmsy\\ in
 the last five years as the response variable. This is based on the data shown in Fig.~\ref{fig:scatter-sim-slope}.}
-\label{fig:scatter-sim-slope}
+\label{fig:performance-sim-slope}
 \end{center}
 \end{figure}
 
