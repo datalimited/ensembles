@@ -261,7 +261,7 @@ tick3 <- findInterval(0.5, pal_df$mre)
 text(rep(leg_x + 0.025, 3),
   blocks[c(tick1, 50, tick3)], labels = c("-0.5", "  0", "  0.5"), pos = 4,
   col = "grey50", cex = 0.9)
-text(leg_x - 0.01, 0.22, "Bias (MRE)", col = "grey20", pos = 4)
+text(leg_x - 0.01, 0.22, "Bias (MPE)", col = "grey20", pos = 4)
 
 segments(
   x0 = rep(leg_x + 0.025, 3),
@@ -272,7 +272,7 @@ segments(
 
 perf(re_ram_sum, label = "(b) Stock assessment database")
 
-mtext("Inaccuracy (MARE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
+mtext("Inaccuracy (MAPE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
   cex = 1)
 par(xpd = NA)
 mtext("Rank-order correlation", cex = 1, side = 2, outer = TRUE, line = -0.9,
@@ -316,8 +316,8 @@ tick3 <- findInterval(0.02, pal_df$mre)
 text(rep(leg_x + 0.002, 3),
   blocks[c(tick1, 50, tick3)], labels = c("-0.02", "  0", "  0.02"), pos = 4,
   col = "grey50", cex = 0.9)
-text(leg_x - 0.001, 0.22, "Bias (MRE)", col = "grey20", pos = 4)
-mtext("Inaccuracy (MARE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
+text(leg_x - 0.001, 0.22, "Bias (MPE)", col = "grey20", pos = 4)
+mtext("Inaccuracy (MAPE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
   cex = 1)
 par(xpd = NA)
 mtext("Rank-order correlation", cex = 1, side = 2, outer = TRUE, line = -0.9,

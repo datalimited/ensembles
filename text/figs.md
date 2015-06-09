@@ -42,10 +42,10 @@ In panels a--h, the data were binned into hexagons for visual presentation. Dark
 \includegraphics[width=6in]{../figs/performance.pdf}
 \caption{
 Performance metrics of individual and ensemble models predicted mean \bbmsy\\ in the last five years fitted to a dataset with (a) known population statuses and (b) the RAM Legacy stock assessment database. 
-The x-axis represents within-population innaccuracy: median absolute relative error. 
+The x-axis represents within-population innaccuracy: median absolute proportional error (MAPE). 
 The y-axis represents across-population Spearman rank-order correlation. 
 The top-left corner contains methods with the best performance across the two metrics. 
-The colour shading represents bias (median relative error): white points are unbiased, blue points represent methods that predict \bbmsy\\ values that are too high, red points represent methods that predict \bbmsy\\ values that are too low. 
+The colour shading represents bias (median proportional error; MPE): white points are unbiased, blue points represent methods that predict \bbmsy\\ values that are too high, red points represent methods that predict \bbmsy\\ values that are too low. 
 These performance metrics are derived from the data in Fig.~\ref{fig:hexagon} and based on repeated three-fold cross-validation testing. \textit{(TODO: I'll tweak the labels to avoid overlap near the end. Otherwise, they move slightly with every little thing we tweak in the analysis.)}.
 }
 \label{fig:performance}
