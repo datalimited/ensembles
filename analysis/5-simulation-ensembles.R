@@ -8,6 +8,7 @@ dsim <- readRDS("generated-data/dsim.rds")
 spec <- readRDS("generated-data/spec-frequencies-sim.rds")
 dsim <- suppressWarnings(left_join(dsim, spec)) # warnings on character-factor conversions
 dsim$method_id <- sub("COM.SIR", "COMSIR", dsim$method_id) # to match RAM fits
+dsim$method_id <- sub("Costello", "mPRM", dsim$method_id)
 dsim <- rename(dsim, stockid = stock_id, method = method_id) # to match RAM fits
 # extend the stockid to be truly unique per scenario:
 # (note that there are still multiple iterations with the same stockid)

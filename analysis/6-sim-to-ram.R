@@ -7,6 +7,7 @@ source("0-ensemble-functions.R")
 
 # prep the RAM data:
 ram <- readRDS("generated-data/ram_fits.rds")
+ram$method <- sub("Costello", "mPRM", ram$method)
 
 ram_sum <- ram %>%
   group_by(stockid, method) %>%
@@ -48,18 +49,23 @@ d_slope <- reshape2::dcast(ram_sum, stockid + scientificname ~ method,
 # bring in the simulation formatted data to build the simulation-trained models:
 d_mean_sim <- readRDS("generated-data/sim-mean-dat.rds")
 m_rf <- randomForest::randomForest(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
     spec_freq_0.05 + spec_freq_0.2,
   data = d_mean_sim, ntree = 1000L)
 
 m_gbm <- gbm::gbm(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + Costello + SSCOM +
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
     spec_freq_0.05 + spec_freq_0.2,
   data = d_mean_sim, distribution = "gaussian",
   n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 
+m_lm0 <- lm(
+  log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
+      spec_freq_0.05 + spec_freq_0.2),
+  data = d_mean_sim)
+
 m_lm <- lm(
-  log(bbmsy_true_mean) ~ (CMSY + COMSIR + Costello + SSCOM +
+  log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
       spec_freq_0.05 + spec_freq_0.2)^2,
   data = d_mean_sim)
 
@@ -79,13 +85,13 @@ dev.off()
 
 library("mgcv")
 m_gam <- mgcv::gam(
-  log(bbmsy_true_mean) ~ s(CMSY) + s(COMSIR) + s(Costello) + s(SSCOM) +
-    + (CMSY:COMSIR) + (CMSY:Costello) + (CMSY:SSCOM) + (COMSIR:Costello) +
-    (COMSIR:SSCOM) + (Costello:SSCOM) +
+  log(bbmsy_true_mean) ~ s(CMSY) + s(COMSIR) + s(mPRM) + s(SSCOM) +
+    + (CMSY:COMSIR) + (CMSY:mPRM) + (CMSY:SSCOM) + (COMSIR:mPRM) +
+    (COMSIR:SSCOM) + (mPRM:SSCOM) +
     s(spec_freq_0.05) + s(spec_freq_0.2),
   data = d_mean_sim)
 
-# join in life-history data for Costello method
+# join in life-history data for mPRM method
 # spp_categories is in the datalimited package as data:
 ts_dat <- dplyr::left_join(datalimited::ram_ts, datalimited::spp_categories)
 # format before to save time, can be done once before cross-validation:
@@ -154,13 +160,13 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
         as.numeric(aa$bbmsy_true_mean_original)) %>%
         stopifnot()
 
-      # now substitute these in for the Costello values in the original d_mean:
+      # now substitute these in for the mPRM values in the original d_mean:
       # note that due to the inner_join this also accomplishes subsetting
       # the full dataset to the cross-validation chunk level:
       d_test <- test_dat_sum %>%
-        rename(Costello = bbmsy_est_mean) %>%
-        select(stockid, Costello) %>%
-        dplyr::inner_join(select(d_mean, -Costello), by = "stockid")
+        rename(mPRM = bbmsy_est_mean) %>%
+        select(stockid, mPRM) %>%
+        dplyr::inner_join(select(d_mean, -mPRM), by = "stockid")
 
       # we're in trouble if these don't match:
       stopifnot(identical(length(test_ids), nrow(d_test)))
@@ -169,7 +175,7 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
       d_test$rf_ensemble <- exp(predict(m_rf, newdata = d_test))
       d_test$gbm_ensemble <- exp(predict(m_gbm, newdata = d_test, n.trees = m_gbm$n.trees))
       geo_mean <- TRUE
-      individual_models <- c("CMSY", "COMSIR", "Costello", "SSCOM")
+      individual_models <- c("CMSY", "COMSIR", "mPRM", "SSCOM")
       if (geo_mean) {
         d_test$mean_ensemble <- exp(rowMeans(log(d_test[, individual_models])))
       } else {
