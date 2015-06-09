@@ -12,7 +12,7 @@
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=4.2in]{../figs/didactic2.pdf}
+\includegraphics[width=4.2in]{../figs/didactic3.pdf}
 \caption{Using an ensemble model to predict population status.
 (Left panel) Individual models are fit to populations of known or assumed status. Estimates from these individual models, potential combined with additional covariates, are then used as coviarates in an ensemble model fitted the known or assumed population status as the response. (Right panel) Finally, the same individual models are fit to a population of interest and combined with the previously fitted ensemble model to derive the ensemble prediction of population status.}
 \label{fig:didactic}
