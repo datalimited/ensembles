@@ -114,6 +114,16 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 
 \begin{figure}[htbp]
 \begin{center}
+\includegraphics[width=0.6\textwidth]{../figs/lm-coefs-3.pdf}
+\caption{Standardized regression coefficients from a linear model ensemble predicting log mean \bbmsy\\ in the last five years \textbf{with third-order interactions}. Coefficients are centered (mean of each predictor is subtracted) and scaled (divided by two standard deviations). Thick and thin lines represent +/- one and two standard errors from the mean.}
+\label{fig:lm-coefs3}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim.pdf}
 \caption{Partial dependence plots for GBM ensemble models fitted to the
 simulation data. Lines represent the marginal non-linear effect of each
