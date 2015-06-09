@@ -66,6 +66,9 @@ Boosted regression ensemble:
 
 # Supplementary Tables
 
+\renewcommand{\thetable}{S\arabic{table}}
+\setcounter{table}{0}
+
 Table of the predictors
 
 \begin{longtable}{>{\RaggedRight}m{4.5cm}>{\RaggedRight}p{8.5cm}}
@@ -98,6 +101,16 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 
 \renewcommand{\thefigure}{S\arabic{figure}}
 \setcounter{figure}{0}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../figs/lm-coefs.pdf}
+\caption{Standardized regression coefficients from a linear model ensemble predicting log mean \bbmsy\\ in the last five years. Coefficients are centered (mean of each predictor is subtracted) and scaled (divided by two standard deviations). Thick and thin lines represent +/- one and two standard errors from the mean.}
+\label{fig:lm-coefs}
+\end{center}
+\end{figure}
+
+\clearpage
 
 \begin{figure}[htbp]
 \begin{center}
