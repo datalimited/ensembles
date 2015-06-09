@@ -198,21 +198,6 @@ pdf("../figs/hex-mean-sim-basic-cv.pdf", width = 8, height = 4)
 plot_hex_fig(d_sim_basic, xbins = 100L)
 dev.off()
 
-## Performance panel figures:
-pdf("../figs/performance.pdf", width = 6, height = 3.1)
-par(mfrow = c(1, 2), mgp = c(1.5, 0.4, 0), las = 1, tck = -0.012,
-  oma = c(2.7, 3.5, .5, .5), cex = 0.8, mar = c(0, 0, 0, 0),
-  xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-par(xpd = FALSE)
-performance_panel(d_sim_perf_summ, xlim = c(0.2, 0.6), ylim = c(0.1, 0.7))
-performance_panel(re_ram_sum_long, xlim =  c(0.48, 0.65), ylim = c(0.15, 0.45))
-mtext("Within population inaccuracy (MAPE)", side = 1, line = 1.4, col = "grey40", cex = 0.8, outer = TRUE)
-mtext("Across population correlation", side = 2, line = 2.2, col = "grey40", las = 0, cex = 0.8, outer = TRUE)
-#text(0.54, 0.5, "Bias (MPE)", col = "grey30", pos = 4)
-dev.off()
-
-# base:
-
 all <- bind_rows(d_sim_perf_wide, re_ram_sum)
 pal <- RColorBrewer::brewer.pal(11, "RdBu") %>% colorRampPalette
 pal_df <- data_frame(mre = seq(-max(abs(all$mre)+0.05), max(abs(all$mre)+0.05), length.out = 100),
