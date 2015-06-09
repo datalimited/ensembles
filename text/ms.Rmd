@@ -82,7 +82,17 @@ E-mail: sean_anderson@sfu.ca
 
 # Abstract
 
-What can we do when multiple ecological models give different impressions of population status? Any single model is unlikely to perform best in all scenarios. However, ensemble methods from the fields climate science and machine learning provide a powerful tool to leverage information across multiple ecological models. Here we evaluate the potential for ensemble methods to improve estimates of fish population status. We fit four data-limited models of population and exploitation dynamics and combine their estimates of the mean and slope of biomass at maximum sustainable yield (\bbmsy\\) with four ensemble models: a simple average, a linear model, and two machine-learning methods---random forests and boosted regression trees. We build our ensembles on a simulated dataset of 5760 fish stocks and test our models with cross-validation and a global database of `r ram_stocks_n` stock assessments. We find that ensemble models substantially improve estimates of population status and trajectory. Machine-learning ensembles performed the best: accuracy improved `r mean_sim$mach_vs_ind_mare_fold`%, correlation improved from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and bias (median proportional error) declined from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`. We found similar improvements when predicting the slope of status. When the simulation-trained ensembles were applied to global fish stocks, the best ensembles still improved all dimensions of performance over the next-best individual model. Ensemble models have potential to improve estimates of population status and trajectory across many taxa beyond fish. However, ensemble methods must be carefully tested, formed from a diverse set of accurate models, and built on a dataset sufficiently representative of the populations they are applied to.
+What can we do when multiple ecological models give different impressions of population status? Any single model is unlikely to perform best in all scenarios. 
+However, ensemble methods from the fields climate science and machine learning provide a powerful tool to leverage information across multiple ecological models. 
+Here we evaluate the potential for ensemble methods to improve estimates of fish population status. 
+We fit four data-limited models of population and exploitation dynamics and combine their estimates of the mean and slope of biomass at maximum sustainable yield (\bbmsy\\) with four ensemble models: a simple average, a linear model, and two machine-learning methods---random forests and boosted regression trees. 
+We build our ensembles on a simulated dataset of 5760 fish stocks and test our models with cross-validation and a global database of `r ram_stocks_n` stock assessments. 
+We find that ensemble models substantially improve estimates of population status and trajectory. 
+Machine-learning ensembles performed the best: accuracy improved `r mean_sim$mach_vs_ind_mare_fold`%, correlation improved from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and bias (median proportional error) declined from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`. 
+We found similar improvements when predicting the slope of status. 
+When the simulation-trained ensembles were applied to global fish stocks, the best ensembles still improved all dimensions of performance over the next-best individual model. 
+Ensemble models have potential to improve estimates of population status and trajectory across many taxa beyond fish. 
+However, ensemble methods must be carefully tested, formed from a diverse set of accurate models, and built on a dataset sufficiently representative of the populations they are applied to.
 
 # Introduction
 
@@ -93,44 +103,43 @@ suggest different conclusions about population status and often times we do not
 know which model is best. How can we reconcile multiple models to make robust
 management decisions about ecological resources?
 
-When models give conflicting estimates of a population's status, there are a
-number of solutions. (1) We can pick a single model. However, it isn't always
-obvious which model is best, and even objectively second-best models may contain
-useful additional information. (2) We can maintain multiple models throughout
-the decision-making process. However, this can be complicated (REFs)... (3) We
-can combine the model outputs. This could be as simple as taking the average,
-potentially weighting the models by some performance metric. This could be as
-complicated as forming an additional 'hyper' model that draws on interactions
-between model outputs and potentially incorporates additional information to
-derive a best estimate.
-
-Ensemble models are widely used in the climate sciences, where thousands of
-models with varying structural combined across different structural ... The
-idea behind ensemble models forms the backbone of many machine learning
-methods. For example...
+Ensemble models, which combine the output from multiple models, are one
+potential solution to this problem. A simple ensemble model might take the
+average of multiple model outputs, perhaps weighted by some goodness of fit
+(REFs). A complex ensemble model might also take into account the interactions
+between model outputs and additional covariates. Ensemble models are popular in
+many fields including public health [e.g. @thomson2006], agriculture [e.g.
+@cantelaube2005], climate science (e.g. REFs), and machine learning (e.g.
+REFs). We think they have tremendous opportunity in ecological resource
+management.
 
 In fisheries science, a common problem is estimating the status of an exploited
-fish population. For the majority of fish stocks, we have limited information to
-go on and stock status isn't known. In recent years, a number of methods have
-been proposed to derive population status based on limited information and a set
-of assumptions. However, we know that these models can give conflicting output
-and no one model is that accurate.
+fish population. For the majority of fish stocks, we have limited biological
+information and stock status isn't known (e.g. REFs).  In recent years, a
+number of methods have been proposed to derive population status based on the
+limited information that is frequently available: fisheries catch time series
+and basic knowledge about the productivity of the species. Recent work has
+investigated the ability for these models to estimate population status through
+a large-scale simulation model [@rosenberg2014]. A key finding was that these
+models frequently disagree on population status and any one model has
+relatively poor predictive ability (e.g. Fig. \ref{fig:motivate}).
 
-Motivation: (Fig. \ref{fig:motivate}).
-
-Ensemble models combine estimates of individual models, potentially along with
-additional covariates, in an additional 'ensemble' model
-(Fig. \ref{fig:didactic}).
-
+<!--
 Exploit interactions between individual models and relationships between other
 conditions of the data and the performance of the individual models.
-
 Fitted to populations of known or assumed status and this ensemble model is
 used to extrapolate to populations of interest.
+-->
 
-Here, we develop ensemble models for data-limited exploited fish populations. We
-explore a variety of ensemble approaches applied to both simulated and
-real-world fish stocks and compare performance...
+Here, we develop ensemble models to estimate the population status of exploited
+fish populations. We explore a variety of ensemble approaches applied to both
+simulated and real-world fish stocks and compare predictive performance. In
+developing these models we highlight the types of problems one encounters when
+forming and evaluating ensemble models. We find that ensembles generally
+provide improved predictive performance than any single model---especially when
+considered across multiple dimensions of predictive ability. Furthermore, the
+output from ensemble models can provide better mechanistic understanding of how
+invidual models perform.
 
 # Methods
 
@@ -145,52 +154,50 @@ population status.
 
 <!--TODO: github flr repo not available--> 
 
-We developed and tested ensemble models with both a fully factorial simulated
-dataset [@rosenberg2014] and the RAM Legacy Stock Assessment Database
-[@ricard2012]. @rosenberg2014 provide a full description of the simulation
-model and the code to generate the simulations is available at
-<https://github.com/flr/StockSims> (TODO: not there). To summarize, the models were built in the
-package FLR [@kell2007] for the statistical software \textsf{R} [@r2015]...
-included all combinations of the following factors:
+We first developed and tested ensemble models with a fully factorial simulated
+dataset [@rosenberg2014]. The simulation models included three life histories (small
+pelagic, demersal, large pelagic), three levels of how depleted biomass was at
+the start of the dataset (100%, 70%, and 40% of carrying capacity), four
+harvest dynamics (a constant harvest rate, a harvest rate that is coupled with
+biomass to mimic an open-access single-species fishery, a scenario where
+harvest rate increases to a fixed level, a 'roller-coaster' scenario where the
+harvest rate increases, maintains a steady level and decreases to a lower
+steady level). Process noise was introduced to the models through two levels of
+multiplicative recruitment variability ($N(0, 0.2)$ and $N(0, 0.6)$, two levels
+of first-order autoregressive correlation on recruitment variablity (0 and
+0.6). The simulation included a scenario without observation error and with
+multiplicative observation error around catch at $N(0, 0.2)$. 
 
-- Three life histories: small pelagic, demersal, large pelagic.
-- Two time series lengths: 20 and 60 years.
-- Three levels of initial depletion: 1, 0.7, and 0.4.
-- Four harvest dynamics: (1) a constant harvest rate, (2) a harvest rate that
-  is coupled with biomass to mimic an open-access single-species fishery, (3) a
-  one-way trip where harvest rate increases five percent per year to 80% of the
-  level at which the stock would crash, and (4) roller-coaster shaped where the
-  harvest rate increases, maintains a steady level at 80% of the level at which
-  the stock would crash, and then decreases to FMSY. 
-- Two levels of multiplicative standard deviation around catch (0 and 0.2)
-- Two levels of standard deviation of recruitment variability (0.2 and 0.6)
-- Two levels of autoregressive correlation on recruitment variability (0 and 0.6)
+@rosenberg2014 ran ten iterations for each combination of factors adding
+stochastic draws of recruitment and catch-recording variability each time to
+generate a total of 5760 stocks. The simulation models were built in the
+package FLR [@kell2007] for the statistical software \textsf{R} [@r2015].
+@rosenberg2014 provide a full description of the simulation model and the code
+to generate the simulations is available at <https://github.com/flr/StockSims>
+(TODO: not there). 
 
-\noindent @rosenberg2014 ran ten iterations for each combination of factors
-adding stochastic draws of recruitment and catch-recording variability each
-time to generate a total of 5760 stocks.
-
-Our analysis of the RAM Legacy Stock Assessment Database was based on version
-XX downloaded on XX. This version includes XX stocks from XX countries across
-XX taxonomic orders.
+We also tested our ensemble models on the RAM Legacy Stock Assessment Database
+[@ricard2012]. Our analysis of the stock-assessment database was based on
+version XX downloaded on XX. After removing stocks for which the models
+described below did not converge, this database included `r ram_stocks_n` from
+XX countries across XX taxonomic orders.
 
 ## Individual models of population status
 
 We fit four individual data-limited models to estimate \bbmsy\\. Three of the
-models are mechanistic and based generally on Shaefer biomass dynamics
-[@schaefer1954] of the form:
+models are mechanistic and based generally on @schaefer1954 biomass
+dynamics of the form:
 
 \begin{equation}
 \hat{B}_{t+1} = B_t + r B_t \left(1 - B_t / B_0 \right) - C_t,
 \end{equation}
 
-\noindent where $B_t$ represents biomass at time $t$, $r$ represents the
-intrinsic population growth rate, $B_0$ represents unfished biomass, and $C$
-represents catch. One of the models is empirical instead of mechanistic.
-@rosenberg2014 provide a full summary of these four methods and we provide some
-further details in the Supporting Materials. Code to carry out all methods is
-available in an accompanying package **datalimited** for the statistical
-software \textsf{R}. In summary:
+\noindent where $\hat{B}_{t+1}$ represents predicted biomass at time $t$ plus
+one year, $B_t$ represents biomass at time $t$, $r$ represents the intrinsic
+population growth rate, $B_0$ represents unfished biomass or carrying capacity,
+and $C$ represents catch. @rosenberg2014 provide a full summary of these four
+methods and code to fit all the models is available in an accompanying package
+**datalimited** for the statistical software \textsf{R}. In summary:
 
 - *COM-SIR* (catch-only-model with sample-importance-resampling) is a coupled
 harvest-dynamics model developed by @vasconcellos2005. Biomass is assumed to
@@ -204,7 +211,6 @@ a prior to the relative proportion of biomass at the end compared to unfished
 biomass (depletion) based on the percentage of maximum catch at the end of the
 time series.
 
-
 - *SSCOM* (state-space catch-only-model) ...
 
 - *mPRM* (modified panel regression model) is a modified version of the
@@ -214,6 +220,7 @@ a series of characteristics of the catch time series and stock with \bbmsy\\ as
 the response. The model used in this paper and @rosenberg2014 is modified from
 the original in that it simplifies the life-history categories to be applicable
 to simulated data.
+<!--TODO: what are we doing with the RAM stocks again?-->
 
 ## Additional covariates
 
@@ -224,44 +231,56 @@ be life-history characteristics, additional information on exploitation
 patterns, or additional statistical properties of the data going into the
 individual models. For simplicity, and to allow us to apply models developed
 with the simulated dataset to the real-world dataset, we added only one set of
-additional covariates: spectral properties of the catch time series itself. We
-fit spectral models to the catch time series and recorded representative
-short-term and long-term spectral densities of 0.05 (corresponding to a 20-year
-cycle) and 0.2 (corresponding to a 5-year cycle).
+additional covariates: spectral properties of the catch time series itself.
+Spectral analysis decomposes a time series into the frequency domain and
+provides a useful means of describing the statistical properties of the catch
+series that is independent of time series length and magnitude of catch. We fit
+spectral models to the scaled catch time series (divided by maximum catch) with
+the `spec.ar` function in \textsf{R} and recorded representative short- and
+long-term spectral densities of 0.05 and 0.2, which correspond to 20- and
+5-year cycles.
 
 ## Ensemble models
 
 The individual models we seek to combine with ensemble models provide time
-series of \bbmsy\\. Therefore, we can use ensemble models to estimate a number of
-different attributes of the time series. Here, we focus on two attributes the
-mean and slope of \bbmsy\\ in the last 3 years. We refer to these quantities
-collectively as $\theta$. Together, these quantities address both the current
+series of \bbmsy\\ ($\hat{b}_\mathrm{CMSY}$, $\hat{b}_\mathrm{COM-SIR}$, etc.).
+Therefore, we can use ensemble models to estimate multiple properties of these
+status time series. Here, we focus on two values: the mean and slope of
+\bbmsy\\ in the last 5 years. Below, we refer to these quantities collectively
+as $\hat{b}_\mathrm{ensemble}$. Together, these quantities address the current
 state and trajectory of status, both of which may be of management and
 conservation interest. To avoid undue influence of the end points of the time
-series on the calculated slope, we instead measured the median slope as the
-Theil-Sen estimator [@theil1950].
+series on the calculated slope, we measured the slope as the Theil-Sen
+estimator of median slope [@theil1950].
 
-An ensemble model can combine inference through anything from a simple average,
-to a weighted average, to a complex non-linear model. Here we choose four
-ensemble models to compare: an average, a linear model with two-way
-interactions, a random forest, and boosted regression tree. 
+An ensemble model can combine models through anything from a simple average to
+a complex non-linear model. Here we choose four ensemble models to compare: an
+average, a linear model with two-way interactions, a random forest, and boosted
+regression tree. The general form of our models is as follows:
 
-General form:
-
-\begin{equation}
+$$
 \hat{\theta} = \mathrm{argmin}_\theta(L(b \, | \, \hat{b}_{\mathrm{ensemble}}))
-\end{equation}
+$$
 
-\begin{equation}
-\hat{b}_\mathrm{ensemble} = f(\hat{b}_\mathrm{CMSY}, \hat{b}_\mathrm{COM-SIR}, \hat{b}_\mathrm{SSCOM}, \hat{b}_\mathrm{mPRM}, \mathrm{other~covariates} \, | \, \theta)
-\end{equation}
+$$
+\hat{b}_\mathrm{ensemble} = 
+f(\hat{b}_\mathrm{CMSY}, \hat{b}_\mathrm{COM-SIR}, 
+\hat{b}_\mathrm{SSCOM}, \hat{b}_\mathrm{mPRM}, 
+S(0.2), S(0.5), | \, \theta)
+$$
 
-\noindent where $L$ is a generalized loss function, $f$ is some generalized regression function, $\hat{b}_\mathrm{COM-SIR}$ is the prediction from COM-SIR, etc., and $\theta$ is the set of parameters for the regression function.
+\noindent where $L$ is a generalized loss function, $f$ is some generalized
+regression function, $\hat{b}_\mathrm{CMSY}$ is the prediction from COM-SIR,
+$\hat{b}_\mathrm{COM-SIR}$ etc., $b$ is the true value the model is fitted to,
+$S(n)$ represents the spectral density at frequency $n$ of the scaled catch
+series, and $\theta$ is the set of parameters for the regression function.
 
+<!--
 *Linear model*: For populations $i$ $1$ through $n$, individual models and
 covariates $j$ $1$ through $m$, and allowing $\theta$ to refer to both
 quantities estimated from individual models and additional covariates, we fit
 the linear model with two-way interactions as:
+-->
 
 <!--\noindent-->
 <!--The geometric mean is calculated as-->
@@ -272,6 +291,7 @@ the linear model with two-way interactions as:
   <!--\beta_0 + \beta_1 \log B/B_{\mathrm{MSY}(i)} -->
 <!--$$-->
 
+<!--
 \begin{equation}
 \theta_{\mathrm{ensemble}(i)} = 
   \beta_0 + 
@@ -287,60 +307,60 @@ where the $\beta$ represent coefficients and $\epsilon$ represents normally
 distributed residual variation. We also tried fitting linear models without
 interactions but found better cross-validation predictive performance from all
 performance measures evaluated using the procedure outlined below.
+-->
 
 *Random forests* are a machine learning method that combines a series of
-regression trees. Regression trees sequentially determine what value of
-a predictor best splits the response data into two 'branches' based on
-a specified loss function. In random forests, a series of regression trees are
+regression trees. Regression trees sequentially determine what value of a
+predictor best splits the response data into two 'branches' based on a
+specified loss function. In random forests, a series of regression trees are
 built on a random subset of the data and random subset of the covariates of the
 model. By combining many of these stochastically generated models, random
-forests can provide good predictive performance and fit highly non-linear
-relationships TODO. We fit random forest models with the **randomForest**
+forests can provide strong predictive performance and fit highly non-linear
+relationships (REFs). We fit random forest models with the **randomForest**
 package [@liaw2002] for \textsf{R} with the default argument values. 
 
 *Boosted regression models* are a machine learning method that, like random
 forests, combines a series of regression trees built on random subsets of the
-data, but also add a boosting procedure. Boosting refers to fitting a series
-of models with each subsequent model fit to the residuals from the previous
-model; data points that are fit poorly in a given model are given more weight
-in the next model [@elith2008]. Boosting can result in TODO and TODO and is
-a common and powerful machine learning technique [@elith2008]. We fit boosted
-regression tree models with the **GBM** package [@ridgeway2015] for \textsf{R}
-with 10000 trees, an interaction depth of $2$, a learning rate (shrinkage
-parameter) of $0.01$, and all other arguments at their default values. 
+data, but also add a boosting procedure. Boosting refers to fitting a series of
+models with each subsequent model fit to the residuals from the previous model;
+data points that are fit poorly in a given model are given more weight in the
+next model [@elith2008]. Boosting can result in TODO and TODO and is a common
+and powerful machine learning technique [@elith2008]. We fit boosted regression
+tree models with the **GBM** package [@ridgeway2015] for \textsf{R}. Based on
+cross-validation with the **caret** package (Supporting Materials, Fig. SX), we
+fit GBMs with 2000 trees, an interaction depth of $6$, a learning rate
+(shrinkage parameter) of $0.01$, and all other arguments at their default
+values. 
 
-For all ensemble models of $\overline{B/B_\mathrm{MSY}}$, which is bounded at
-zero, we log transformed all $\overline{B/B_\mathrm{MSY}}_{(ji)}$ and
-exponentiated the estimated $\log
-\widehat{\overline{B/B_\mathrm{MSY}}}_\mathrm{ensemble}$ to derive a median
-estimate of $\widehat{\overline{B/B_\mathrm{MSY}}}_\mathrm{ensemble}$. For the
-estimates of \bbmsy\\ slope, which are not bounded at zero, we fit ensemble
-models on the natural untransformed scale.
+For all ensemble models of mean \bbmsy\\, which is bounded at zero, we fit the
+models in log space and exponentiated the predictions to derive a median
+estimate of \bbmsy\\. For the estimates of \bbmsy\\ slope, which are not
+bounded at zero, we fit ensemble models on the natural untransformed scale.
 
 ## Testing model performance
 
 A critical component to any predictive modelling exercise is to evaluate the
-predictive performance of a model on new data [@hastie2009]. Typically, data
-are limited in availability, and so a common and effective tool is
-cross-validation [@hastie2009]. We used repeated three-fold cross validation to
-test predictive performance: we randomly divided the dataset into three sets,
-built ensemble models on two-thirds of the data, and evaluated predictive
-performance on the remaining third of the data. We repeated this across each of
-the three splits and then repeated the whole procedure XX times to account for
-bias that may result from any one set of validation splits.
+performance of a model new data [@hastie2009]. We used repeated three-fold
+cross validation to test predictive performance: we randomly divided the
+dataset into three sets, built ensemble models on two-thirds of the data, and
+evaluated predictive performance on the remaining third of the data. We
+repeated this across each of the three splits and then repeated the whole
+procedure XX times to account for bias that may result from any one set of
+validation splits. Since the dynamics of simulated populations differing only
+in the magnitude of observation error around catch, magnitude of recuitment
+variability, or stochastic draw of these values are likely similar, we grouped
+these characteristics together in the cross-validation process---we never
+trained and tested on models differing only in these characteristics.
 
 Predictive performance can be evaluated with metrics that represent a variety
-of modelling goals. For instance, a model may provide an unbiased but highly
-imprecise prediction. For continuous response variables such as those
-considered here performance metrics often measure some form of bias, precision,
-or accuracy (a combination of bias and precision), or the ability to correctly
-rank or correlate across populations. Here, we measure proportional error (PE;
-also called 'relative error') defined as $(\hat{\theta} - \theta)/\theta$,
-where $\theta$ represents the true parameter value and $\hat{\theta}$ the
-estimate of that parameter ($\overline{B/B_\mathrm{BMSY}}$ or slope of
-\bbmsy\\). We summarize median proportional error  to measure bias, median
-absolute proportional error to measure accuracy, and Spearman's rank-order
-correlation to measure the ability to correctly rank population status.
+of modelling goals. For continuous response variables such as the mean and
+slope of population status, peformance metrics often measure some form of bias,
+precision, accuracy (a combination of bias and precision), or the ability to
+correctly rank or correlate across populations. Here, we measure proportional
+error (PE; also called 'relative error') defined as $(\hat{b} - b)/b$. We
+summarize median proportional error to measure bias, median absolute
+proportional error to measure accuracy, and Spearman's rank-order correlation
+to measure the ability to correctly rank populations.
 
 # Results
 
