@@ -105,24 +105,24 @@ management decisions about ecological resources?
 
 Ensemble models, which combine the output from multiple models, are one
 potential solution to this problem. A simple ensemble model might take the
-average of multiple model outputs, perhaps weighted by some goodness of fit
-(REFs). A complex ensemble model might also take into account the interactions
-between model outputs and additional covariates. Ensemble models are popular in
-many fields including public health [e.g. @thomson2006], agriculture [e.g.
-@cantelaube2005], climate science (e.g. REFs), and machine learning (e.g.
-REFs). We think they have tremendous opportunity in ecological resource
-management.
+average of multiple model outputs, perhaps weighted by some goodness of fit. A
+complex ensemble model might also take into account the interactions between
+model outputs and additional covariates. Ensemble models are popular in other
+fields including public health [e.g. @thomson2006], agriculture [e.g.
+@cantelaube2005], climate science [e.g. @murphy2004; @tebaldi2007;
+@pierce2009], and machine learning [e.g. @dietterich2000]. We think they have
+tremendous opportunity in ecological resource management.
 
 In fisheries science, a common problem is estimating the status of an exploited
 fish population. For the majority of fish stocks, we have limited biological
-information and stock status isn't known (e.g. REFs).  In recent years, a
-number of methods have been proposed to derive population status based on the
-limited information that is frequently available: fisheries catch time series
-and basic knowledge about the productivity of the species. Recent work has
+information and stock status isn't known [@fao2014]. In recent years, a number
+of methods have been proposed to derive population status based on the limited
+information that is frequently available: fisheries catch time series and basic
+knowledge about the productivity of the species. Recently, @rosenberg2014
 investigated the ability for these models to estimate population status through
-a large-scale simulation model [@rosenberg2014]. A key finding was that these
-models frequently disagree on population status and any one model has
-relatively poor predictive ability (e.g. Fig. \ref{fig:motivate}).
+a large-scale simulation model. A key finding was that these models frequently
+disagree on population status and any one model has relatively poor predictive
+ability (e.g. Fig. \ref{fig:motivate}).
 
 <!--
 Exploit interactions between individual models and relationships between other
@@ -271,13 +271,13 @@ $$
 
 \noindent where $L$ is a generalized loss function, $f$ is some generalized
 regression function, $\hat{b}_\mathrm{CMSY}$ is the prediction from the CMSY
-model etc. (Table \ref{tab:predictors}), $b$ is the true value the model is
-fitted to, $S(n)$ represents the spectral density at frequency $n$ of the
-scaled catch series, and $\theta$ is the set of parameters for the regression
-function. For all ensemble models of mean \bbmsy\\, which is bounded at zero,
-we fit the models in log space and exponentiated the predictions to derive a
-median estimate of \bbmsy\\. For the estimates of \bbmsy\\ slope we fit
-ensemble models on the natural untransformed scale.
+model etc. (Table \ref{tab:predictors}), $S(n)$ represents the spectral density
+at frequency $n$ of the scaled catch series, $b$ is the true value the model is
+fitted to, and $\theta$ is the set of parameters for the regression function.
+For all ensemble models of mean \bbmsy\\, which is bounded at zero, we fit the
+models in log space and exponentiated the predictions to derive a median
+estimate of \bbmsy\\. For the estimates of \bbmsy\\ slope we fit ensemble
+models on the natural untransformed scale.
 
 We calculated the average ensemble models as the geometric mean of the
 individual model median \bbmsy\\ estimates and the mean of the individual model
@@ -363,7 +363,7 @@ Fig. \ref{fig:performance-sim-slope}
 
 # Acknowledgements
 
-Funding...
+<!--Funding...-->
 
 <!--# Citation notes-->
 
