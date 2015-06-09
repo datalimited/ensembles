@@ -63,6 +63,20 @@ m_lm <- lm(
       spec_freq_0.05 + spec_freq_0.2)^2,
   data = d_mean_sim)
 
+
+pdf("../figs/lm-coefs.pdf", width = 5, height = 6)
+par(mfrow = c(1, 1))
+par(mar = c(4, 12, 1, 3), cex = 0.9)
+par(xpd = FALSE)
+#arm::coefplot(arm::standardize(m_lm0), main = "")
+#par(xpd = NA)
+#mtext("(a) Standardized coefficients\n(no interactions)", side = 3, line = 2)
+#par(xpd = FALSE)
+arm::coefplot(arm::standardize(m_lm), main = "")
+par(xpd = NA)
+mtext("Standardized regression coefficient", side = 3, line = 3)
+dev.off()
+
 library("mgcv")
 m_gam <- mgcv::gam(
   log(bbmsy_true_mean) ~ s(CMSY) + s(COMSIR) + s(Costello) + s(SSCOM) +
