@@ -139,7 +139,7 @@ forming and evaluating ensemble models. We find that ensembles generally
 provide improved predictive performance than any single model---especially when
 considered across multiple dimensions of predictive ability. Furthermore, the
 output from ensemble models can provide better mechanistic understanding of how
-invidual models perform.
+individual models perform.
 
 # Methods
 
@@ -155,17 +155,17 @@ population status.
 <!--TODO: github flr repo not available--> 
 
 We first developed and tested ensemble models with a fully factorial simulated
-dataset [@rosenberg2014]. The simulation models included three life histories (small
-pelagic, demersal, large pelagic), three levels of how depleted biomass was at
-the start of the dataset (100%, 70%, and 40% of carrying capacity), four
-harvest dynamics (a constant harvest rate, a harvest rate that is coupled with
+dataset [@rosenberg2014]. The simulation models included three life histories: small
+pelagic, demersal, large pelagic; three levels of how depleted biomass was at
+the start of the dataset: 100%, 70%, and 40% of carrying capacity; and four
+harvest dynamics: a constant harvest rate, a harvest rate that is coupled with
 biomass to mimic an open-access single-species fishery, a scenario where
 harvest rate increases to a fixed level, a 'roller-coaster' scenario where the
 harvest rate increases, maintains a steady level and decreases to a lower
-steady level). Process noise was introduced to the models through two levels of
-multiplicative recruitment variability ($N(0, 0.2)$ and $N(0, 0.6)$, two levels
-of first-order autoregressive correlation on recruitment variablity (0 and
-0.6). The simulation included a scenario without observation error and with
+steady level. Process noise was introduced to the models through two levels of
+multiplicative recruitment variability: $N(0, 0.2)$ and $N(0, 0.6)$, two levels
+of first-order autoregressive correlation on recruitment variability: 0 and
+0.6. The simulation included a scenario without observation error and with
 multiplicative observation error around catch at $N(0, 0.2)$. 
 
 @rosenberg2014 ran ten iterations for each combination of factors adding
@@ -309,14 +309,14 @@ evaluated predictive performance on the remaining third of the data. We
 repeated this across each of the three splits and then repeated the whole
 procedure XX times to account for bias that may result from any one set of
 validation splits. Since the dynamics of simulated populations differing only
-in the magnitude of observation error around catch, magnitude of recuitment
+in the magnitude of observation error around catch, magnitude of recruitment
 variability, or stochastic draw of these values are likely similar, we grouped
 these characteristics together in the cross-validation process---we never
 trained and tested on models differing only in these characteristics.
 
 Predictive performance can be evaluated with metrics that represent a variety
 of modelling goals. For continuous response variables such as the mean and
-slope of population status, peformance metrics often measure some form of bias,
+slope of population status, performance metrics often measure some form of bias,
 precision, accuracy (a combination of bias and precision), or the ability to
 correctly rank or correlate across populations. Here, we measure proportional
 error (PE; also called 'relative error') defined as $(\hat{b} - b)/b$. We
