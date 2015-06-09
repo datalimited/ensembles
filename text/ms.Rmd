@@ -188,9 +188,7 @@ We fit four individual data-limited models to estimate \bbmsy\\. Three of the
 models are mechanistic and based generally on @schaefer1954 biomass
 dynamics of the form:
 
-\begin{equation}
-\hat{B}_{t+1} = B_t + r B_t \left(1 - B_t / B_0 \right) - C_t,
-\end{equation}
+$$\hat{B}_{t+1} = B_t + r B_t \left(1 - B_t / B_0 \right) - C_t,$$
 
 \noindent where $\hat{B}_{t+1}$ represents predicted biomass at time $t$ plus
 one year, $B_t$ represents biomass at time $t$, $r$ represents the intrinsic
@@ -221,6 +219,8 @@ the response. The model used in this paper and @rosenberg2014 is modified from
 the original in that it simplifies the life-history categories to be applicable
 to simulated data.
 <!--TODO: what are we doing with the RAM stocks again?-->
+
+<!--TODO: build in fig:didactic -->
 
 ## Additional covariates
 
@@ -264,42 +264,40 @@ $$
 $$
 $$
 \hat{b}_\mathrm{ensemble} = 
-f \left( \hat{b}_\mathrm{CMSY}, \hat{b}_\mathrm{COM-SIR}, 
-\hat{b}_\mathrm{SSCOM}, \hat{b}_\mathrm{mPRM}, 
-S(0.2), S(0.5), | \, \theta \right)
+f \left( \hat{b}_\mathrm{CMSY}, \, \hat{b}_\mathrm{COM-SIR}, \,
+\hat{b}_\mathrm{SSCOM}, \, \hat{b}_\mathrm{mPRM}, \,
+S(0.2), \, S(0.5), \, | \, \theta \right)
 $$
 
 \noindent where $L$ is a generalized loss function, $f$ is some generalized
 regression function, $\hat{b}_\mathrm{CMSY}$ is the prediction from the CMSY
-model etc., $b$ is the true value the model is fitted to, $S(n)$ represents the
-spectral density at frequency $n$ of the scaled catch series, and $\theta$ is
-the set of parameters for the regression function. For all ensemble models of
-mean \bbmsy\\, which is bounded at zero, we fit the models in log space and
-exponentiated the predictions to derive a median estimate of \bbmsy\\. For the
-estimates of \bbmsy\\ slope we fit ensemble models on the natural untransformed
-scale.
+model etc. (Table \ref{tab:predictors}), $b$ is the true value the model is
+fitted to, $S(n)$ represents the spectral density at frequency $n$ of the
+scaled catch series, and $\theta$ is the set of parameters for the regression
+function. For all ensemble models of mean \bbmsy\\, which is bounded at zero,
+we fit the models in log space and exponentiated the predictions to derive a
+median estimate of \bbmsy\\. For the estimates of \bbmsy\\ slope we fit
+ensemble models on the natural untransformed scale.
 
 We calculated the average ensemble models as the geometric mean of the
 individual model median \bbmsy\\ estimates and the mean of the individual model
 \bbmsy\\ slopes. We fit the linear model ensemble with second-order
-interactions.
-
-We fit two machine learning ensemble models based on regression trees.
-Regression trees sequentially determine what value of a predictor best splits
-the response data into two 'branches' based on a specified loss function. In
-random forests, a series of regression trees are built on a random subset of
-the data and random subset of the covariates of the model (REF). In generalized
-boosted models (GBMs), each subsequent model is fit to the residuals from the
-previous model; data points that are fit poorly in a given model are given more
-weight in the next model [@elith2008]. Random forests and GBMs can provide
-strong predictive performance and fit highly non-linear relationships (REFs).
-We fit random forest models with the **randomForest** package [@liaw2002] for
-\textsf{R} with the default argument values. We fit boosted regression tree
-models with the **GBM** package [@ridgeway2015] for \textsf{R}. Based on
-cross-validation with the **caret** package (Supporting Materials, Fig. SX), we
-fit GBMs with 2000 trees, an interaction depth of $6$, a learning rate
-(shrinkage parameter) of $0.01$, and all other arguments at their default
-values.                                                
+interactions. We fit two machine learning ensemble models based on regression
+trees. Regression trees sequentially determine what value of a predictor best
+splits the response data into two 'branches' based on a specified loss
+function. In random forests, a series of regression trees are built on a random
+subset of the data and random subset of the covariates of the model (REF). In
+generalized boosted models (GBMs), each subsequent model is fit to the
+residuals from the previous model; data points that are fit poorly in a given
+model are given more weight in the next model [@elith2008]. Random forests and
+GBMs can provide strong predictive performance and fit highly non-linear
+relationships (REFs). We fit random forest models with the **randomForest**
+package [@liaw2002] for \textsf{R} with the default argument values. We fit
+boosted regression tree models with the **GBM** package [@ridgeway2015] for
+\textsf{R}. Based on cross-validation with the **caret** package (Supporting
+Materials, Fig. SX), we fit GBMs with 2000 trees, an interaction depth of $6$,
+a learning rate (shrinkage parameter) of $0.01$, and all other arguments at
+their default values.                                                
 
 ## Testing model performance
 
@@ -328,11 +326,38 @@ to measure the ability to correctly rank populations.
 
 # Results
 
-Individual model and ensemble model scatterplots:
+* Individual model and ensemble model scatterplots:
 Fig. \ref{fig:hexagon}
 
-Accuracy, rank correlation, and bias:
+* Accuracy, rank correlation, and bias:
 Fig. \ref{fig:performance}
+
+* Regression coefficients from linear model ensemble:
+Fig. \ref{fig:lm-coefs}
+
+* Partial dependence plots of GBMs:
+Fig. \ref{fig:partial-sim}
+
+* Partial residuals version of GBMs:
+Fig. \ref{fig:partial-residuals-sim-gbm}
+
+* 2-dimension partial dependence plots:
+Fig. \ref{fig:partial-2d-sim}
+
+* ROC curves from simulation ensembles:
+Fig. \ref{fig:roc-sim}
+
+* Scatterplots of RAM fits:
+Fig. \ref{fig:hexagon-ram}
+
+* Scatterplots of basic ensembles without covariates:
+Fig. \ref{fig:hexagon-sim-basic}
+
+* Scatterplots estimating slope:
+Fig. \ref{fig:scatter-sim-slope}
+
+* Accuracy, rank correlation, and bias of slope:
+Fig. \ref{fig:performance-sim-slope}
 
 # Discussion
 
