@@ -13,9 +13,10 @@ dsim <- rename(dsim, stockid = stock_id, method = method_id) # to match RAM fits
 # extend the stockid to be truly unique per scenario:
 # (note that there are still multiple iterations with the same stockid)
 # cv_id defines groups that should *all* be in the testing or training
-# datasets
+# datasets (note that stockid and cv_id are now essentially the same
+# these remain due to legacy code)
 dsim <- dsim %>%
-  mutate(cv_id = paste0(stockid, "_lh_", LH)) %>%
+  mutate(cv_id = paste0(stockid, "_sigC_", sigmaC, "_sigR_", sigmaR)) %>%
   mutate(stockid =
       paste0(stockid, "_sigmaC_", sigmaC, "_sigmaR_", sigmaR, "_lh_", LH)) %>%
   arrange(stockid, iter, year) # critical since not all in order
