@@ -133,6 +133,27 @@ nvar <- 6L
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
     spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
   data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
+d_mean$gbm_pred <- exp(gbm::predict.gbm(m, n.trees = 2000L))
+
+p1 <- ggplot(d_mean, aes(CMSY, gbm_pred)) + geom_point()
+p2 <- ggplot(d_mean, aes(COMSIR, gbm_pred)) + geom_point()
+p3 <- ggplot(d_mean, aes(mPRM, gbm_pred)) + geom_point()
+p4 <- ggplot(d_mean, aes(SSCOM, gbm_pred)) + geom_point()
+p5 <- ggplot(d_mean, aes(spec_freq_0.05, gbm_pred)) + geom_point()
+p6 <- ggplot(d_mean, aes(spec_freq_0.2, gbm_pred)) + geom_point()
+pdf("../figs/predictor-vs-predicted-gbm.pdf", width = 10, height = 5)
+gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+dev.off()
+
+p1 <- ggplot(d_mean, aes(CMSY, bbmsy_true_mean)) + geom_point()
+p2 <- ggplot(d_mean, aes(COMSIR, bbmsy_true_mean)) + geom_point()
+p3 <- ggplot(d_mean, aes(mPRM, bbmsy_true_mean)) + geom_point()
+p4 <- ggplot(d_mean, aes(SSCOM, bbmsy_true_mean)) + geom_point()
+p5 <- ggplot(d_mean, aes(spec_freq_0.05, bbmsy_true_mean)) + geom_point()
+p6 <- ggplot(d_mean, aes(spec_freq_0.2, bbmsy_true_mean)) + geom_point()
+pdf("../figs/predictor-vs-truth-gbm.pdf", width = 10, height = 5)
+gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+dev.off()
 
 make_partial_resid_gbm <- function(var = "SSCOM") {
   d_temp <- d_mean
