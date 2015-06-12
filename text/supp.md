@@ -122,6 +122,7 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \end{center}
 \end{figure}
 
+<!--
 \clearpage
 
 \begin{figure}[htbp]
@@ -131,6 +132,7 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \label{fig:partial-residuals-sim-gbm}
 \end{center}
 \end{figure}
+-->
 
 \clearpage
 
