@@ -166,9 +166,9 @@ ram_third_row_lims <- filter(d_ram, grepl("Ensemble", clean_method)) %>%
 # Same as above but add the RAM ensembles as a third row:
 pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.6, height = 4.2)
 plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 25L,
-  lims_hex3 = ram_third_row_lims, count_transform3 = 18,
+  lims_hex3 = ram_third_row_lims, count_transform3 = 12,
   oma = c(3.5, 3.5, .5, 2.5), count_transform = 1,
-  alpha = 15)
+  alpha = 15, bias = c(rep(3, 8), rep(1.8, 4)))
 par(xpd = NA)
 mtext("Simulated data", side = 4, outer = TRUE, line = 0.4, las = 0, col = "grey20",
   adj = 0.8)
