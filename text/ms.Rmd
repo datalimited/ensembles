@@ -96,33 +96,35 @@ However, ensemble methods must be carefully tested, formed from a diverse set of
 
 # Introduction
 
-We often have multiple models of ecological systems. For example, models might
-incorporate different data types, assume alternate population dynamics, or make
-contrasting assumptions about the starting state of a system. These models may
-suggest different conclusions about population status and often times we do not
-know which model is best. How can we reconcile multiple models to make robust
+There are often multiple ecological models we can apply to a system to assess
+population status and trajectory. Models might incorporate different data
+types, assume alternate population dynamics, or make contrasting assumptions
+about the starting state of a system. These models may suggest different
+conclusions about population status and trajectory and we often do not know
+which model is best. How can we reconcile multiple models to make robust
 management decisions about ecological resources?
 
-Ensemble models, which combine the output from multiple models, are one
-potential solution to this problem. A simple ensemble model might take the
-average of multiple model outputs, perhaps weighted by some goodness of fit. A
-complex ensemble model might also take into account the interactions between
-model outputs and additional covariates. Ensemble models are popular in other
-fields including public health [e.g. @thomson2006], agriculture [e.g.
-@cantelaube2005], climate science [e.g. @murphy2004; @tebaldi2007;
-@pierce2009], and machine learning [e.g. @dietterich2000]. We think they have
-tremendous opportunity in ecological resource management.
+Ensemble methods, which combine the output from multiple models as predictors
+in a new 'ensemble' model, are one solution to this problem. A simple ensemble
+model might take the average of multiple model outputs, perhaps weighted by
+some goodness of fit. A complex ensemble model might also take into account the
+interactions between model outputs and additional covariates. Ensemble models
+are popular in other fields including public health [e.g. @thomson2006],
+agriculture [e.g. @cantelaube2005], climate science [e.g. @murphy2004;
+@tebaldi2007; @pierce2009], and machine learning [e.g. @dietterich2000]. We
+think they have tremendous opportunity in ecological resource management.
 
-In fisheries science, a common problem is estimating the status of an exploited
-fish population. For the majority of fish stocks, we have limited biological
-information and stock status isn't known [@fao2014]. In recent years, a number
-of methods have been proposed to derive population status based on the limited
-information that is frequently available: fisheries catch time series and basic
-knowledge about the productivity of the species. Recently, @rosenberg2014
-investigated the ability for these models to estimate population status through
-a large-scale simulation model. A key finding was that these models frequently
-disagree on population status and any one model has relatively poor predictive
-ability on average (e.g. Fig. \ref{fig:motivate}).
+In fisheries science, a common problem is estimating the status and trajectory
+of an exploited fish population. For the majority of fish stocks, we have
+limited biological information and stock status isn't known [@fao2014]. In
+recent years, a number of methods have been proposed to derive population
+status based on the limited information that is broadly available: fisheries
+catch time series and basic knowledge about the productivity of the species.
+Recently, @rosenberg2014 investigated the ability for these models to estimate
+population status through a large-scale simulation model. A key finding was
+that these models frequently disagree on population status and any one model
+has relatively poor predictive ability on average (e.g. Fig.
+\ref{fig:motivate}).
 
 <!--
 Exploit interactions between individual models and relationships between other
@@ -131,24 +133,25 @@ Fitted to populations of known or assumed status and this ensemble model is
 used to extrapolate to populations of interest.
 -->
 
-Here, we develop ensemble models to estimate the population status of exploited
-fish populations. We explore a variety of ensemble approaches applied to both
-simulated and real-world fish stocks and compare predictive performance. In
-developing these models we highlight the types of problems one encounters when
-forming and evaluating ensemble models. We find that ensembles generally
-provide improved predictive performance than any single model---especially when
-considered across multiple dimensions of predictive ability. Furthermore, the
-output from ensemble models can provide better mechanistic understanding of how
-individual models perform.
+Here, we develop ensemble models to estimate the population status and
+trajectory of exploited fish populations. We explore a variety of ensemble
+approaches applied to both simulated and real-world fish stocks and compare
+predictive performance. In developing these models we highlight the types of
+challenges one encounters when forming and evaluating ensemble models. We find
+that ensembles generally provide improved predictive performance than any
+single model---especially when considered across multiple dimensions of
+predictive ability and across multiple datasets. Furthermore, the output from
+ensemble models can provide better mechanistic understanding of how individual
+models of status and trajectory perform.
 
 # Methods
 
 We tested the ability of ensemble models to improve estimates of population
-status when applied to both a large simulated dataset and a global database of
-assessed stock status. Here we describe the datasets, individual models of
-population status, and ensemble models to combine those estimates. We then
-describe how we evaluated the ability of the various models to estimate
-population status.
+status and trajectory when applied to both a large simulated dataset and a
+global database of assessed stock status. Here we describe the datasets,
+individual models of population status, and ensemble models to combine those
+estimates. We then describe how we evaluated the ability of the various models
+to estimate population status.
 
 ## Datasets
 
@@ -199,59 +202,57 @@ methods and code to fit all the models is available in an accompanying package
 **datalimited** for the statistical software \textsf{R}. In summary:
 
 - *COM-SIR* (catch-only-model with sample-importance-resampling) is a coupled
-harvest-dynamics model developed by @vasconcellos2005. Biomass is assumed to
-follow a Schaefer model and harvest dynamics are assumed to follow a logistic
-model. The model is fit with a sample-importance-sampling algorithm developed
-in @rosenberg2014.
+  harvest-dynamics model developed by @vasconcellos2005. Biomass is assumed to
+  follow a Schaefer model and harvest dynamics are assumed to follow a logistic
+  model. The model is fit with a sample-importance-sampling algorithm developed
+  in @rosenberg2014.
 
-- *CMSY* (catch-MSY) implements a stock-reduction analysis with Schaefer biomass
-dynamics [@martell2013]. It requires a prior distribution for $r$ and assigns
-a prior to the relative proportion of biomass at the end compared to unfished
-biomass (depletion) based on the percentage of maximum catch at the end of the
-time series.
+- *CMSY* (catch-MSY) implements a stock-reduction analysis with Schaefer
+  biomass dynamics [@martell2013]. It requires a prior distribution for $r$ and
+  assigns a prior to the relative proportion of biomass at the end compared to
+  unfished biomass (depletion) based on the percentage of maximum catch at the
+  end of the time series.
 
 - *SSCOM* (state-space catch-only-model) TODO: Jim -- can you give a ~2 sentence summary?
 
 - *mPRM* (modified panel regression model) is a modified version of the
-panel-regression model used in @costello2012. Unlike the other models
-considered, mPRM is empirical and not mechanistic --- it fits a linear model to
-a series of characteristics of the catch time series and stock with \bbmsy\\ as
-the response. The model used in this paper and @rosenberg2014 is modified from
-the original in that it simplifies the life-history categories to be applicable
-to simulated data.
-<!--TODO: what are we doing with the RAM stocks again?-->
-
-<!--TODO: build in fig:didactic -->
+  panel-regression model used in @costello2012. Unlike the other models
+  considered, mPRM is empirical and not mechanistic --- it uses the RAM Legacy
+  Stock Assessment database to fit a linear model to a series of
+  characteristics of the catch time series and stock with stock-assessed
+  \bbmsy\\ as the response. The model used in this paper and @rosenberg2014 is
+  modified from the original in that it condenses the life-history categories
+  into three categories to match the simulated dataset. 
+  <!--TODO: what are we doing with the RAM stocks again?-->
+  <!--TODO: bias adjustment?-->
+  <!--TODO: build in fig:didactic -->
 
 ## Additional covariates
 
 Ensemble methods allow us to incorporate additional covariates into our models
-and potentially leverage interactions of how these covariates combine with the
-main individual model estimates to estimate population status. Examples might
-be life-history characteristics, additional information on exploitation
-patterns, or additional statistical properties of the data going into the
-individual models. For simplicity, and to allow us to apply models developed
-with the simulated dataset to the real-world dataset, we added only one set of
-additional covariates: spectral properties of the catch time series itself.
+and potentially leverage interactions between these covariates and individual
+model predictions. Additional covariates could be, for example, life-history
+characteristics, information on exploitation patterns, or statistical
+properties of the data. For simplicity, and to allow us to apply models
+developed with the simulated dataset to the real-world dataset, we added only
+one set of additional covariates: spectral properties of the catch time series.
 Spectral analysis decomposes a time series into the frequency domain and
-provides a useful means of describing the statistical properties of the catch
-series that is independent of time series length and magnitude of catch. We fit
-spectral models to the scaled catch time series (divided by maximum catch) with
-the `spec.ar` function in \textsf{R} and recorded representative short- and
-long-term spectral densities of 0.05 and 0.2, which correspond to 20- and
-5-year cycles.
+provides a means of describing the statistical properties of the catch series
+that is independent of time series length and magnitude of catch. We fit
+spectral models to the scaled catch time series (catch divided by maximum
+catch) with the `spec.ar` function in \textsf{R} and recorded representative
+short- and long-term spectral densities of 0.05 and 0.2, which correspond to
+20- and 5-year cycles.
 
 ## Ensemble models
 
 The individual models we seek to combine with ensemble models provide time
-series of \bbmsy\\ ($\hat{b}_\mathrm{CMSY}$, $\hat{b}_\mathrm{COM-SIR}$, etc.).
-Therefore, we can use ensemble models to estimate multiple properties of these
-status time series. Here, we focus on two values: the mean and slope of
-\bbmsy\\ in the last 5 years. Below, we refer to these quantities collectively
-as $\hat{b}_\mathrm{ensemble}$. Together, these quantities address the current
-state and trajectory of status, both of which may be of management and
-conservation interest. To avoid undue influence of the end points of the time
-series on the calculated slope, we measured the slope as the Theil-Sen
+series of \bbmsy\\. Therefore, we can use ensemble models to estimate multiple
+properties of these status time series. Here, we focus on two values: the mean
+and slope of \bbmsy\\ in the last 5 years. Together, these quantities address
+the recent state and trajectory of status, both of which may be of management
+and conservation interest. To avoid undue influence of the end points of the
+time series on the calculated slope, we measured the slope as the Theil-Sen
 estimator of median slope [@theil1950].
 
 An ensemble model can combine models through anything from a simple average to
@@ -261,7 +262,7 @@ regression tree. The general form of our models is as follows:
 
 $$
 \hat{\theta} = 
-\mathrm{argmin}_\theta \left( L(b \, | \, \hat{b}_{\mathrm{ensemble}}) \right)
+\argmin_\theta \left( L(b \, | \, \hat{b}_{\mathrm{ensemble}}) \right)
 $$
 $$
 \hat{b}_\mathrm{ensemble} = 
@@ -272,16 +273,16 @@ $$
 
 \noindent where $L$ is a generalized loss function, $f$ is some generalized
 regression function, $\hat{b}_\mathrm{CMSY}$ is the prediction from the CMSY
-model etc. (Table \ref{tab:predictors}), $S(n)$ represents the spectral density
-at frequency $n$ of the scaled catch series, $b$ is the true value the model is
-fitted to, and $\theta$ is the set of parameters for the regression function.
-For all ensemble models of mean \bbmsy\\, which is bounded at zero, we fit the
-models in log space and exponentiated the predictions to derive a median
-estimate of \bbmsy\\. For the estimates of \bbmsy\\ slope we fit ensemble
-models on the natural untransformed scale.
+model etc. (Table \ref{tab:predictors}), $S(0.2)$ and $S(0.05)$ represent the
+spectral density of the scaled catch series at frequencies of 0.2 and 0.05, $b$
+is the true value the model is fitted to, and $\theta$ is the set of parameters
+for the regression function. For all ensemble models of mean \bbmsy\\, which is
+bounded at zero, we fit the models in log space and exponentiated the
+predictions to derive a median estimate of \bbmsy\\. For the estimates of
+\bbmsy\\ slope, we fit ensemble models on the natural untransformed scale.
 
 We calculated the average ensemble models as the geometric mean of the
-individual model median \bbmsy\\ estimates and the mean of the individual model
+individual model \bbmsy\\ estimates and the mean of the individual model
 \bbmsy\\ slopes. We fit the linear model ensemble with second-order
 interactions. We fit two machine learning ensemble models based on regression
 trees. Regression trees sequentially determine what value of a predictor best
@@ -292,34 +293,33 @@ generalized boosted models (GBMs), each subsequent model is fit to the
 residuals from the previous model; data points that are fit poorly in a given
 model are given more weight in the next model [@elith2008]. Random forests and
 GBMs can provide strong predictive performance and fit highly non-linear
-relationships (REFs). We fit random forest models with the **randomForest**
-package [@liaw2002] for \textsf{R} with the default argument values. We fit
-boosted regression tree models with the **GBM** package [@ridgeway2015] for
-\textsf{R}. Based on cross-validation with the **caret** package (Supporting
-Materials, Fig. SX), we fit GBMs with 2000 trees, an interaction depth of $6$,
-a learning rate (shrinkage parameter) of $0.01$, and all other arguments at
-their default values.                                                
+relationships [e.g. @elith2008; @hastie2009]. We fit random forest models with
+the **randomForest** package [@liaw2002] for \textsf{R} with the default
+argument values. We fit boosted regression tree models with the **GBM** package
+[@ridgeway2015] for \textsf{R}. Based on cross-validation with the **caret**
+\textsf{R} package, we fit GBMs with 2000 trees, an interaction depth of $6$, a
+learning rate (shrinkage parameter) of $0.01$, and all other arguments at their
+default values.                                                
 
 ## Testing model performance
 
 A critical component to any predictive modelling exercise is to evaluate the
-performance of a model new data [@hastie2009]. We used repeated three-fold
+performance of a model on new data [@hastie2009]. We used repeated three-fold
 cross validation to test predictive performance: we randomly divided the
 dataset into three sets, built ensemble models on two-thirds of the data, and
-evaluated predictive performance on the remaining third of the data. We
-repeated this across each of the three splits and then repeated the whole
-procedure XX times to account for bias that may result from any one set of
-validation splits. Since the dynamics of simulated populations differing only
-in the magnitude of observation error around catch, magnitude of recruitment
-variability, or stochastic draw of these values are likely similar, we grouped
-these characteristics together in the cross-validation process---we never
-trained and tested on models differing only in these characteristics.
+evaluated predictive performance on the remaining third. We repeated this
+across each of the three splits and then repeated the whole procedure 50 times
+to account for bias that may result from any one set of validation splits.
+Since the dynamics of simulated populations differing only in the stochastic
+draw of random values are likely similar, we grouped these stocks (10 per
+factorial cell) in the cross-validation process into either the training or
+testing split.
 
 Predictive performance can be evaluated with metrics that represent a variety
 of modelling goals. For continuous response variables such as the mean and
 slope of population status, performance metrics often measure some form of bias,
 precision, accuracy (a combination of bias and precision), or the ability to
-correctly rank or correlate across populations. Here, we measure proportional
+correctly rank or correlate across populations (REFs). Here, we measure proportional
 error (PE; also called 'relative error') defined as $(\hat{b} - b)/b$. We
 summarize median proportional error to measure bias, median absolute
 proportional error to measure accuracy, and Spearman's rank-order correlation
@@ -329,40 +329,79 @@ to measure the ability to correctly rank populations.
 
 CMSY has bimodality (Fig. \ref{fig:hexagon}a)
 
-Applied to the simulated data (Fig. \ref{fig:hexagon}e--h, Fig. \ref{fig:performance}a)...
+Applied to the simulated data (Fig. \ref{fig:hexagon}e--h, Fig.
+\ref{fig:performance}a)...
 
-machine learning models and linear models outperformed all individual models in terms of accuracy (MAPE) and Spearman's rank-order correlation across stocks
+non-linear machine learning models were best able to predict higher \bbmsy\\ values (Fig. \ref{fig:hexagon}g, h) by exploiting interactions between the spectral density predictors and the individual model predictions (Fig. \ref{fig:partial-2d-sim})
 
-ensembles generally had lower bias (MPE) than any individual model (Fig. \ref{fig:performance})
+machine learning and linear ensemble models outperformed all individual models
+in terms of accuracy (MAPE) and Spearman's rank-order correlation across stocks
+at predicting mean \bbmsy\\ with the simulated dataset of known status (Fig.
+\ref{fig:performance}a)
 
-ensemble models generally had better ability to distinguish if simulated stocks were above or below $B/B_\mathrm{MSY}$ = 1$ (Fig. \ref{fig:roc-sim})
+the level of correlation across stocks and accuracy were both lower when
+predicting full-stock assessement \bbmsy\\ than when predicting true status in
+the simulated dataset (Fig. \ref{fig:performance}a vs. b)
 
-ensembles also did better at estimating the slope of \bbmsy\\ in the last five years (Figs. \ref{fig:scatter-sim-slope}, \ref{fig:performance-sim-slope}).
+ensembles generally had lower bias (MPE) than any individual model (Fig.
+\ref{fig:performance})
 
-for slope: again, machine learning ensembles best by rank-order correlation and accuracy and had lowest bias (numbers) (Fig. \ref{fig:performance-sim-slope})
+ensemble models generally had better ability to distinguish if simulated stocks
+were above or below $B/B_\mathrm{MSY}$ = 1$ (Fig. \ref{fig:roc-sim})
 
-Although the additional spectral density covariates improved ensemble fit, performance of the ensembles was only marginally degraded by removing these covariates (Fig. ~\ref{fig:hexagon} vs. Fig. \ref{fig:hexagon-sim-basic})
+ensembles also did better at estimating the slope of \bbmsy\\ in the last five
+years (Figs. \ref{fig:scatter-sim-slope}, \ref{fig:performance-sim-slope}).
 
-For example, the linear model ensemble suggests that if both mPRM and SSCOM predict high \bbmsy\\, the true \bbmsy\\ is also high (Fig. \ref{fig:lm-coefs})
+for slope: again, machine learning ensembles best by rank-order correlation and
+accuracy and had lowest bias (numbers) (Fig. \ref{fig:performance-sim-slope})
 
-The GBM model, also indicates a similar relationship, but suggests a non-linear relationship between these individual models in predicting \bbmsy\\ (Fig. \ref{fig:partial-2d-sim}XX)
+Although the additional spectral density covariates improved ensemble fit,
+performance of the ensembles was only marginally degraded by removing these
+covariates (Fig. ~\ref{fig:hexagon} vs. Fig. \ref{fig:hexagon-sim-basic})
+
+For example, the linear model ensemble suggests that if both mPRM and SSCOM
+predict high \bbmsy\\, the true \bbmsy\\ is also high (Fig. \ref{fig:lm-coefs})
+The GBM model, also indicates a similar relationship, but suggests a non-linear
+relationship between these individual models in predicting \bbmsy\\ (Fig.
+\ref{fig:partial-2d-sim}l)
 
 Partial dependence plots illustrate the non-linear relationship between the
 various individual model predictions and the ensemble predictions (Fig.
 \ref{fig:partial-sim}). These integrate across other predictor values...
 
-Ensemble models can exploit the best performance characteristics of individual models. 
-For example, if SSCOM predicts a low \bbmsy\\ (less than about 0.X), true \bbmsy\\ is probably low (Fig. \ref{fig:hexagon}c).
-But, SSCOM provides less predictive ability on its own when it predicts higher \bbmsy\\. The machine learning ensemble models can exploit this (Fig. \ref{fig:partial-sim}XX). On its own, CMSY contributes the most to predicting \bbmsy\\ when it makes predictions of \bbmsy\\ over one.
+Ensemble models can exploit the best performance characteristics of individual
+models. For example, if SSCOM predicts a low \bbmsy\\ (less than about 0.X),
+true \bbmsy\\ is probably low (Fig. \ref{fig:hexagon}c). But, SSCOM provides
+less predictive ability on its own when it predicts higher \bbmsy\\. The
+machine learning ensemble models can exploit this (Fig.
+\ref{fig:partial-sim}c). On its own, CMSY contributes the most to predicting
+\bbmsy\\ when it makes predictions of \bbmsy\\ between about 1.0 and 1.4 (Fig.
+\ref{fig:partial-sim}a)
 
-Ensemble models trained on the simulated dataset, outperformed any individual model across all performance dimensions when applied to a completely new dataset: the RAM Legacy Stock Assessment database. They even outperform the mPRM method which is trained on the stock assessment database itself (Fig. \ref{fig:hexagon-ram})
+Ensemble models trained on the simulated dataset, outperformed any individual
+model across all performance dimensions when applied to a completely new
+dataset: the RAM Legacy Stock Assessment database. They even outperform the
+mPRM method which is trained on the stock assessment database itself (Fig.
+\ref{fig:hexagon-ram})
 
-Ensembles take advantage of not just the best aspects of individual models, but also the interactions between multiple individual models or the interaction between individual models and other covariates. For example, CMSY becomes more informative about mean \bbmsy\\ when combined with the spectral density measures (Fig. \ref{fig:partial-2d-sim}XX, XX).
+Ensembles take advantage of not just the best aspects of individual models, but
+also the interactions between multiple individual models or the interaction
+between individual models and other covariates. For example, CMSY becomes more
+informative about mean \bbmsy\\ when combined with the spectral density
+measures (Fig. \ref{fig:partial-2d-sim}XX, XX).
 
 Across simulated data mean \bbmsy\\, stock assessment database \bbmsy\\ and
-simulated data slope, the ensembles consistently had the best, or among the best levels of accuracy, rank order correlation, and level of bias (Figs \ref{fig:performance}, \ref{fig:performance-sim-slope}).
+simulated data slope, the ensembles consistently had the best, or among the
+best levels of accuracy, rank order correlation, and level of bias (Figs
+\ref{fig:performance}, \ref{fig:performance-sim-slope}).
 
-Some individual models performed nearly as well as the enembles in one or two performance dimensions: e.g. SSCOM does nearly as well as the ensembles at predicting the slope of \bbmsy\\ (Fig. \ref{fig:performance-sim-slope}). But no individual method is consistently nearly as good as the ensembles. SSCOM does more poorly than the ensembles and other individual models in terms of accuracy, rank-order correlation, and bias at estimating the mean \bbmsy\\ for both the simulated and stock-assessment datasets (Fig. \ref{fig:performance).
+Some individual models performed nearly as well as the ensembles in one or two
+performance dimensions: e.g. SSCOM does nearly as well as the ensembles at
+predicting the slope of \bbmsy\\ (Fig. \ref{fig:performance-sim-slope}). But no
+individual method is consistently nearly as good as the ensembles. SSCOM does
+more poorly than the ensembles and other individual models in terms of
+accuracy, rank-order correlation, and bias at estimating the mean \bbmsy\\ for
+both the simulated and stock-assessment datasets (Fig. \ref{fig:performance).
 
 # Discussion
 
