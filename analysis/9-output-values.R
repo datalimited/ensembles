@@ -3,7 +3,7 @@
 # `../text/values.rda` and are input through knitr in `../text/ms.Rmd`.
 
 get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
-  collapse = "--") {
+  collapse = "--", mre_digits = 2) {
 
   dat <- dat %>%
     mutate(ensemble = ifelse(grepl("Ensemble", clean_method), TRUE, FALSE)) %>%
@@ -31,9 +31,9 @@ get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
   x$ind_mare_range <- round(range(ind$mare), digits_raw)
   x$mach_mare_range <- round(range(mach$mare), digits_raw)
 
-  x$ensemble_mre_range <- ensemble$mre %>% range %>% round(digits_raw)
-  x$mach_mre_range <- mach$mre %>% range %>% round(digits_raw)
-  x$ind_mre_range <- ind$mre %>% range %>% round(digits_raw)
+  x$ensemble_mre_range <- ensemble$mre %>% range %>% round(mre_digits)
+  x$mach_mre_range <- mach$mre %>% range %>% round(mre_digits)
+  x$ind_mre_range <- ind$mre %>% range %>% round(mre_digits)
 
   lapply(x, paste, collapse = collapse)
 }
@@ -45,7 +45,7 @@ re_ram_sum <- readRDS("generated-data/re_ram_sum.rds")
 mean_ram <- get_performance_stats(re_ram_sum)
 
 d_slope_error <- readRDS("generated-data/d_slope_error.rds")
-slope_sim <- get_performance_stats(d_slope_error)
+slope_sim <- get_performance_stats(d_slope_error, mre_digits = 3L)
 
 auc_sim_mean <- readRDS("generated-data/auc_sim_mean.rds")
 auc_sim <- list()
