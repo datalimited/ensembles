@@ -106,7 +106,7 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../figs/lm-coefs.pdf}
 \caption{Standardized regression coefficients from a linear model ensemble predicting log mean \bbmsy\\ in the last five years. Coefficients are centered (mean of each predictor is subtracted) and scaled (divided by two standard deviations). Thick and thin lines represent +/- one and two standard errors from the mean.}
-\label{fig:lm-coefs}
+\label{lm-coefs}
 \end{center}
 \end{figure}
 
@@ -118,7 +118,7 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 \caption{Partial dependence plots for GBM ensemble models fitted to the
 simulation data. Lines represent the marginal non-linear effect of each
 predictor on \bbmsy\\ after integrating out the other predictor values.}
-\label{fig:partial-sim}
+\label{partial-sim}
 \end{center}
 \end{figure}
 
@@ -129,7 +129,7 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/gbm-partial-residuals.pdf}
 \caption{Partial residuals plot from the GBM model. The dots represent the residuals when predicting from the model with the predictor set to its mean value. The lines represent the prediction when all other predictors are set to their mean value. Note that these are on a scale of $\log$ \bbmsy\\ residuals.}
-\label{fig:partial-residuals-sim-gbm}
+\label{partial-residuals-sim-gbm}
 \end{center}
 \end{figure}
 -->
@@ -140,7 +140,7 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
 \caption{Two-dimensional partial dependence plots for GBM ensemble models fitted to the simulated dataset of known status. Red shading indicates an expected \bbmsy\\ above one and blue shading an expected value below one. White shading represents an expected value of 1.}
-\label{fig:partial-2d-sim}
+\label{partial-2d-sim}
 \end{center}
 \end{figure}
 
@@ -150,7 +150,7 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/roc-sim.pdf}
 \caption{Receiver-operating-characteristic (ROC) curves from repeated three-fold cross-validation of the simulated data of known status. Shown are ROC curves for (a) ensemble models and (b) individual data-limited model estimates based on estimates of \bbmsy\\ with the response variable representing whether true \bbmsy\\ was above or below one. The diagonal dashed line represents performance that is no better than flipping a coin. The area under the curve represents the probability that the model would correctly rank two randomly chosen stocks in terms of their mean \bbmsy\\ in the last five years. Sensitivity represents the true positive rate (correctly categorizing a stock as having a \bbmsy\\ greater than one). Specificity refers to the true negative rate (correctly categorizing a stock as having a \bbmsy\\ less than one). The sensitivity and sensitivity values are shown across all possible splits (values of \bbmsy\\) at which one could divide the stocks into these two categories.}
-\label{fig:roc-sim}
+\label{roc-sim}
 \end{center}
 \end{figure}
 
@@ -159,8 +159,8 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=6.5in]{../figs/hex-mean-ram-cv.pdf}
-\caption{RAM stocks fit with individual data-limited assessment methods (a--d) and ensemble models (e--h) that were trained on the simulated dataset. These are based on 3-fold cross-validation of the mPRM model. Panels e--h duplicate the lower row in Fig.~\ref{fig:hexagon}.}
-\label{fig:hexagon-ram}
+\caption{RAM stocks fit with individual data-limited assessment methods (a--d) and ensemble models (e--h) that were trained on the simulated dataset. These are based on 3-fold cross-validation of the mPRM model. Panels e--h duplicate the lower row in Fig.~\ref{hexagon}.}
+\label{hexagon-ram}
 \end{center}
 \end{figure}
 
@@ -169,16 +169,16 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=6.5in]{../figs/hex-mean-sim-basic-cv.pdf}
-\caption{Same as Fig.~\ref{fig:hexagon} but with simulation ensembles that have no additional covariates (spectral densities were not included in these models).}
-\label{fig:hexagon-sim-basic}
+\caption{Same as Fig.~\ref{hexagon} but with simulation ensembles that have no additional covariates (spectral densities were not included in these models).}
+\label{hexagon-sim-basic}
 \end{center}
 \end{figure}
 
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=6.5in]{../figs/hex-slope-sim.pdf}
-\caption{Same as Fig.~\ref{fig:hexagon} but with the slope (Theil-Sen median slope) of \bbmsy\\ in the last five years as the response variable.}
-\label{fig:scatter-sim-slope}
+\caption{Same as Fig.~\ref{hexagon} but with the slope (Theil-Sen median slope) of \bbmsy\\ in the last five years as the response variable.}
+\label{scatter-sim-slope}
 \end{center}
 \end{figure}
 
@@ -187,9 +187,9 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=5in]{../figs/performance-slope-sim.pdf}
-\caption{Same as Fig.~\ref{fig:performance} but with the slope of \bbmsy\\ in
-the last five years as the response variable. This is based on the data shown in Fig.~\ref{fig:scatter-sim-slope}.}
-\label{fig:performance-sim-slope}
+\caption{Same as Fig.~\ref{performance} but with the slope of \bbmsy\\ in
+the last five years as the response variable. This is based on the data shown in Fig.~\ref{scatter-sim-slope}.}
+\label{performance-sim-slope}
 \end{center}
 \end{figure}
 
