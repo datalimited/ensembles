@@ -1,5 +1,6 @@
 # apply the simulation-trained ensemble model to the RAM dataset
 
+set.seed(123)
 library("randomForest")
 library("dplyr")
 
@@ -109,6 +110,9 @@ ts_dat <- plyr::ddply(ts_dat, "stockid", function(x) {
   datalimited::format_prm(year = x$year, catch = x$catch, bbmsy = x$bbmsy_ram,
     species_cat = x$spp_category[1L])
 })
+# until I get the proper 3-level species categories:
+ts_dat$species_cat <- NULL
+ts_dat$species_cat <- "ignore_me"
 
 # Apply the simulation ensembles to a cross-validated version of the RAM dataset:
 cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
@@ -195,15 +199,18 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
       d_test$gam_ensemble <- exp(predict(m_gam, newdata = d_test))
       d_test$.n = .n # for identification purposes
 
+      if (.n %% 10 == 0) write(.n, file = paste0(.n, ".txt"))
+
       d_test
+    } else {
+      print("skipped iteration", .n)
     }
   })
 }
 
 library("doParallel")
 registerDoParallel(cores = 2L)
-set.seed(123)
-qq <- plyr::ldply(seq_len(40L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
+qq <- plyr::ldply(seq_len(80L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
   .parallel = TRUE)
 
 d_mean_long <- qq %>%
