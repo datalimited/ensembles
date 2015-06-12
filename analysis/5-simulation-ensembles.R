@@ -200,9 +200,15 @@ partial <- plyr::ldply(seq_len(nvar), function(i) {
   dd
 })
 
+partial_names <- data_frame(
+  predictor = c("CMSY", "COMSIR", "mPRM", "SSCOM",
+    "spec_freq_0.05", "spec_freq_0.2"),
+  predictor_label = c("(a) CMSY", "(b) COM-SIR", "(d) mPRM", "(c) SSCOM",
+    "(e) Long-term spectral density", "(d) Short-term spectral density"))
+partial <- inner_join(partial, partial_names)
 # partial dependence plot:
 p <- ggplot(partial, aes(predictor_value, y)) + geom_line() +
-  facet_wrap(~predictor, scales = "free_x") + ylim(0.3, 1.6) + theme_bw() +
+  facet_wrap(~predictor_label, scales = "free_x") + ylim(0.3, 1.6) + theme_bw() +
   ylab("Expected B/B_MSY integrating out other predictors") +
   xlab("Predictor value")
 ggsave("../figs/partial-sim.pdf", width = 7, height = 5)
@@ -219,21 +225,22 @@ partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
 }))
 
 # check colour pallete:
-zlim <- c(min(partial_2d$z)+0.1, max(partial_2d$z))
-pal <- rev(colorRampPalette(c("red", "white", "blue"))(13))[-c(1:1)]
-# white should line up with 1: (adjust the above line as needed)
+zlim <- c(min(partial_2d$z)+0.11, max(partial_2d$z))
+pal <- rev(colorRampPalette(c("red", "white", "blue"), space = "Lab")(13))[-c(1:1)]
+# white should line up with 1: (adjust the above 2 lines as needed)
 
 pdf("../figs/partial-2d-col-check.pdf", width = 6, height = 4)
 plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, bg = pal, pch = 21, cex = 3);abline(v = 1)
 dev.off()
 
 ii <<- 0
+lab <<- 0
 panels <- matrix(NA, ncol = nvar, nrow = nvar, byrow = TRUE) %>% upper.tri %>%
   t %>% as.vector
 
 pdf("../figs/partial-sim-2d.pdf", width = 10, height = 8.5)
-par(mfrow = c(nvar-1, nvar), mar = c(3,3,1,1), oma = c(1, 1, 0.5, 0.5), cex = 0.7)
-par(xpd = NA, mgp = c(2.1, 0.5, 0), tck = -0.03, las = 1)
+par(mfrow = c(nvar-1, nvar), mar = c(3.5,3.5,1,1), oma = c(1, 1, 0.5, 0.5), cex = 0.7)
+par(xpd = NA, mgp = c(1.7, 0.5, 0), tck = -0.03, las = 1)
 plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
   ii <<- ii + 1
   if (panels[ii]) {
@@ -242,9 +249,24 @@ plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
       xlab = unique(x$var1), ylab = unique(x$var2),
       zlim = zlim,
       col = pal)
+    lab <<- lab + 1
+    add_label(0, -0.08, label = paste0("(", letters[lab], ")"))
   } else {
-    if (ii < nvar^2 - nvar)
-      plot(1, 1, type = "n", axes = FALSE, xlab = "", ylab = "")
+    if (ii < nvar^2 - nvar) {
+      plot(1, 1, type = "n", axes = FALSE, xlab = "", ylab = "", ylim = c(0, 1))
+      if (ii == 1) {
+        blocks <- seq(0.1, 0.9, length.out = length(pal))
+        for(i in seq_along(pal)) {
+          rect(xleft = 0.9, ybottom = blocks[i],
+               xright = 1.1, ytop = blocks[i+1]+0.001,
+               border = NA, col = pal[i])
+        }
+        text(0.9, blocks[1], round(min(zlim), 1), pos = 2)
+        text(0.9, 0.5, 1, pos = 2)
+        text(0.9, blocks[length(blocks)], round(max(zlim), 1), pos = 2)
+        mtext(expression(B/B[MSY]), side = 2, las = 0, cex = 0.8)
+      }
+    }
   }
 })
 dev.off()
