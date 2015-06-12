@@ -128,7 +128,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   rows <- max(dat$order) / 4
   par(mfrow = c(rows, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
     oma = oma, cex = 0.8, mar = c(0, 0, 0, 0),
-    xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+    xaxs = "i", yaxs = "i", col.axis = "grey60", col.lab = "grey50")
   par(family="serif")
 
   hexcol1 <- RColorBrewer::brewer.pal(9, "Blues")
@@ -167,9 +167,9 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   # hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Spectral") %>% rev
   #hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Greys")
 
-  hexcol_third_row <- RColorBrewer::brewer.pal(9, "Greys")
-   #hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Spectral") %>% rev
-  # hexcol_third_row <- RColorBrewer::brewer.pal(9, "RdPu")
+  #hexcol_third_row <- RColorBrewer::brewer.pal(9, "Greys")
+   #hexcol_third_row <- RColorBrewer::brewer.pal(9, "Spectral") %>% rev
+   hexcol_third_row <- RColorBrewer::brewer.pal(9, "YlGnBu")
 
   panels <- seq_len(length(unique(dat$order)))
 
@@ -206,7 +206,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     }
     #alternative power transformation:
     #counts <- round((counts)^0.30)
-    space = "rgb"
+    space = "Lab"
     if (m %in% 1)
       pal_function <- colorRampPalette(hexcol1, space = space, bias = bias[1])
     if (m %in% 2)
@@ -219,8 +219,8 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
       pal_function <- colorRampPalette(hexcol_ensemble, space = space, bias = bias[5])
     if (m %in% 9:12) {
       pal_function <- colorRampPalette(hexcol_third_row, space = space, bias = bias[9])
-      add_hex <- FALSE
-      if (m %in% 9) par(mar = par("mar") + c(0, 0, 0.25, 0))
+      #add_hex <- FALSE
+      if (m %in% 9) par(mar = par("mar") + c(0, 0, 0.27, 0))
     }
     if (add_hex) {
       pal <- pal_function(max(counts))
@@ -247,12 +247,12 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     abline(h = 1, lty = "22", col = line_col, lwd = 1.3)
     #abline(a = 0, b = 1, lty = "22", col = line_col, lwd = 1.3)
     segments(0, 0, 2.8, 2.8, lty = "22", col = line_col, lwd = 1.3)
-    box(col = "grey50")
+    box(col = "grey60")
     add_label(-0.01, 0.08, paste0("(", letters[m], ") ", unique(filter(dat, order == m)$clean_method)),
       #col = "grey20", add_bg = ifelse(m %in% 1:4, FALSE, TRUE))
       col = "grey20", add_bg = FALSE)
-    if (m %in% c(1, 5, 9)) axis(2, at = axis_ticks[-length(axis_ticks)], col = "grey50")
-    if (m %in% (rows * 4 - 3):(rows * 4)) axis(1, at = axis_ticks, col = "grey50")
+    if (m %in% c(1, 5, 9)) axis(2, at = axis_ticks[-length(axis_ticks)], col = "grey60")
+    if (m %in% (rows * 4 - 3):(rows * 4)) axis(1, at = axis_ticks, col = "grey60")
   })
   mtext(xlab, side = 1, line = 2.1, outer = TRUE, col = "grey20")
   mtext(ylab, side = 2, line = 1.6, outer = TRUE,
