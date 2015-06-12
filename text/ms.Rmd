@@ -313,7 +313,9 @@ to account for bias that may result from any one set of validation splits.
 Since the dynamics of simulated populations differing only in the stochastic
 draw of random values are likely similar, we grouped these stocks (10 per
 factorial cell) in the cross-validation process into either the training or
-testing split.
+testing split. Since mPRM is built on the RAM Legacy Stock Assessment database,
+when testing model performance on the stock assessment database, we refit mPRM
+on each training split.
 
 Predictive performance can be evaluated with metrics that represent a variety
 of modelling goals. For continuous response variables such as the mean and
@@ -327,8 +329,8 @@ to measure the ability to correctly rank populations.
 
 # Results
 
-Applied to the simulated dataset of known status, the individual models had variable success at recovering the mean and slope of \bbmsy\\ in the last five years (hereafter used interchangeably with 'status' and 'trajectory'). 
-All models exhibted a high degree of scatter around the 1:1 line of perfect status prediction (Fig. \ref{hexagon}). 
+Applied to the simulated dataset of known status, the individual models had variable success at recovering the mean and slope of \bbmsy\\ in the last five years (hereafter used interchangeably with 'status' and 'trajectory', respectively). 
+All models exhibited a high degree of scatter around the 1:1 line of perfect status prediction (Fig. \ref{hexagon}). 
 CMSY exhibited bimodal predictions of status but had the best rank-order correlation and accuracy scores (Fig. \ref{performance}a).
 COM-SIR and SSCOM both correctly identified a number of low status stocks, but frequently predicted a high status when status was in fact low (Fig. \ref{hexagon}b, c). 
 mPRM had relatively poor ability to predict status for the simulated dataset (Fig. \ref{hexagon}d). 
@@ -338,14 +340,14 @@ Ensemble models, and in particular the machine learning ensemble models (random 
 Compared to the individual models, machine learning ensembles improved accuracy (median absolute proportional error) by `r mean_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias (median proportional error) from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range` (Figs \ref{performance}a).
 These ensembles also had better ability to distinguish if simulated stocks
 were above or below $B/B_\mathrm{MSY} = 1$ (Fig. \ref{roc-sim}).
-Results were similar when predicting trajectory: compared to individual models, machine learning ensembles improved accuracy accuracy by `r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r slope_sim$ind_corr_range` to `r slope_sim$mach_corr_range`, and reduced bias from `r slope_sim$ind_mre_range` to `r slope_sim$mach_mre_range` (Fig. \ref{performance-sim-slope}).
+Results were similar when predicting trajectory: compared to individual models, machine learning ensembles improved accuracy by `r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r slope_sim$ind_corr_range` to `r slope_sim$mach_corr_range`, and reduced bias from `r slope_sim$ind_mre_range` to `r slope_sim$mach_mre_range` (Fig. \ref{performance-sim-slope}).
 The ensemble models that simply took a mean of the individual models ranked slightly behind the best individual model for estimating status (CMSY; Fig. \ref{performance}a) and had slightly lower correlation but higher accuracy than the best individual model at predicting slope (SSCOM; Fig. \ref{performance-sim-slope}).
 
 The ensemble models were able to improve the predictions of status by exploiting the best properties of individual models, the covariance between individual models, and interactions with other covariates.
-For example, SSCOM had strong predictive ability when it predicted low \bbmsy\\ (less than about 0.XX; Fig. \ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were approximately linearly related to \bbmsy\\ within the low and high bimodal prediction clusters (Fig. \ref{partial-sim}).
-Ensembles also exploit the covariance between individual model predictions.
-For instance, both the linear model and GBM ensemble suggest that if mPRM and SSCOM predict high \bbmsy\\, the true \bbmsy\\ also tends to be high (Figs \ref{lm-coefs}, \ref{partial-2d-sim}l).
-The addition of spectral density covariates helped the ensemble models correctly predict higher \bbmsy\\ values (Fig. \ref{hexagon}g, h) by exploiting interactions between the spectral density predictors and the individual model predictions (Fig. \ref{partial-2d-sim}).
+For example, SSCOM had strong predictive ability when it predicted low \bbmsy\\ (Fig. \ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were approximately linearly related to \bbmsy\\ within the low and high bimodal prediction clusters (Fig. \ref{partial-sim}).
+Ensembles also exploited the covariance between individual model predictions.
+For instance, both the linear model and GBM ensemble suggest that if mPRM and SSCOM predict high status, the true status also tends to be high (Figs \ref{lm-coefs}, \ref{partial-2d-sim}l).
+The addition of spectral density covariates helped the ensemble models correctly predict higher status values (Fig. \ref{hexagon}g, h) by exploiting interactions between the spectral density predictors and the individual model predictions (Fig. \ref{partial-2d-sim}).
 Although the additional covariates improved ensemble fit, performance of the ensembles was only marginally degraded by removing these covariates (Fig. \ref{hexagon} vs. Fig. \ref{hexagon-sim-basic}) TODO NEW FIG THAT QUANTIFIES THIS.
 
 When applied to the stock assessment database, the ensemble models---trained exclusively on the simulated dataset---generally performed as well or better than the best individual models.
