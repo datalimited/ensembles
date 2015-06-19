@@ -2,7 +2,6 @@ TEXT = anderson-etal-ensembles
 MS = ms
 SOM = supp
 FIGS = figs
-VERSION = 0.2
 REFS = fisheries-ensembles
 
 all: $(TEXT).pdf
@@ -26,8 +25,8 @@ $(TEXT).pdf: $(MS).tex $(SOM).tex $(FIGS).tex $(TEXT).tex $(REFS).bib
 	#pdflatex $(TEXT)
 
 dropbox: $(TEXT).pdf rtf
-	cp $(TEXT).pdf ~/Dropbox/Public/$(TEXT)-v$(VERSION).pdf
-	mv $(TEXT).rtf ~/Dropbox/Public/$(TEXT)-v$(VERSION).rtf
+	cp $(TEXT).pdf ~/Dropbox/Public/$(TEXT).pdf
+	mv $(TEXT).rtf ~/Dropbox/Public/$(TEXT).rtf
 
 rtf: $(TEXT).pdf
 	latex2rtf -E0 $(TEXT).tex
