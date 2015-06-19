@@ -23,9 +23,7 @@ text/ms.tex
 text/figs.tex
 text/supp.tex
 .DS_Store
-
 *.docx
-
 text/ms.md
-
 analysis/plot-sims.pdf
+text/discussion.mindnode/
