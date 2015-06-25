@@ -210,10 +210,8 @@ A strength of ensemble models is that they can be tailored or specific response 
     * can learn under what conditions certain models perform well
     * pick out an example
 
-* Jim: Other possible applications of ensemble models outside fisheries status and
-  trajectory
-    * other taxa examples
-    * other kinds of response variables
+Combining predictions from multiple models via ensemble methods is also broadly useful in other subfields of ecology and fisheries science. Predictions about extinction risk are widely used at the national (endangered species act in the US, citation, species at risk act in Canada, citation) and international (the IUCN red list, citation) levels. These risk assessments generally involve fitting regression models to outcomes for individual species along with predictors of species risk [@pinsky2011], or population dynamics models to data for individual species [@dfo2010]. Both types of models are prone to error caused by model-misspecification and therefore results are sensitive to a priori decisions about model structure [@brooks2015]. Although there are many potential options to account for potential model-misspecification in determination of species risk (e.g., model averaging, @burnham2002, or semi-parametric methods, @thorson2014), ensemble methods are a relatively easy way to combine predictions from multiple models in a way that is clearly explained (i.e., without complicated statistics). Similarly, ensemble methods could be used to increase the robustness of spatial predictions when designing networks of protected areas [@rassweiler2014], or to forecast potential spatial shifts in species distribution given climate impacts [@harsch2014].
+
 	
 <!--
 * Other possible topics:
