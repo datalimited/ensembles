@@ -7,7 +7,10 @@ library("dplyr")
 source("0-ensemble-functions.R")
 
 # prep the RAM data:
-ram <- readRDS("generated-data/ram_fits.rds")
+ram <- readRDS("generated-data/ram_fits.rds") %>%
+  as.data.frame() %>%
+  filter(!is.na(b_bmsy_true))
+
 ram$method <- sub("Costello", "mPRM", ram$method)
 
 ram_sum <- ram %>%
@@ -75,7 +78,6 @@ m_lm3 <- lm(
       spec_freq_0.05 + spec_freq_0.2)^3,
   data = d_mean_sim)
 
-
 pdf("../figs/lm-coefs.pdf", width = 5, height = 6)
 par(mfrow = c(1, 1))
 par(mar = c(4, 12, 1, 3), cex = 0.9)
@@ -102,17 +104,8 @@ m_gam <- mgcv::gam(
     s(spec_freq_0.05) + s(spec_freq_0.2),
   data = d_mean_sim)
 
-# join in life-history data for mPRM method
-# spp_categories is in the datalimited package as data:
-ts_dat <- dplyr::left_join(datalimited::ram_ts, datalimited::spp_categories)
-# format before to save time, can be done once before cross-validation:
-ts_dat <- plyr::ddply(ts_dat, "stockid", function(x) {
-  datalimited::format_prm(year = x$year, catch = x$catch, bbmsy = x$bbmsy_ram,
-    species_cat = x$spp_category[1L])
-})
-# until I get the proper 3-level species categories:
-ts_dat$species_cat <- NULL
-ts_dat$species_cat <- "ignore_me"
+# load the RAM data formatted for mPRM:
+ram_prm_dat <- readRDS("generated-data/ram_prm_dat.rds")
 
 # Apply the simulation ensembles to a cross-validated version of the RAM dataset:
 cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
@@ -136,10 +129,22 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
     test_ids  <- ids_scrambled_cut[
       seq(chunk_starts[i], chunk_starts[i] + chunk_size)] %>% na.omit()
     train_ids <- ids_scrambled_cut[!ids_scrambled_cut %in% test_ids]
-    train_dat <- dplyr::filter(ts_dat, stockid %in% train_ids)
-    test_dat  <- dplyr::filter(ts_dat, stockid %in% test_ids)
+    train_dat <- dplyr::filter(ram_prm_dat, stockid %in% train_ids)
+    test_dat  <- dplyr::filter(ram_prm_dat, stockid %in% test_ids)
 
-    mprm <- datalimited::fit_prm(train_dat)
+    mprm <- datalimited::fit_prm(train_dat,
+      eqn = log(bbmsy) ~
+        mean_scaled_catch +
+        scaled_catch +
+        scaled_catch1 +
+        scaled_catch2 +
+        scaled_catch3 +
+        scaled_catch4 +
+        species_cat +
+        catch_to_rolling_max +
+        time_to_max +
+        years_back +
+        initial_slope - 1)
 
     # on rare occassions the testing dataset will have new factor levels on the
     # species category
@@ -177,7 +182,8 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
       # now substitute these in for the mPRM values in the original d_mean:
       # note that due to the inner_join this also accomplishes subsetting
       # the full dataset to the cross-validation chunk level:
-      d_test <- test_dat_sum %>%
+
+       d_test <- test_dat_sum %>%
         rename(mPRM = bbmsy_est_mean) %>%
         select(stockid, mPRM) %>%
         dplyr::inner_join(select(d_mean, -mPRM), by = "stockid")
@@ -198,9 +204,6 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
       d_test$lm_ensemble <- exp(predict(m_lm, newdata = d_test))
       d_test$gam_ensemble <- exp(predict(m_gam, newdata = d_test))
       d_test$.n = .n # for identification purposes
-
-      if (.n %% 10 == 0) write(.n, file = paste0(.n, ".txt"))
-
       d_test
     } else {
       print("skipped iteration", .n)
@@ -209,8 +212,8 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
 }
 
 library("doParallel")
-registerDoParallel(cores = 2L)
-qq <- plyr::ldply(seq_len(80L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
+registerDoParallel(cores = 2L) # often crashes on more cores
+qq <- plyr::ldply(seq_len(100L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
   .parallel = TRUE)
 
 d_mean_long <- qq %>%
