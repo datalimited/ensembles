@@ -80,15 +80,33 @@ stopifnot(sum(is.na(sp_cat$spp_category)) == 0)
 ram2 <- select(ram, assessid, stockid, tsyear, stocklong, scientificname,
   CtoUse, res, Bbmsy_toUse) %>%
   filter(!is.na(CtoUse)) %>%
-  left_join(sp_cat, by = "scientificname")
+  left_join(sp_cat, by = "scientificname") %>%
+  unique() %>%
+  arrange(stockid, tsyear) %>%
+  filter(stockid %in% ram_fits$stockid)
 stopifnot(sum(is.na(ram2$spp_category)) == 0)
 
 ram_prm_dat <- plyr::ddply(ram2, "stockid", function(x) {
   datalimited::format_prm(year = x$tsyear, catch = x$CtoUse, bbmsy = x$Bbmsy_toUse,
     species_cat = x$spp_category[1L])
 })
+saveRDS(ram_prm_dat, "generated-data/ram_prm_dat.rds")
 
-m <- datalimited::fit_prm(ram_prm_dat)
+# this version drops maximum catch since it doesn't translate between simulated
+# and real datasets:
+m <- datalimited::fit_prm(ram_prm_dat,
+  eqn = log(bbmsy) ~
+    mean_scaled_catch +
+    scaled_catch +
+    scaled_catch1 +
+    scaled_catch2 +
+    scaled_catch3 +
+    scaled_catch4 +
+    species_cat +
+    catch_to_rolling_max +
+    time_to_max +
+    years_back +
+    initial_slope - 1)
 
 mprm_ram <- plyr::ddply(ram_prm_dat, c("stockid"), function(x) {
   out <- predict_prm(x, model = m, ci = TRUE, level = 0.95)
@@ -96,8 +114,13 @@ mprm_ram <- plyr::ddply(ram_prm_dat, c("stockid"), function(x) {
   out
 })
 
-mprm_ram <- rename(mprm_ram, b2bmsy = fit) %>% mutate(method = "Costello") %>%
+mprm_ram <- rename(mprm_ram, b_bmsy_est = fit) %>% mutate(method = "Costello") %>%
   select(-lower, -upper)
+
+# merge back in other stock data:
+mprm_ram <- filter(ram_fits, method == "Costello") %>% unique() %>%
+  select(-b_bmsy_est, -method) %>%
+  inner_join(mprm_ram, by = c("stockid", "tsyear"))
 
 # do both have the same stocks?
 stopifnot(identical(setdiff(
