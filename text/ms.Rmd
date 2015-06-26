@@ -97,7 +97,7 @@ In fisheries science, a common task is estimating the status and trajectory of a
 Exploit interactions between individual models and relationships between other conditions of the data and the performance of the individual models. Fitted to populations of known or assumed status and this ensemble model is used to extrapolate to populations of interest.
 -->
 
-Here, we develop ensemble models to estimate the population status and trajectory of exploited fish populations. We explore a variety of ensemble approaches applied to both simulated and real-world fish stocks and compare predictive performance. In developing these models we highlight the types of challenges one encounters when forming and evaluating ensemble models. We find that ensembles generally provide improved predictive performance than any single model---especially when considered across multiple dimensions of predictive ability and across multiple datasets. Furthermore, the output from ensemble models can provide better mechanistic understanding of how individual models of status and trajectory perform.
+Here, we develop ensemble models to estimate the population status and trajectory of exploited fish populations. We explore a variety of ensemble approaches applied to both simulated and real-world fish stocks and compare predictive performance. In developing these models we highlight the types of challenges one encounters when forming and evaluating ensemble models. We find that ensembles generally provide improved predictive performance over any single model---especially when considered across multiple dimensions of predictive ability and across multiple datasets. Furthermore, the output from ensemble models can provide better mechanistic understanding of how individual models of status and trajectory perform.
 
 # Methods
 
@@ -174,19 +174,97 @@ We calculated the average ensemble models as the geometric mean of the individua
 
 ## Testing model performance
 
-A critical component to any predictive modelling exercise is to evaluate the performance of a model on new data [@hastie2009]. We used repeated three-fold cross validation to test predictive performance: we randomly divided the dataset into three sets, built ensemble models on two-thirds of the data, and evaluated predictive performance on the remaining third. We repeated this across each of the three splits and then repeated the whole procedure 50 times to account for bias that may result from any one set of validation splits. Since the dynamics of simulated populations differing only in the stochastic draw of random values are likely similar, we grouped these stocks (10 per factorial cell) in the cross-validation process into either the training or testing split. Since mPRM is built on the RAM Legacy Stock Assessment database, when testing model performance on the stock assessment database, we refit mPRM on each training split.
+A critical component to any predictive modelling exercise is to evaluate the
+performance of a model on new data [@hastie2009]. We used repeated three-fold
+cross validation to test predictive performance: we randomly divided the
+dataset into three sets, built ensemble models on two-thirds of the data, and
+evaluated predictive performance on the remaining third. We repeated this
+across each of the three splits and then repeated the whole procedure 50 times
+to account for bias that may result from any one set of validation splits.
+Since the dynamics of simulated populations differing only in the stochastic
+draw of random values are likely similar, we grouped these stocks (10 per
+factorial cell) in the cross-validation process into either the training or
+testing split. Since mPRM is built on the RAM Legacy Stock Assessment database,
+when testing model performance on the stock assessment database, we refit mPRM
+on each training split.
 
-Predictive performance can be evaluated with metrics that represent a variety of modelling goals. For continuous response variables such as the mean and slope of population status, performance metrics often measure some form of bias, precision, accuracy (a combination of bias and precision), or the ability to correctly rank or correlate across populations (REFs). Here, we measure proportional error (PE; also called 'relative error') defined as $(\hat{b} - b)/b$. We summarize median proportional error to measure bias, median absolute proportional error to measure accuracy, and Spearman's rank-order correlation to measure the ability to correctly rank populations.
+Predictive performance can be evaluated with metrics that represent a variety
+of modelling goals. For continuous response variables such as the mean and slope of population status, performance metrics often measure some form of
+bias, precision, accuracy (a combination of bias and precision), or the ability
+to correctly rank or correlate across populations (REFs). Here, we measure
+proportional error (PE; also called 'relative error') defined as $(\hat{b} -
+b)/b$. We summarize median proportional error to measure bias, median absolute
+proportional error to measure accuracy, and Spearman's rank-order correlation
+to measure the ability to correctly rank populations.
 
 # Results
 
-Applied to the simulated dataset of known status, the individual models had variable success at recovering the mean (status) and slope (trajectory) of \bbmsy\\ in the last five years. All models exhibited a high degree of scatter around the 1:1 line of perfect status prediction (Fig. \ref{hexagon}). CMSY exhibited bimodal predictions of status but had the best rank-order correlation and accuracy scores (Fig. \ref{performance}a). COM-SIR and SSCOM both correctly identified a number of low status stocks, but frequently predicted a high status when status was in fact low (Fig. \ref{hexagon}b, c). mPRM had relatively poor ability to predict status for the simulated dataset (Fig. \ref{hexagon}d). There was generally little correlation between true and predicted trajectory for any of the individual models besides SSCOM (Figs \ref{scatter-sim-slope}a--d, \ref{performance-sim-slope}).
+Applied to the simulated dataset of known status, the individual models had
+variable success at recovering the mean (status) and slope (trajectory) of
+\bbmsy\\ in the last five years. All models exhibited a high degree of scatter
+around the 1:1 line of perfect status prediction (Fig. \ref{hexagon}). CMSY
+exhibited bimodal predictions of status but had the best rank-order correlation
+and accuracy scores (Fig. \ref{performance}a). COM-SIR and SSCOM both correctly
+identified a number of low status stocks, but frequently predicted a high
+status when status was in fact low (Fig. \ref{hexagon}b, c). mPRM had
+relatively poor ability to predict status for the simulated dataset (Fig.
+\ref{hexagon}d). There was generally little correlation between true and
+predicted trajectory for any of the individual models besides SSCOM (Figs
+\ref{scatter-sim-slope}a--d, \ref{performance-sim-slope}).
 
-Ensemble models, and in particular the machine learning ensemble models (random forest and GBM), generally improved estimates of status and trajectory (Fig. \ref{hexagon}e--h, Fig. \ref{scatter-sim-slope}e--h). Compared to the individual models, machine learning ensembles improved accuracy (median absolute proportional error) by `r mean_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias (median proportional error) from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range` (Figs \ref{performance}a). These ensembles also had better ability to distinguish if simulated stocks were above or below $B/B_\mathrm{MSY} = 1$ (Fig. \ref{roc-sim}). Results were similar when predicting trajectory: compared to individual models, machine learning ensembles improved accuracy by `r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r slope_sim$ind_corr_range` to `r slope_sim$mach_corr_range`, and reduced bias from `r slope_sim$ind_mre_range` to `r slope_sim$mach_mre_range` (Fig. \ref{performance-sim-slope}). The ensemble models that simply took a mean of the individual models ranked slightly behind the best individual model for estimating status (CMSY; Fig. \ref{performance}a) and had slightly lower correlation but higher accuracy than the best individual model at predicting slope (SSCOM; Fig. \ref{performance-sim-slope}).
+Ensemble models, and in particular the machine learning ensemble models (random
+forest and GBM), generally improved estimates of status and trajectory (Fig.
+\ref{hexagon}e--h, Fig. \ref{scatter-sim-slope}e--h). Compared to the
+individual models, machine learning ensembles improved accuracy (median
+absolute proportional error) by 
+`r mean_sim$mach_vs_ind_mare_fold`%, 
+increased rank-order correlation from `r mean_sim$ind_corr_range` 
+to `r mean_sim$mach_corr_range`, 
+and reduced bias (median proportional error) from 
+`r mean_sim$ind_mre_range` to 
+`r mean_sim$mach_mre_range` (Fig. \ref{performance}a). 
+These ensembles also had better ability to distinguish if
+simulated stocks were above or below $B/B_\mathrm{MSY} = 1$ (Fig.
+\ref{roc-sim}). Results were similar when predicting trajectory: compared to
+individual models, machine learning ensembles improved accuracy by 
+`r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from 
+`r slope_sim$ind_corr_range` to 
+`r slope_sim$mach_corr_range`, and reduced bias
+from `r slope_sim$ind_mre_range` 
+to `r slope_sim$mach_mre_range` (Fig. \ref{performance-sim-slope}). The
+ensemble models that simply took a mean of the individual models ranked
+slightly behind the best individual model for estimating status (CMSY; Fig.
+\ref{performance}a) and had slightly lower correlation but higher accuracy than
+the best individual model at predicting slope (SSCOM; Fig.
+\ref{performance-sim-slope}).
 
-The ensemble models were able to improve the predictions of status by exploiting the best properties of individual models, the covariance between individual models, and interactions with other covariates. For example, SSCOM had strong predictive ability when it predicted low \bbmsy\\ (Fig. \ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were approximately linearly related to \bbmsy\\ within the low and high prediction clusters (Fig. \ref{partial-sim}). Ensembles also exploited the covariance between individual model predictions. For instance, both the linear model and GBM ensemble suggest that if mPRM and SSCOM predict high status, the true status also tends to be high (Figs \ref{lm-coefs}, \ref{partial-2d-sim}l). The addition of spectral density covariates helped the ensemble models correctly predict higher status values (Fig. \ref{hexagon}g, h) by exploiting interactions between the spectral density predictors and the individual model predictions (Fig. \ref{partial-2d-sim}). Although the additional covariates improved ensemble fit, performance of the ensembles was only marginally degraded by removing these covariates (Fig. \ref{hexagon} vs. Fig. \ref{hexagon-sim-basic}) TODO NEW FIG THAT QUANTIFIES THIS.
+The ensemble models were able to improve the predictions of status by
+exploiting the best properties of individual models, the covariance between
+individual models, and interactions with other covariates. For example, SSCOM had strong predictive ability when it predicted low \bbmsy\\ (Fig.
+\ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were
+approximately linearly related to \bbmsy\\ within the low and high prediction
+clusters (Fig. \ref{partial-sim}). Ensembles also exploited the covariance
+between individual model predictions. For instance, both the linear model and
+GBM ensemble suggest that if mPRM and SSCOM predict high status, the true
+status also tends to be high (Figs \ref{lm-coefs}, \ref{partial-2d-sim}l). The
+addition of spectral density covariates helped the ensemble models correctly
+predict higher status values (Fig. \ref{hexagon}g, h) by exploiting
+interactions between the spectral density predictors and the individual model
+predictions (Fig. \ref{partial-2d-sim}). Although the additional covariates
+improved ensemble fit, performance of the ensembles was only marginally
+degraded by removing these covariates (Fig. \ref{hexagon} vs. Fig.
+\ref{hexagon-sim-basic}) TODO NEW FIG THAT QUANTIFIES THIS.
 
-When applied to the stock assessment database, the ensemble models---trained exclusively on the simulated dataset---generally performed as well or better than the best individual models. The mean, random forest, and GBM ensembles even outperformed the mPRM method which is trained on the RAM Legacy Stock Assessment database itself (Fig. \ref{performance}b, Fig. \ref{hexagon-ram}). Compared to the individual models, the machine learning ensembles increased accuracy by `r mean_ram$mach_vs_ind_mare_fold`%, improved correlation from `r mean_ram$ind_corr_range` to `r mean_ram$mach_corr_range`, and reduced bias from `r mean_ram$ind_mre_range` to `r mean_ram$mach_mre_range`.                    
+When applied to the stock assessment database, the ensemble models---trained
+exclusively on the simulated dataset---generally performed as well or better
+than the best individual models. The mean, random forest, and GBM ensembles
+even outperformed the mPRM method which is trained on the RAM Legacy Stock
+Assessment database itself (Fig. \ref{performance}b, Fig. \ref{hexagon-ram}).
+Compared to the individual models, the machine learning ensembles increased
+accuracy by `r mean_ram$mach_vs_ind_mare_fold`%, 
+improved correlation from `r mean_ram$ind_corr_range` to 
+`r mean_ram$mach_corr_range`, and reduced bias from
+`r mean_ram$ind_mre_range` to `r mean_ram$mach_mre_range`.                    
 
 <!--
 Some individual models performed nearly as well as the ensembles in one or two performance dimensions: e.g. SSCOM does nearly as well as the ensembles at predicting the slope of \bbmsy\\ (Fig. \ref{performance-sim-slope}). But no individual method is consistently nearly as good as the ensembles. SSCOM does more poorly than the ensembles and other individual models in terms of accuracy, rank-order correlation, and bias at estimating the mean \bbmsy\\ for both the simulated and stock-assessment datasets (Fig. \ref{performance}).
@@ -194,13 +272,70 @@ Some individual models performed nearly as well as the ensembles in one or two p
 
 # Discussion
 
-Ensemble models provide a useful approach to situations where conservation and management decisions must be made on the basis of multiple, potentially contrasting estimates of status---a situation that is common to many ecological settings beyond fisheries. Compared to individual models of fish population status, ensemble models were consistently the best or among the best across three performance dimensions, two response variables, two datasets, and multiple ensemble model types. Our results suggest choosing an ensemble model that allows for non-parametric relationships, such as machine learning methods---these methods provide added insight into individual model behaviour and generally performed the best---but even a simple average of predictions across multiple models may be useful.
+Ensemble methods provide a useful approach to situations where conservation and
+management decisions must be made on the basis of multiple, potentially
+contrasting estimates of status---a situation common to many ecological
+settings beyond fisheries. Compared to individual models of fish population
+status, ensemble models were consistently the best or among the best across
+three performance dimensions, two response variables, two datasets, and
+multiple ensemble model types. Our results suggest choosing an ensemble model
+that allows for non-parametric relationships, such as machine learning
+methods---these methods provide added insight into individual model behaviour
+and generally performed the best---but even a simple average of predictions
+across multiple models may be useful.
 
-Certain conditions will make some ensemble models more effective than others. First, ensemble models will be most effective when they are comprised of diverse individual models that make different assumptions about underlying dynamics, or make contrasting but plausible assumptions about parameter values [e.g. @ali1996; @tebaldi2007]. Such individual models would be expected to perform well across a variety of conditions and an ensemble model can exploit the best predictive performance of each. Second, ensemble models will be most effective when they are not overfit to the training dataset. The probability of overfitting ensemble models generally increases with the number of individual models [e.g. @caruana2004]. Cross-validation testing, information theoretic methods (e.g. AIC), and methods that are robust to over-fitting such as random forests (REF), may help avoid overfitting ensemble models. We note that our simplest ensemble model, a mean of the individual model predictions, performed approximately as well as the complex machine learning models when we applied our ensembles to an entirely new dataset (FIG). Third, ensemble models will be most effective when they are trained on data that are representative of the dataset of interest. Cross-validation within a training dataset will provide a optimistically biased impression of predictive performance if the training dataset fundamentally differs from the dataset of interest.
+Certain conditions will make some ensemble models more effective than others.
+First, ensembles will be most effective when they are comprised of diverse
+individual models that choose different structural model forms, explore
+contrasting but plausible ranges of parameter values, or make errors in
+uncorrelated ways [e.g. @ali1996; @dietterich2000; @tebaldi2007]. Such
+individual models would be expected to perform well in different conditions and
+an ensemble model can exploit the best predictive performance of each. Second,
+ensemble models will be most effective when they are not overfit to the
+training dataset. Cross-validation testing [e.g. @caruana2004; @hastie2009] and
+methods that are robust to over-fitting such as random forests [@breiman2001],
+may help avoid overfitting ensemble models. We note that our simplest ensemble
+model, an average of individual model predictions, performed approximately as
+well as complex machine learning models when we applied our ensembles to an
+entirely new dataset (Fig. \ref{performance}b) and averages are a common
+ensemble approach in climate science [@ipcc2013]. Third, ensemble
+models will be most effective when they are trained on data that are
+representative of the dataset of interest [e.g. @knutti2009; @weigel2010].
+Cross-validation within a training dataset will provide a optimistically biased
+impression of predictive performance if the training dataset fundamentally
+differs from the dataset of interest [@hastie2009].
 
-Ensemble models share similarities with coefficient averaging [@burnham2002] but differ other important ways. Ensemble models and coefficient averaging share the same notion that no one model is correct and multiple models can contribute useful information for inference. A fundamental difference between coefficient averaging and ensemble models is that coefficient averaging focuses on a averaging *coefficients* whereas ensembles instead average *predictions*. By focussing on predictions, ensembles are a more general purpose tool: they do not require information theoretics, they can combine different types of models (e.g. combining parametric and non-parametric models or frequentist and Bayesian predictions), and they can combine predictions in complex non-linear ways that may depend on additional covariates.
+Multi-model inference in the form of coefficient averaging weighted by
+information theoretics such as the Akaike Information Criteron (AIC) is a
+common analytical approach in ecology [e.g. @burnham2002; @grueber2011]. The
+ensemble methods described in this paper share similarities with coefficient
+averaging but differ in other important ways. Ensemble models and coefficient
+averaging share the long-held notion that multiple working hypotheses can
+contribute useful information for inference [@chamberlin1890]. A fundamental
+difference is that coefficient averaging focuses on a averaging *coefficients*
+whereas ensembles instead average *predictions*. By focussing on predictions,
+ensembles do not suffer from the muddled inference of coefficient averaging
+when coefficients covary [@cade2015] and are a more general purpose tool: they
+do not require information theoretics, they can combine different types of
+models (e.g. parametric and non-parametric models or frequentist and
+Bayesian predictions), and they can combine predictions in complex non-linear
+ways that may depend on additional covariates.
 
-A strength of ensemble models is that they can be tailored or specific response variables. For example, we built separate models of mean \bbmsy\\ and the slope of \bbmsy\\. The same set of model weights or non-linear relationships need not hold across different response variables: ensemble models can optimally combine the individual models depending on the response. Ensemble models could be combined to estimate any number of response variables of interest. For example, they could be combined to estimate a binary response such as whether status is above or below some threshold.
+A strength of ensemble models is that they can be tailored or specific response
+variables. For example, we built separate ensemble models of mean \bbmsy\\ and
+the slope of \bbmsy\\. The same set of model weights or non-linear
+relationships need not hold across different response variables. For example,
+SSCOM contributed little to the GBM ensemble estimate of status at higher
+levels of predicted \bbmsy\\, but contributed strongly to estimates of slope
+(TODO FIG). Formally, this fitting of ensemble models to specific quantities of
+interest provides an additional calibration step [@rykiel1996]. Individual
+models are typically calibrated (i.e. parameters are estimated) based on a
+single response variable; however, this model might then provide a biased or
+inaccurate estimate of quantities. For example, a data-limited fisheries model
+might calibrate parameters by maximizing likelihood with respect to observed
+and predicted catches but those parameters may then provide a biased or
+inaccurate estimate of the mean and slope of \bbmsy\\. Ensemble methods can
+provide a final calibration step to a quantity of interest.
 
 * Coilin: How ensembles can help understand mechanistic underpinnings of individual 
   models
@@ -210,8 +345,24 @@ A strength of ensemble models is that they can be tailored or specific response 
     * can learn under what conditions certain models perform well
     * pick out an example
 
-Combining predictions from multiple models via ensemble methods is also broadly useful in other subfields of ecology and fisheries science. Predictions about extinction risk are widely used at the national (endangered species act in the US, citation, species at risk act in Canada, citation) and international (the IUCN red list, citation) levels. These risk assessments generally involve fitting regression models to outcomes for individual species along with predictors of species risk [@pinsky2011], or population dynamics models to data for individual species [@dfo2010]. Both types of models are prone to error caused by model-misspecification and therefore results are sensitive to a priori decisions about model structure [@brooks2015]. Although there are many potential options to account for potential model-misspecification in determination of species risk (e.g., model averaging, @burnham2002, or semi-parametric methods, @thorson2014), ensemble methods are a relatively easy way to combine predictions from multiple models in a way that is clearly explained (i.e., without complicated statistics). Similarly, ensemble methods could be used to increase the robustness of spatial predictions when designing networks of protected areas [@rassweiler2014], or to forecast potential spatial shifts in species distribution given climate impacts [@harsch2014].
-
+Combining predictions from multiple models via ensemble methods is also broadly
+useful in other subfields of ecology and fisheries science. Predictions about
+extinction risk are widely used at the national (e.g. the US Endangered Species
+Act and the Canadian Species at Risk Act) and international [e.g. the IUCN Red
+List, @iucn2015] levels. These risk assessments generally involve fitting
+regression models to outcomes for individual species along with predictors of
+species risk [e.g. @anderson2011a;@pinsky2011], or population dynamics models to
+data for individual species [e.g. @dfo2010]. Both types of models are prone to
+error caused by model-misspecification and therefore results are sensitive to
+decisions about model structure [@brooks2015]. Although there are options to
+account for potential model-misspecification in determination of species risk
+[e.g., coefficient averaging, @burnham2002; or semi-parametric methods,
+@thorson2014], ensemble methods are a relatively simple way to combine
+predictions in a transparent manner. Beyond estimates of status and trajectory,
+ensemble methods could be used to increase the robustness of spatial
+predictions when designing networks of protected areas [@rassweiler2014], or to
+forecast potential spatial shifts in species distribution given climate impacts
+[@harsch2014].
 	
 <!--
 * Other possible topics:
@@ -223,9 +374,23 @@ Combining predictions from multiple models via ensemble methods is also broadly 
       dichotomous assumptions where either one or the other is right and imply
       different management actions? ...
     * your ideas here...
+
+Why do ensembles work?
+
+- 'representational' no one model can contain all 'hypothetical functional
+  forms'... many models can cover many hypotheses @dietterich2000
+- error cancellation --- especially if multiple models make errors in
+  uncorrelated ways [@ali1996]
+- they provide an additional step of 'calibration' [@rykiel1996] where the
+  predictions are calibrated to data of known or assumed truth about a
+  particular aspect of interest in the data (e.g. mean status, slope of status)
+  whereas individual model may be calibrated (parameters estimated) with a
+  slightly different response in mind (e.g. maximizing likelihood with respect
+  to observed and predicted catches)
+- we usually do not know which individual model is 'best' [@hagedorn2005];
+  ensembles have the property of rarely being far from the best
+
 -->
-	
-# References
 
 # Acknowledgements
 
@@ -271,6 +436,8 @@ Combining predictions from multiple models via ensemble methods is also broadly 
   but are those same weights applicable to the future (or in our case other
   fisheries)?
 
+Why do ensemble methods work?
+
 - error cancellation is one but not the only reason for superiority of ensemble
   models [@hagedorn2005]
 
@@ -313,4 +480,10 @@ Combining predictions from multiple models via ensemble methods is also broadly 
 
 - @rykiel1996 "Testing ecological models: the meaning of validation" (see for
   performance criteria, theory on model testing and assessment)
+
+model averaging AIC:
+f Chamberlin 1890).  multiple woring hypotheses
+  (e.g., Johnson and Omland 2004, Hobbs and Hilborn 2006, Burnham et al. 2011,
+  52 Grueber et al. 2011). 
 -->
+
