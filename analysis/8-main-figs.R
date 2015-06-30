@@ -126,7 +126,9 @@ make_roc_curves <- function(dat) {
     geom_line() + coord_equal() +
     geom_abline(intercept = 1, slope = 1, lty = 2, col = "darkgrey") +
     xlim(1, 0) +
-    xlab("Specificity") + ylab("Sensitivity") + theme_bw() +
+    xlab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as < 1)) +
+    ylab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as > 1)) +
+    theme_bw() +
     theme(plot.background = element_blank(),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank()) + facet_wrap(~Ensemble) +
