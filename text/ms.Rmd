@@ -84,7 +84,7 @@ E-mail: sean_anderson@sfu.ca
 
 <!--200 words-->
 
-What can we do when multiple ecological models suggest different conclusions about population status? Any single model is unlikely to perform best under all scenarios. Ensemble methods, commonly used in fields such as climate science, provide a powerful tool to leverage information across multiple ecological models. Here we evaluate the potential for ensemble methods to improve estimates of fish population status and trajectory. We fit four data-limited models of population and exploitation dynamics and combine their estimates of the mean and slope of biomass at maximum sustainable yield (\bbmsy\\) with four ensemble models: a simple average, a linear model, and two machine-learning methods---random forests and boosted regression trees. We build our ensembles on a simulated dataset of 5760 fish stocks and test our models with cross-validation and a global database of `r ram_stocks_n` stock assessments. We find that ensemble models substantially improve estimates of population status and trajectory. Machine-learning ensembles performed the best: accuracy improved `r mean_sim$mach_vs_ind_mare_fold`%, correlation improved from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and bias (median proportional error) declined from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`. We found similar improvements when predicting the slope of status. When the simulation-trained ensembles were applied to global fish stocks, the best ensembles still improved all dimensions of performance over the next-best individual model. Ensemble models have potential to improve estimates of population status and trajectory across many taxa beyond fish. 
+What can we do when multiple ecological models suggest different conclusions about population status? Any single model is unlikely to perform best under all scenarios. Ensemble methods, commonly used in fields such as climate science, provide a powerful tool to leverage information across multiple ecological models. Here we evaluate the potential for ensemble methods to improve estimates of fish population status and trajectory. We fit four data-limited models of population and exploitation dynamics and combine their estimates of the mean and slope of biomass at maximum sustainable yield ($B/B_\mathrm{MSY}$) with four ensemble models: a simple average, a linear model, and two machine-learning methods---random forests and boosted regression trees. We build our ensembles on a simulated dataset of 5760 fish stocks and test our models with cross-validation and a global database of `r ram_stocks_n` stock assessments. We find that ensemble models substantially improve estimates of population status and trajectory. Machine-learning ensembles performed the best: accuracy improved `r mean_sim$mach_vs_ind_mare_fold`%, correlation improved from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and bias (median proportional error) declined from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`. We found similar improvements when predicting the slope of status. When the simulation-trained ensembles were applied to global fish stocks, the best ensembles still improved all dimensions of performance over the next-best individual model. Ensemble models have potential to improve estimates of population status and trajectory across many taxa beyond fish. 
 However, ensemble methods must be carefully tested, formed from a diverse set of accurate models, and built on a dataset sufficiently representative of the populations they are applied to.
 
 <!-- 3-6 keywords -->
@@ -182,7 +182,7 @@ stocks.
 
 ## Individual models of population status
 
-We fit four individual data-limited models to estimate \bbmsy\\. Three of the
+We fit four individual data-limited models to estimate $B/B_\mathrm{MSY}$. Three of the
 models are mechanistic and based generally on Schaefer biomass dynamics
 [@schaefer1954] of the form
 
@@ -215,7 +215,7 @@ summary:
   models, mPRM is empirical and not mechanistic---it uses the RAM
   Legacy Stock Assessment database to fit a regression model to a series of
   characteristics of the catch time series and stock with stock-assessed
-  \bbmsy\\ as the response. The model used in this paper is
+  $B/B_\mathrm{MSY}$ as the response. The model used in this paper is
   modified from the original in that it condenses the life-history categories
   into three categories to match the simulated dataset, removes the maximum
   catch predictor since the absolute catch in the simulated dataset is
@@ -245,9 +245,9 @@ correspond to 5- and 20-year cycles.
 ## Ensemble models
 
 The individual models we seek to combine with ensemble models provide time
-series of \bbmsy\\. Therefore, we can use ensemble models to estimate multiple
+series of $B/B_\mathrm{MSY}$. Therefore, we can use ensemble models to estimate multiple
 properties of these status time series. Here, we focus on two properties: the
-mean and slope of \bbmsy\\ in the last 5 years. Together, these quantities
+mean and slope of $B/B_\mathrm{MSY}$ in the last 5 years. Together, these quantities
 address the recent state and trajectory of status, which are both of management
 and conservation interest (e.g. [@mace2008]). To avoid undue influence of the
 end points of the time series on the calculated slope, we measured the slope as
@@ -275,13 +275,13 @@ model etc. (Table \ref{tab:predictors}), $S(0.2)$ and $S(0.05)$ represent the
 spectral density of the scaled catch series at frequencies of 0.20 and 0.05, $b$
 is the mean or slope value the model is fitted to, and $\theta$ is the set of
 parameters for the regression function. For all ensemble models of mean
-\bbmsy\\---a ratio bounded at zero---we fit the models in log space and
-exponentiated the predictions. For the estimates of \bbmsy\\ slope, we fit
+$B/B_\mathrm{MSY}$---a ratio bounded at zero---we fit the models in log space and
+exponentiated the predictions. For the estimates of $B/B_\mathrm{MSY}$ slope, we fit
 ensemble models on the natural untransformed scale.
 
 We calculated the average ensemble models as the geometric mean of the
-individual model \bbmsy\\ estimates and the mean of the individual model
-\bbmsy\\ slopes. We fit the linear model ensemble with second-order
+individual model $B/B_\mathrm{MSY}$ estimates and the mean of the individual model
+$B/B_\mathrm{MSY}$ slopes. We fit the linear model ensemble with second-order
 interactions. We fit two machine learning ensemble models based on regression
 trees. Regression trees sequentially determine what value of a predictor best
 splits the response data into two 'branches' based on a specified loss
@@ -322,7 +322,7 @@ bias, precision, accuracy (a combination of bias and precision), or the ability
 to correctly rank or correlate across populations (e.g. [@walther2005]). Here,
 we measure proportional error, defined as
 $(\hat{b} - b)/b$, where $\hat{b}$ and $b$ represent estimated and 'true'
-(or stock-assessed) mean or slope of \bbmsy\\. We calculated median proportional
+(or stock-assessed) mean or slope of $B/B_\mathrm{MSY}$. We calculated median proportional
 error to measure bias, median absolute proportional error to measure accuracy,
 and Spearman's rank-order correlation to measure the ability to correctly rank
 populations.
@@ -331,7 +331,7 @@ populations.
 
 Applied to the simulated dataset of known status, the individual models had
 variable success at recovering the mean (status) and slope (trajectory) of
-\bbmsy\\ in the last five years. All models exhibited a high degree of scatter
+$B/B_\mathrm{MSY}$ in the last five years. All models exhibited a high degree of scatter
 around the 1:1 line of perfect status prediction (Fig. \ref{hexagon}). CMSY
 exhibited bimodal predictions of status but had the best rank-order correlation
 and accuracy scores (Fig. \ref{performance}a). COM-SIR and SSCOM both correctly
@@ -371,9 +371,9 @@ the best individual model at predicting slope (SSCOM; Fig.
 The ensemble models were able to improve the predictions of status by
 exploiting the best properties of individual models, the covariance between
 individual models, and interactions with other covariates. For example, SSCOM
-had strong predictive ability when it predicted low \bbmsy\\ (Fig.
+had strong predictive ability when it predicted low $B/B_\mathrm{MSY}$ (Fig.
 \ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were
-approximately linearly related to \bbmsy\\ within the low and high prediction
+approximately linearly related to $B/B_\mathrm{MSY}$ within the low and high prediction
 clusters (Fig. \ref{partial-sim}). Ensembles also exploited the covariance
 between individual model predictions. For instance, both the linear model and
 GBM ensemble suggest that if mPRM and SSCOM predict high status, the true
@@ -398,7 +398,7 @@ improved correlation from `r mean_ram$ind_corr_range` to
 `r mean_ram$ind_mre_range` to `r mean_ram$mach_mre_range`.                    
 
 <!--
-Some individual models performed nearly as well as the ensembles in one or two performance dimensions: e.g. SSCOM does nearly as well as the ensembles at predicting the slope of \bbmsy\\ (Fig. \ref{performance-sim-slope}). But no individual method is consistently nearly as good as the ensembles. SSCOM does more poorly than the ensembles and other individual models in terms of accuracy, rank-order correlation, and bias at estimating the mean \bbmsy\\ for both the simulated and stock-assessment datasets (Fig. \ref{performance}).
+Some individual models performed nearly as well as the ensembles in one or two performance dimensions: e.g. SSCOM does nearly as well as the ensembles at predicting the slope of $B/B_\mathrm{MSY}$ (Fig. \ref{performance-sim-slope}). But no individual method is consistently nearly as good as the ensembles. SSCOM does more poorly than the ensembles and other individual models in terms of accuracy, rank-order correlation, and bias at estimating the mean $B/B_\mathrm{MSY}$ for both the simulated and stock-assessment datasets (Fig. \ref{performance}).
 -->
 
 # Discussion
@@ -455,11 +455,11 @@ Bayesian predictions), and they can combine predictions in complex non-linear
 ways that may depend on additional covariates.
 
 A strength of ensemble models is that they can be tailored or specific response
-variables. For example, we built separate ensemble models of mean \bbmsy\\ and
-the slope of \bbmsy\\. The same set of model weights or non-linear
+variables. For example, we built separate ensemble models of mean $B/B_\mathrm{MSY}$ and
+the slope of $B/B_\mathrm{MSY}$. The same set of model weights or non-linear
 relationships need not hold across different response variables. For example,
 SSCOM contributed little to the GBM ensemble estimate of status at higher
-levels of predicted \bbmsy\\, but contributed strongly to estimates of slope
+levels of predicted $B/B_\mathrm{MSY}$, but contributed strongly to estimates of slope
 (TODO FIG). Formally, fitting ensemble models to specific quantities of
 interest provides an additional calibration step [@rykiel1996]. Individual
 models are typically calibrated (i.e. parameters are estimated) based on a
@@ -468,7 +468,7 @@ inaccurate estimate of other quantities of interest. For example, a
 data-limited fisheries model might calibrate parameters by maximizing
 likelihood with respect to observed and predicted catches but those parameters
 may then provide a biased or inaccurate estimate of the mean and slope of
-\bbmsy\\. Ensemble methods provide a final calibration step to a quantity of
+$B/B_\mathrm{MSY}$. Ensemble methods provide a final calibration step to a quantity of
 interest. This ensemble calibration could further include a loss function
 tailored to the goals of the model, say placing greater weight on accuracy at
 low status levels than higher values.
