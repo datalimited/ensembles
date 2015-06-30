@@ -31,7 +31,11 @@ dropbox: $(TEXT).pdf rtf
 	mv $(TEXT).rtf ~/Dropbox/Public/$(TEXT).rtf
 
 rtf: $(TEXT).pdf
-	latex2rtf -E0 $(TEXT).tex
+	latex2rtf -f0 -M6 -E0 $(TEXT).tex
+
+$(TEXT).docx: ms.Rmd
+	Rscript -e "knitr::knit('ms.Rmd')"
+	pandoc -S -s --bibliography=$(REFS).bib --csl=prsb.csl ms.md -o $@
 
 extractbib: text
 	bibtool -x $(MS).aux -o $(MS).bib -- 'expand.macros = ON'
