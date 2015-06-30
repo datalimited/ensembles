@@ -25,15 +25,15 @@ get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
 #     (ind$mre %>% abs %>% min) / (mach$mre %>% abs %>% max) %>% round(digits_fold)
 #   ) * 100
 
-  x$ind_corr_range <- round(range(ind$corr), digits_raw)
-  x$mach_corr_range <- round(range(mach$corr), digits_raw)
+  x$ind_corr_range <- round(range(ind$corr), digits_raw) %>% formatC(digits = digits_raw, format = "f")
+  x$mach_corr_range <- round(range(mach$corr), digits_raw) %>% formatC(digits = digits_raw, format = "f")
 
-  x$ind_mare_range <- round(range(ind$mare), digits_raw)
-  x$mach_mare_range <- round(range(mach$mare), digits_raw)
+  x$ind_mare_range <- round(range(ind$mare), digits_raw) %>% formatC(digits = digits_raw, format = "f")
+  x$mach_mare_range <- round(range(mach$mare), digits_raw) %>% formatC(digits = digits_raw, format = "f")
 
-  x$ensemble_mre_range <- ensemble$mre %>% range %>% round(mre_digits)
-  x$mach_mre_range <- mach$mre %>% range %>% round(mre_digits)
-  x$ind_mre_range <- ind$mre %>% range %>% round(mre_digits)
+  x$ensemble_mre_range <- ensemble$mre %>% range %>% round(mre_digits) %>% formatC(digits = mre_digits, format = "f")
+  x$mach_mre_range <- mach$mre %>% range %>% round(mre_digits) %>% formatC(digits = mre_digits, format = "f")
+  x$ind_mre_range <- ind$mre %>% range %>% round(mre_digits) %>% formatC(digits = mre_digits, format = "f")
 
   lapply(x, paste, collapse = collapse)
 }
