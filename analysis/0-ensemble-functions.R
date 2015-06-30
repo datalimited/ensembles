@@ -246,7 +246,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     segments(1, 0, 1, 2.8, lty = "22", col = line_col, lwd = 1.3)
     abline(h = 1, lty = "22", col = line_col, lwd = 1.3)
     #abline(a = 0, b = 1, lty = "22", col = line_col, lwd = 1.3)
-    segments(0, 0, 2.8, 2.8, lty = "22", col = line_col, lwd = 1.3)
+    segments(-1, -1, 2.8, 2.8, lty = "22", col = line_col, lwd = 1.3)
     box(col = "grey60")
     add_label(-0.01, 0.08, paste0("(", letters[m], ") ", unique(filter(dat, order == m)$clean_method)),
       #col = "grey20", add_bg = ifelse(m %in% 1:4, FALSE, TRUE))
