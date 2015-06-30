@@ -38,6 +38,7 @@ extractbib: text
 	bibtool -x $(SOM).aux -o $(SOM).bib -- 'expand.macros = ON'
 
 clean:
+	rm ms.md
 	latexmk -c
 
 continuous:
