@@ -62,16 +62,14 @@ Random forest ensemble:
 Boosted regression ensemble:
 -->
 
-\clearpage
-
 # Supplementary Tables
 
 \renewcommand{\thetable}{S\arabic{table}}
 \setcounter{table}{0}
 
-Table of the predictors
+Table S1: Covariates in the ensemble models. The first four variables are predictions of the mean or slope of \bbmsy\\ in the last five years from the models described in Rosenberg et al. [@rosenberg2014]. The last two variables are additional covariates incorporated into the ensemble models. These two variables are derived from spectral analysis and represent spectral densities at long- and short-term frequencies.
 
-\begin{longtable}{>{\RaggedRight}m{4.5cm}>{\RaggedRight}p{8.5cm}}
+\begin{longtable}{>{\RaggedRight}m{4.5cm}>{\RaggedRight}p{9.4cm}}
 \toprule
 Variable & Description \\ 
 \midrule
@@ -104,13 +102,35 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=0.6\textwidth]{../figs/lm-coefs.pdf}
-\caption{Standardized regression coefficients from a linear model ensemble predicting log mean \bbmsy\\ in the last five years. Coefficients are centered (mean of each predictor is subtracted) and scaled (divided by two standard deviations). Thick and thin lines represent +/- one and two standard errors from the mean.}
-\label{lm-coefs}
+\includegraphics[width=6.5in]{../figs/hex-slope-sim.pdf}
+\caption{Same as Fig.~\ref{hexagon} but with the slope (Theil-Sen median slope \cite{theil1950}) of \bbmsy\\ in the last five years as the response variable.}
+\label{scatter-sim-slope}
 \end{center}
 \end{figure}
 
 \clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=\textwidth]{../figs/roc-sim.pdf}
+\caption{Receiver-operating-characteristic (ROC) curves from repeated three-fold cross-validation of the simulated data of known status. Shown are ROC curves for (a) ensemble models and (b) individual data-limited model estimates based on estimates of \bbmsy\\ with the response variable representing whether true \bbmsy\\ was above or below one. The diagonal dashed line represents performance that is no better than flipping a coin. The area under the curve represents the probability that the model would correctly rank two randomly chosen stocks in terms of their mean \bbmsy\\ in the last five years. Sensitivity (y axis) represents the true positive rate (correctly categorizing a stock as having a \bbmsy\\ greater than one). Specificity (x axis) refers to the true negative rate (correctly categorizing a stock as having a \bbmsy\\ less than one). The sensitivity and sensitivity values are shown across all possible splits (values of \bbmsy\\) at which one could divide the stocks into these two categories.}
+\label{roc-sim}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=5in]{../figs/performance-slope-sim.pdf}
+\caption{Same as Fig.~\ref{performance} but with the slope of \bbmsy\\ in
+the last five years as the response variable. This is based on the data shown in Fig.~\ref{scatter-sim-slope}.}
+\label{performance-sim-slope}
+\end{center}
+\end{figure}
+
+\clearpage
+
 
 \begin{figure}[htbp]
 \begin{center}
@@ -133,6 +153,15 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \end{center}
 \end{figure}
 -->
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../figs/lm-coefs.pdf}
+\caption{Standardized regression coefficients from a linear model ensemble predicting log mean \bbmsy\\ in the last five years. Coefficients are centered (mean of each predictor is subtracted) and scaled (divided by two standard deviations). Thick and thin lines represent +/- one and two standard errors from the mean.}
+\label{lm-coefs}
+\end{center}
+\end{figure}
 
 \clearpage
 
@@ -146,15 +175,6 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 
 \clearpage
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/roc-sim.pdf}
-\caption{Receiver-operating-characteristic (ROC) curves from repeated three-fold cross-validation of the simulated data of known status. Shown are ROC curves for (a) ensemble models and (b) individual data-limited model estimates based on estimates of \bbmsy\\ with the response variable representing whether true \bbmsy\\ was above or below one. The diagonal dashed line represents performance that is no better than flipping a coin. The area under the curve represents the probability that the model would correctly rank two randomly chosen stocks in terms of their mean \bbmsy\\ in the last five years. Sensitivity represents the true positive rate (correctly categorizing a stock as having a \bbmsy\\ greater than one). Specificity refers to the true negative rate (correctly categorizing a stock as having a \bbmsy\\ less than one). The sensitivity and sensitivity values are shown across all possible splits (values of \bbmsy\\) at which one could divide the stocks into these two categories.}
-\label{roc-sim}
-\end{center}
-\end{figure}
-
-\clearpage
 
 \begin{figure}[htbp]
 \begin{center}
@@ -171,25 +191,6 @@ predictor on \bbmsy\\ after integrating out the other predictor values.}
 \includegraphics[width=6.5in]{../figs/hex-mean-sim-basic-cv.pdf}
 \caption{Same as Fig.~\ref{hexagon} but with simulation ensembles that have no additional covariates (spectral densities were not included in these models).}
 \label{hexagon-sim-basic}
-\end{center}
-\end{figure}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=6.5in]{../figs/hex-slope-sim.pdf}
-\caption{Same as Fig.~\ref{hexagon} but with the slope (Theil-Sen median slope) of \bbmsy\\ in the last five years as the response variable.}
-\label{scatter-sim-slope}
-\end{center}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=5in]{../figs/performance-slope-sim.pdf}
-\caption{Same as Fig.~\ref{performance} but with the slope of \bbmsy\\ in
-the last five years as the response variable. This is based on the data shown in Fig.~\ref{scatter-sim-slope}.}
-\label{performance-sim-slope}
 \end{center}
 \end{figure}
 
