@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,english]{article}
 \usepackage{geometry}
 \geometry{verbose, letterpaper, tmargin = 2.54cm, bmargin = 2.54cm,
   lmargin = 2.54cm, rmargin = 2.54cm}
@@ -44,8 +44,8 @@
 
 \textheight 22.0cm
 
-%\usepackage[round,sectionbib]{natbib}
-%\bibpunct{(}{)}{;}{a}{}{;}
+\usepackage[round,sectionbib]{natbib}
+\bibpunct{(}{)}{;}{a}{}{;}
 
 % Fix line numbering and align environment
 % http://phaseportrait.blogspot.ca/2007/08/lineno-and-amsmath-compatibility.html
@@ -67,7 +67,7 @@
 \patchBothAmsMathEnvironmentsForLineno{multline}%
 }
 
-\title{Improving estimates of population status and trajectory with ensemble models}
+\title{}
 \author{}
 \date{}
 
@@ -77,8 +77,12 @@
 \makeatother
 
 \begin{document}
+%\begin{flushleft}
 
-\maketitle
+%\setlength{\parindent}{0.9cm}
+%\setlength\parskip{0in}
+
+%\maketitle
 %\doublespacing
 \onehalfspacing
 
@@ -90,9 +94,10 @@
 
 \linenumbers
 
+%\begin{spacing}{1.9}
 \input{ms}
 
-\bibliographystyle{prsb}
+\bibliographystyle{ecology3}
 \bibliography{jshort,fisheries-ensembles}
 
 
@@ -104,4 +109,6 @@
 
 \input{supp}
 
+%\end{spacing}
+%\end{flushleft}
 \end{document}
