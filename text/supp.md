@@ -80,7 +80,7 @@ COM-SIR & Median estimated $B/B_{\mathrm{MSY}}$ from
   CMSY method \citep{vasconcellos2005} \\ 
 
 SSCOM & Median estimated $B/B_{\mathrm{MSY}}$ 
-  from SSCOM method (REF) \\ 
+  from SSCOM method \citep{thorson2013} \\ 
 
 mPRM & Median estimated $B/B_{\mathrm{MSY}}$ 
   from modified panel regression method \citep{costello2012} \\ 
@@ -103,7 +103,7 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=6.5in]{../figs/hex-slope-sim.pdf}
-\caption{Same as Fig.~\ref{hexagon} but with the slope (Theil-Sen median slope \cite{theil1950}) of $B/B_\mathrm{MSY}$ in the last five years as the response variable.}
+\caption{Same as Fig.~\ref{hexagon} but with the slope (Theil-Sen median slope \citep{theil1950}) of $B/B_\mathrm{MSY}$ in the last five years as the response variable.}
 \label{scatter-sim-slope}
 \end{center}
 \end{figure}
@@ -175,6 +175,15 @@ predictor on $B/B_\mathrm{MSY}$ after integrating out the other predictor values
 
 \clearpage
 
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6.5in]{../figs/hex-mean-sim-basic-cv.pdf}
+\caption{Same as Fig.~\ref{hexagon} but with simulation ensembles that have no additional covariates (spectral densities were not included in these models).}
+\label{hexagon-sim-basic}
+\end{center}
+\end{figure}
+
+\clearpage
 
 \begin{figure}[htbp]
 \begin{center}
@@ -184,13 +193,5 @@ predictor on $B/B_\mathrm{MSY}$ after integrating out the other predictor values
 \end{center}
 \end{figure}
 
-\clearpage
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=6.5in]{../figs/hex-mean-sim-basic-cv.pdf}
-\caption{Same as Fig.~\ref{hexagon} but with simulation ensembles that have no additional covariates (spectral densities were not included in these models).}
-\label{hexagon-sim-basic}
-\end{center}
-\end{figure}
 
