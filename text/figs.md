@@ -13,8 +13,8 @@
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=4.2in]{../figs/didactic3.pdf}
-\caption{Using an ensemble model to predict population status.
-(Left panel) Individual models are fit to populations of known or assumed status. Estimates from these individual models, potential combined with additional covariates, are then used as coviarates in an ensemble model fitted to the known or assumed population status as the response. (Right panel) Finally, the same individual models are fit to a population of interest and combined with the previously fitted ensemble model to derive the ensemble prediction of population status.}
+\caption{Using an superensemble model to predict population status.
+(Left panel) Individual models are fit to populations of known or assumed status. Estimates from these individual models, potential combined with additional covariates, are then used as coviarates in an additional statistical model fitted to the known or assumed population status as the response. (Right panel) Finally, the same individual models are fit to a population of interest and combined with the previously fitted ensemble model to derive the superensemble prediction of population status.}
 \label{didactic}
 \end{center}
 \end{figure}
@@ -25,12 +25,12 @@
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/hex-mean-sim-ram-cv.pdf}
 \caption{True (or assessed) population status (x axis) vs. predicted population status from individual models and ensembles with cross-validation (y axis).
+These scatterplots represent the aggregate results of repeated three-fold cross-validation tests where the ensemble models are built on two-thirds of the data and tested on the third.
 (a--d) Individual data-limited model estimates of $B/B_\mathrm{MSY}$ (biomass divided by biomass at maximum sustainable yield) in the last five years for a simulated dataset of known population status.
 (e--h) Ensemble estimates for the same populations. Shown are a mean, a linear model with two-way interactions (LM), a random forest ensemble (RF), and a generalised boosted regression model (GBM).
 (i--l) The same ensemble models, which were trained on the simulated dataset, applied to the RAM Legacy stock assessment database and compared to data-rich stock-assessed status.
-These scatterplots represent repeated three-fold cross-validation tests where the ensemble models are built on two-thirds of the data and tested on the third.
 In the case of the RAM Legacy stock assessment data, the modified panel regression model (mPRM) was refit on each cross-validation split.
-In panels a--h, the data were binned into hexagons for visual presentation. Darker areas indicate areas with greater density of data.}
+The data were binned into hexagons for visual presentation. Darker areas indicate areas with greater density of data.}
 \label{hexagon}
 \end{center}
 \end{figure}
