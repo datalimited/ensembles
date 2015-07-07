@@ -11,8 +11,8 @@ all: $(TEXT).pdf
 
 %.tex: %.md
 	pandoc -S --no-wrap --bibliography=$(REFS).bib --natbib -fmarkdown-all_symbols_escapable $< -o $@
-	perl -p -i -e "s/\\\citep/\\\cite/g" $@
-	perl -p -i -e "s/\\\citet/\\\cite/g" $@
+	#perl -p -i -e "s/\\\citep/\\\cite/g" $@
+	#perl -p -i -e "s/\\\citet/\\\cite/g" $@
 	perl -p -i -e "s/Figure /Figure~/g" $@
 	perl -p -i -e "s/Fig\. /Fig.~/g" $@
 	perl -p -i -e "s/vs\. /vs.~/g" $@
