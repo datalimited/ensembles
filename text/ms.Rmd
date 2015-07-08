@@ -103,7 +103,7 @@ between models and may not optimally reduce bias and improve accuracy.
 Superensemble models, commonly used in the fields of climate and weather
 science, may provide a superior solution. Superensembles use the predictions
 from multiple models as covariates in a new statistical model. Here we evaluate
-the potential for ensemble and superensemble methods to improve estimates of fish population
+the potential for ensemble and superensemble models ('ensemble methods') to improve estimates of fish population
 status and trajectory. We fit four models of population and exploitation
 dynamics to data-limited populations and combine their estimates of the mean and
 slope of biomass at maximum sustainable yield ($B/B_\mathrm{MSY}$) with an
@@ -111,7 +111,7 @@ ensemble average and three superensembles: a linear model, a random forest, and
 a boosted regression tree. We build our models on a simulated dataset of 5760
 fish stocks and test them with cross-validation and a global database of 
 `r ram_stocks_n` stock assessments. 
-We find that ensemble and superensemble models
+We find that ensemble methods
 substantially improve estimates of population status and trajectory.
 Machine-learning superensembles performed the best for population status: accuracy improved
 `r mean_sim$mach_vs_ind_mare_fold`%, correlation between predicted and true
@@ -120,9 +120,9 @@ status improved from
 proportional error) declined from 
 `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`. 
 We found similar improvements when predicting the trajectory of status. When the
-simulation-trained ensembles were applied to global fish stocks, the best
-ensembles still improved all dimensions of performance over the next-best
-individual model. Ensemble and superensemble models have the potential to
+simulation-trained superensembles were applied to global fish stocks, the best
+models still improved all dimensions of performance over the next-best
+individual model. Ensemble methods have the potential to
 improve estimates of population status and trajectory across many taxa beyond
 fish. However, they must be carefully tested, formed from a diverse set of
 accurate models, and built on a dataset sufficiently representative of the
@@ -134,37 +134,43 @@ Keywords: data-limited fisheries, ensemble methods, model averaging, population 
 
 # Introduction
 
-Despite considerable advancements in the systematic collection of ecological
-population data, we still have little data with which to estimate population
-status for most species (IUCN, FAO, amphibian citations etc.). Yet, a large
-portion of these data-limited populations face human-caused pressures and may
-warrant conservation action (IUCN REF). This scenario calls for methods to
-assess the status of populations that rely on limited sources of data. While,
-such methods are increasingly available (e.g. REF, REF), their application faces
-two key challenges: (1) performance is relatively poor compared to more
-data-rich forms of population modelling (e.g. REF) and (2) resource managers are
-often faced with reconciling multiple potentially conflicting estimates of
-population status (e.g. REF).
+**Note if you're editing this: I recently started reworking the paper to
+incorporate 'superensembles' as a term and focus on management/conservation need
+up front instead of methods. As a result, some parts (mostly the introduction)
+are still in rough draft form.**
+
+\bigskip
+
+\noindent The estimation of ecological population status and trajectory are two
+of the most fundamental values to quantify in ecological resource management
+[e.g. @mace2008]. Status and trajectory are fundamental to everything from
+global assessments of extinction risk [e.g. @stuart2004; @schipper2008;
+@juan-jorda2011] to local management of hunting (REF) and fishing (REF). But
+ecological resource managers are often faced with reconciling multiple uncertain
+and potentially conflicting estimates of these quantities---some models may
+suggest a population is increasing in abundance while other may suggest it is
+declining (e.g. REF).
 
 One solution is to take the average or weighted average of an ensemble of model
-predictions. Such ensembles are typically more accurate and less biased
-than individual model estimates and can integrate uncertainty in model
-structure, initial conditions, and parameter estimation [@araujo2007]. For
-instance, REF-international did this and REF-national did this.
+predictions. Such ensembles are typically more accurate and less biased than
+individual model estimates and can integrate uncertainty in model structure,
+initial conditions, and parameter estimation [@araujo2007]. For instance,
+REF-international did this and REF-national did this.
 
 Whereas averages or weighted averages can improve predictions, they may not
-optimally leverage available data. Some models perform better than others in
+optimally leverage available data. The truth does not necessarily lie in the
+middle of multiple model predictions. Some models perform better than others in
 certain conditions and the covariance between model predictions may contain
-information that can both improve predictions and aid understanding of
-individual model performance. We can exploit these characteristics by using the
-predictions from a group of models as inputs into a separate statistical model.
-This technique, sometimes called 'superensemble' modelling, is common in climate
-and weather forecasting. The superensemble is fit to some training dataset where
-outcomes are well known and used to predict on a separate dataset. For example,
-@krishnamurti1999 combined predictions of wind and precipitation in Asian
-monsoons via a superensemble regression fit to observed data. Their
-superensemble considerably outperformed any individual prediction or weighted
-average of predictions in terms of accuracy. 
+information that can improve predictions. We can exploit these characteristics
+by using the predictions from a group of models as inputs into a separate
+statistical model. This technique, sometimes called 'superensemble' modelling,
+is common in climate and weather forecasting [@krishnamurti1999]. The
+superensemble is fit to some training dataset where outcomes are well known and
+used to predict on a dataset of interest. For example, @krishnamurti1999
+combined predictions of wind and precipitation in Asian monsoons via a
+superensemble regression fit to observed data. Their superensemble considerably
+outperformed any individual prediction or weighted average of predictions in
+terms of accuracy. 
 
 <!-- Ensemble methods, which combine the output from multiple models as
 predictors in a new 'ensemble' model, are one possible solution to this
