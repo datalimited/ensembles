@@ -141,21 +141,21 @@ are still in rough draft form.**
 
 \bigskip
 
-\noindent The estimation of ecological population status and trajectory are two
-of the most fundamental values to quantify in ecological resource management
-[e.g. @mace2008]. Status and trajectory are fundamental to everything from
-global assessments of extinction risk [e.g. @stuart2004; @schipper2008;
+\noindent Ecological population status and trajectory are two of the most
+fundamental values to quantify in ecological resource management [e.g.
+@mace2008]. Population status and trajectory are key to everything from global
+assessments of extinction risk [e.g. @stuart2004; @schipper2008;
 @juan-jorda2011] to local management of hunting (REF) and fishing (REF). But
-ecological resource managers are often faced with reconciling multiple uncertain
-and potentially conflicting estimates of these quantities---some models may
-suggest a population is increasing in abundance while other may suggest it is
-declining (e.g. REF).
+ecological resource managers are often faced with reconciling multiple
+uncertain and potentially conflicting estimates of these quantities---some
+models may suggest a population is at risk and declining in abundance while
+others may suggest it is not at risk and stable (e.g. REF).
 
 One solution is to take the average or weighted average of an ensemble of model
 predictions. Such ensembles are typically more accurate and less biased than
 individual model estimates and can integrate uncertainty in model structure,
 initial conditions, and parameter estimation [@araujo2007]. For instance,
-REF-international did this and REF-national did this.
+REF-international did this and REF-national did this...
 
 Whereas averages or weighted averages can improve predictions, they may not
 optimally leverage available data. The truth does not necessarily lie in the
@@ -182,28 +182,26 @@ including public health [@thomson2006], agriculture [@cantelaube2005], climate
 science [@murphy2004; @tebaldi2007; @pierce2009], and machine learning
 [@dietterich2000].-->
 
-In fisheries science, a common task is estimating the status and trajectory of
-an exploited fish population. For the majority of fish stocks, we have limited
-fisheries independent data to estimate stock status [@fao2014]. In recent
-years, a number of methods have been proposed to derive population status based
-on the limited information that is broadly available: fisheries catch time
-series and basic knowledge about the productivity of the species 
-[e.g. @vasconcellos2005; @martell2013]. Recently, @rosenberg2014
-investigated the ability for four such models to estimate population status through
-a large-scale simulation experiment. A key finding was that these models
-frequently disagree on population status and any one model has relatively poor
-predictive ability on average (e.g. Fig. \ref{motivate}).
+In fisheries science, a number of models have been proposed to assess
+population status (biomass compared to biomass at maximum sustainable yield,
+$B/B_\mathrm{MSY}$) and trajectory based on the limited data available for the
+majority of stocks: catches and a basic understanding of population
+productivity [e.g. @vasconcellos2005; @martell2013]. Recently, @rosenberg2014
+investigated the performance of four such models through a large-scale
+simulation experiment. The four models frequently disagreed about population
+status and any one model had relatively poor predictive ability on average
+(e.g. Fig. \ref{motivate}).                                                     
 
-Here, we estimate population status and trajectory of exploited fish populations
-using ensemble and superensemble models (collectively referred to 'ensemble
-methods'). We explore a variety of approaches applied to both simulated and
-real-world fish stocks and compare predictive performance. We find that
-ensembles, and in particular superensembles, generally improved predictive
-performance of status and trajectory of fish populations over any single
-model---especially when considered across multiple dimensions of predictive
-ability and across multiple datasets. Furthermore, the output from
-superensembles can aid mechanistic understanding of how individual models of
-status and trajectory perform.
+Here, we estimate population status and trajectory of exploited fish
+populations using ensembles and superensembles (collectively 'ensemble
+methods') of these four data-limited models. We explore a variety of approaches
+applied to both simulated and real-world fish stocks and compare predictive
+performance. We find that ensembles, and in particular superensembles,
+generally improved predictive performance of status and trajectory of fish
+populations over any single model---especially when considered across multiple
+dimensions of predictive ability and across multiple datasets. Furthermore, the
+output from superensembles can aid mechanistic understanding of how individual
+models of status and trajectory perform.
 
 # Methods
 
