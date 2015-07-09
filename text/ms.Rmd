@@ -28,20 +28,20 @@ Improving estimates of population status and trajectory with superensemble model
 
 \noindent
 Sean C. Anderson^1\*^, 
+Andrew B. Cooper^1^
+Olaf P. Jensen^4^, 
+C\'{o}il\'{i}n Minto^6^, 
+James T. Thorson^11^,
+Jessica C. Walsh^1^,
 Jamie Afflerbach^2^, 
 Mark Dickey-Collas^3^, 
-Olaf P. Jensen^4^, 
 Kristin M. Kleisner^5^, 
 Catherine Longo^2^, 
-C\'{o}il\'{i}n Minto^6^, 
 Giacomo Chato Osio^7^, 
 Dan Ovando^8^, 
 Andrew A. Rosenberg^9^, 
 Elizabeth R. Selig^10^, 
-James T. Thorson^11^,
-Jessica C. Walsh^1^,
-Andrew B. Cooper^1^
-*(order to be determined and others may be added)*
+*(order to be determined and superscripts out of order)*
 
 \bigskip
 
@@ -100,8 +100,8 @@ Ecological resource managers are often faced with reconciling multiple potential
 conflicting estimates of population status and trajectory.  One solution is to
 average these predictions in an ensemble, but this approach ignores covariance
 between models and may not optimally reduce bias and improve accuracy.
-Superensemble models, commonly used in the fields of climate and weather
-science, may provide a superior solution. Superensembles use the predictions
+Superensemble models, commonly used for climate and weather
+forecasting, may provide a superior solution. Superensembles use the predictions
 from multiple models as covariates in a new statistical model. Here we evaluate
 the potential for ensemble and superensemble models ('ensemble methods') to improve estimates of fish population
 status and trajectory. We fit four data-limited models of population and exploitation
@@ -129,9 +129,10 @@ fish. However, they must be carefully tested, formed from a diverse set of
 accurate models, and built on a dataset sufficiently representative of the
 populations to which they are applied.
 
+\bigskip
 <!-- up to 12 keywords -->
 \noindent 
-Keywords: data-limited fisheries, ensemble methods, model averaging, population dynamics, sustainable resource management
+Keywords: data-limited fisheries, ensemble methods, multi-model averaging, population dynamics, sustainable resource management
 
 # Introduction
 
