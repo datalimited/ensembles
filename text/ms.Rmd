@@ -145,7 +145,7 @@ Anna Gårdmark1,8, Martin Lindegren2, Stefan Neuenfeldt2, Thorsten Blenckner3, O
 Read More: http://www.esajournals.org/doi/abs/10.1890/12-0267.1
 -->
 
-Whereas averages or weighted averages may improve predictions over any single model, they may not optimally leverage available data. The truth does not necessarily lie in the middle of multiple model predictions, some models may perform better than others in certain conditions, and the covariance between models may contain information that can improve predictive accuracy. We can exploit these characteristics by using the predictions from a group of models as inputs into a separate statistical model. This technique, sometimes called 'superensemble' modelling, is common in climate and weather forecasting [e.g. @krishnamurti1999; @yun2005; @mote2015]. The superensemble is fit to some training dataset where outcomes are well known and used to predict on a dataset of interest. For example, @krishnamurti1999 combined predictions of wind and precipitation in Asian monsoons via a superensemble regression fit to observed data. Their superensemble was considerably more accurate than any individual prediction or weighted average of predictions. 
+Whereas averages or weighted averages may improve predictions over any single model, they may not optimally leverage available data. The truth does not necessarily lie in the middle of multiple model predictions, some models may perform better than others in certain conditions, and the covariance between models may contain information that can improve predictive accuracy. We can exploit these characteristics by using the predictions from a group of models as inputs into a separate statistical model. This technique, sometimes called 'superensemble' modelling [@krishnamurti1999], is common in climate and weather forecasting [e.g. @yun2005; @mote2015]. The superensemble is fit to some training dataset where outcomes are well known and used to predict on a dataset of interest. For example, @krishnamurti1999 combined predictions of wind and precipitation in Asian monsoons via a superensemble regression fit to observed data. Their superensemble was considerably more accurate than any individual prediction or weighted average of predictions. 
 
 <!-- Ensemble methods, which combine the output from multiple models as
 predictors in a new 'ensemble' model, are one possible solution to this
@@ -248,8 +248,8 @@ summary:
   a prior to the relative proportion of biomass at the end compared to unfished
   biomass (depletion) based on the percentage of maximum catch at the end of the
   time series. Our version of the model was modified from @martell2013 to
-  generate biomass trends from all viable $r$-$K$ pairs and produced an estimate of
-  $B/B_\mathrm{MSY}$ from the geometric mean trend.
+  generate biomass trends from all viable $r$-$K$ pairs and produce an estimate of
+  $B/B_\mathrm{MSY}$ from the median trend.
 
 * *COM-SIR* (catch-only-model with sample-importance-resampling) is a coupled
   harvest-dynamics model [@vasconcellos2005]. Biomass is assumed to follow a
@@ -532,7 +532,7 @@ accuracy at low status levels than higher values.
 *TODO: Coilin: How ensembles can help understand mechanistic underpinnings of individual models*
 Beyond predictive performance, superensembles can help understand mechanistic
 underpinnings of individual models. 
-First, at a most basic level, superensembles that allow for nonlinear
+First, superensembles that allow for nonlinear
 relationships can describe at what ranges of a prediction a certain model is
 most informative. For example, we can see that SSCOM is most effective at
 distinguishing low values of $B/B_\mathrm{MSY}$ (Fig. S4).
