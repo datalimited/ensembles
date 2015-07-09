@@ -3,7 +3,7 @@
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=3.7in]{../figs/motivate.pdf}
-\caption{Different models can suggest conflicting population statuses and trends. Shown here are trajectories of estimated \bbmsy\\ from four data-limited assessment methods (colours) and a data-rich stock assessment (black). Lines indicate median fits and shaded regions interquartile ranges. (\textit{TODO: could add a panel with a simulated stock and/or change the stock that is shown and/or show a number of small panels with different conflicting patterns but without the confidence intervals.})}
+\caption{Different models can suggest conflicting population statuses and trends. Shown here are trajectories of estimated \bbmsy\\ from four data-limited assessment methods (colours) and a data-rich stock assessment (black). Lines indicate median fits and shaded regions interquartile ranges. (\textit{Could add a panel with a simulated stock, change the stock that is shown, and/or show a number of small panels with different conflicting patterns but without the confidence intervals.})}
 \label{motivate}
 \end{center}
 \end{figure}
@@ -13,7 +13,7 @@
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=4.2in]{../figs/didactic3.pdf}
-\caption{Using an superensemble model to predict population status.
+\caption{Using a superensemble model to predict population status.
 (Left panel) Individual models are fit to populations of known or assumed status. Estimates from these individual models, potential combined with additional covariates, are then used as coviarates in an additional statistical model fitted to the known or assumed population status as the response. (Right panel) Finally, the same individual models are fit to a population of interest and combined with the previously fitted ensemble model to derive the superensemble prediction of population status.}
 \label{didactic}
 \end{center}
