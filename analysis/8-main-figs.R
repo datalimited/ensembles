@@ -10,7 +10,7 @@ clean_names <- dplyr::data_frame(
   method = c("CMSY", "COMSIR", "mPRM", "SSCOM",
     "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
   clean_method = c("CMSY", "COM-SIR", "mPRM", "SSCOM",
-    "GBM Ensemble", "RF Ensemble", "LM Ensemble", "Mean Ensemble"),
+    "GBM Superensemble", "RF Superensemble", "LM Superensemble", "Mean Ensemble"),
   order = c(1, 2, 4, 3, 8, 7, 6, 5),
   label_fudge_x = c(
     0, -0.03,0,-0.04,
@@ -43,7 +43,7 @@ d_sim_perf_summ <- d_sim_perf_long %>%
     l = quantile(value, 0.25),
     u = quantile(value, 0.75)) %>%
   as.data.frame
-d_sim_perf_summ$text_col <- ifelse(grepl("Ensemble", d_sim_perf_summ$clean_method),
+d_sim_perf_summ$text_col <- ifelse(grepl("ensemble", d_sim_perf_summ$clean_method, ignore.case = TRUE),
   "grey20", "grey50")
 d_sim_perf_wide <- reshape2::dcast(d_sim_perf_summ, clean_method + order ~ variable,
   value.var = "m")
@@ -80,7 +80,7 @@ re_ram_sum_long <- reshape2::melt(re_ram_sum, id.vars = "clean_method") %>%
   inner_join(clean_names) %>%
   rename(m = value) %>%
   mutate(l = m, u = m) %>%
-  mutate(text_col = ifelse(grepl("Ensemble", clean_method), "grey20", "grey50"))
+  mutate(text_col = ifelse(grepl("ensemble", clean_method, ignore.case = TRUE), "grey20", "grey50"))
 re_ram_sum_long$clean_method <- reorder(re_ram_sum_long$clean_method, re_ram_sum_long$order)
 re_ram_sum_long$label_fudge_x <- 0
 re_ram_sum_long$label_fudge_y <- 0
@@ -98,7 +98,7 @@ d_sim_mean <- d_sim %>% filter(type == "mean") %>%
 rocs_sim_mean <- d_sim_mean %>% group_by(clean_method, order) %>%
   do({get_roc(true = .$above1, est = .$bbmsy_est)}) %>%
   as.data.frame
-rocs_sim_mean$Ensemble <- ifelse(grepl("Ensemble", rocs_sim_mean$clean_method),
+rocs_sim_mean$Ensemble <- ifelse(grepl("ensemble", rocs_sim_mean$clean_method, ignore.case = TRUE),
   "(a) Ensemble", "(b) Individual")
 auc_sim_mean <- rocs_sim_mean %>%
   group_by(clean_method) %>%
@@ -113,7 +113,7 @@ d_ram_mean <- d_ram %>%
 rocs_ram_mean <- d_ram_mean %>% group_by(clean_method, order) %>%
   do({get_roc(true = .$above1, est = .$bbmsy_est)}) %>%
   as.data.frame
-rocs_ram_mean$Ensemble <- ifelse(grepl("Ensemble", rocs_ram_mean$clean_method),
+rocs_ram_mean$Ensemble <- ifelse(grepl("ensemble", rocs_ram_mean$clean_method, ignore.case = TRUE),
   "(A) Ensemble", "(B) Individual")
 auc_ram_mean <- rocs_ram_mean %>%
   group_by(clean_method) %>%
@@ -153,10 +153,10 @@ d_mean_plot <- na.omit(d_mean_plot)
 
 d_mean_sim_and_ram <- bind_rows(
   mutate(d_mean_plot, data = "Simulated"),
-  filter(d_ram, grepl("Ensemble", clean_method)) %>%
+  filter(d_ram, grepl("ensemble", clean_method, ignore.case = TRUE)) %>%
     mutate(order = order + 4, data = "RAM Legacy"))
 
-ram_third_row_lims <- filter(d_ram, grepl("Ensemble", clean_method)) %>%
+ram_third_row_lims <- filter(d_ram, grepl("ensemble", clean_method, ignore.case = TRUE)) %>%
   summarise(lower = min(c(bbmsy_est, bbmsy_true)), upper = max(c(bbmsy_est, bbmsy_true))) %>%
   as.numeric
 
@@ -166,16 +166,16 @@ ram_third_row_lims <- filter(d_ram, grepl("Ensemble", clean_method)) %>%
 # dev.off()
 
 # Same as above but add the RAM ensembles as a third row:
-pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 6.6, height = 4.2)
+pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 7.0, height = 4.6)
 plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 25L,
   lims_hex3 = ram_third_row_lims, count_transform3 = 12,
   oma = c(3.5, 3.5, .5, 2.5), count_transform = 1,
   alpha = 15, bias = c(rep(3, 8), rep(1.8, 4)))
 par(xpd = NA)
 mtext("Simulated data", side = 4, outer = TRUE, line = 0.4, las = 0, col = "grey20",
-  adj = 0.8)
+  adj = 0.75, cex = 0.9)
 mtext("Stock assessment", side = 4, outer = TRUE, line = 0.4, las = 0,
-  col = "grey20", adj = 0)
+  col = "grey20", adj = 0, cex = 0.9)
 mtext("database", side = 4, outer = TRUE, line = 1.4, las = 0,
   col = "grey20", adj = 0.1)
 dev.off()
@@ -216,7 +216,7 @@ perf <- function(dat, xlim = range(dat$mare) + c(-0.07, 0.025),
   points(dat$mare, dat$corr, pch = 21, cex = 2, bg = dat$col, lwd = 0.7,
     col = "grey40")
   text(dat$mare, dat$corr, labels = dat$clean_method, adj = c(0.5, 2),
-    col = ifelse(grepl("Ensemble", dat$clean_method), "grey10", "grey50"),
+    col = ifelse(grepl("ensemble", dat$clean_method, ignore.case = TRUE), "grey10", "grey50"),
     cex = 0.9)
   par(xpd = NA)
   add_label(0.01, -0.04, label, cex = 1.1)
