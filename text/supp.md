@@ -137,7 +137,7 @@ the last five years as the response variable. This is based on the data shown in
 \includegraphics[width=\textwidth]{../figs/partial-sim.pdf}
 \caption{Partial dependence plots for GBM ensemble models fitted to the
 simulation data. Lines represent the marginal non-linear effect of each
-predictor on $B/B_\mathrm{MSY}$ after integrating out the other predictor values.}
+predictor on $B/B_\mathrm{MSY}$ after integrating out the other predictor values. The marginal effect at a given predictor value is the average predicted response across all data points holding the given predictor at a specific value.}
 \label{partial-sim}
 \end{center}
 \end{figure}
@@ -193,5 +193,16 @@ predictor on $B/B_\mathrm{MSY}$ after integrating out the other predictor values
 \end{center}
 \end{figure}
 
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6.5in]{../figs/partial-sim-slope.pdf}
+\caption{Partial dependence plots for GBM ensemble models fitted to the
+simulation data. Lines represent the marginal non-linear effect of each
+predictor on the slope of $B/B_\mathrm{MSY}$ after integrating out the other predictor values.}
+\label{partial-sim-slope}
+\end{center}
+\end{figure}
 
 
