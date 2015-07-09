@@ -74,7 +74,7 @@ ylim <- range(c(dl_dat$b_bmsyiq25, dl_dat$b_bmsyiq75))
 pdf("../figs/motivate.pdf", width = 4.6, height = 2.9)
 par(mar = c(3, 3.4, .5, 4.5), cex = 0.8, oma = c(0, 0, 0, 0), tck = -0.015,
   mgp = c(2, 0.5, 0), col.axis = "grey40", las = 1)
-par(family="serif")
+#par(family="serif")
 plot(1, 1, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", axes = FALSE)
 abline(h = 1, lty = 2, col = "grey40", lwd = 2)
 plyr::d_ply(dl_dat, "method", plot_method)

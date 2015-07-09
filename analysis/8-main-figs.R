@@ -231,7 +231,7 @@ par(mfrow = c(1, 2))
 par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
   oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
   xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-par(family="serif")
+#par(family="serif")
 
 perf(d_sim_perf_wide, label = "(a) Simulation")
 
@@ -285,7 +285,7 @@ pdf("../figs/performance-slope-sim.pdf", width = 5, height = 4)
 par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
   oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
   xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-par(family="serif")
+#par(family="serif")
 
 pal_df <- data_frame(mre = seq(-max(abs(d_slope_error$mre)+0.02),
   max(abs(d_slope_error$mre)+0.02),
