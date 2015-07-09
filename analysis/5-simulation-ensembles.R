@@ -136,6 +136,10 @@ m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
   data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 d_mean$gbm_pred <- exp(gbm::predict.gbm(m, n.trees = 2000L))
 
+m_slope <- gbm::gbm(bbmsy_true_slope ~ CMSY + COMSIR + mPRM + SSCOM +
+    spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
+  data = d_slope, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
+
 p1 <- ggplot(d_mean, aes(CMSY, gbm_pred)) + geom_point()
 p2 <- ggplot(d_mean, aes(COMSIR, gbm_pred)) + geom_point()
 p3 <- ggplot(d_mean, aes(mPRM, gbm_pred)) + geom_point()
@@ -200,18 +204,32 @@ partial <- plyr::ldply(seq_len(nvar), function(i) {
   dd
 })
 
+partial_slope <- plyr::ldply(seq_len(nvar), function(i) {
+  dd <- gbm::plot.gbm(m_slope, i.var = i, return.grid = TRUE)
+  dd$predictor <- names(dd)[1]
+  names(dd)[1] <- "predictor_value"
+  dd
+})
+
 partial_names <- data_frame(
   predictor = c("CMSY", "COMSIR", "mPRM", "SSCOM",
     "spec_freq_0.05", "spec_freq_0.2"),
   predictor_label = c("(a) CMSY", "(b) COM-SIR", "(d) mPRM", "(c) SSCOM",
-    "(e) Long-term spectral density", "(d) Short-term spectral density"))
+    "(f) Long-term spectral density", "(e) Short-term spectral density"))
 partial <- inner_join(partial, partial_names)
+partial_slope <- inner_join(partial_slope, partial_names)
 # partial dependence plot:
 p <- ggplot(partial, aes(predictor_value, y)) + geom_line() +
   facet_wrap(~predictor_label, scales = "free_x") + ylim(0.3, 1.6) + theme_bw() +
   ylab("Expected B/B_MSY integrating out other predictors") +
   xlab("Predictor value")
 ggsave("../figs/partial-sim.pdf", width = 7, height = 5)
+
+p <- ggplot(partial_slope, aes(predictor_value, y)) + geom_line() +
+  facet_wrap(~predictor_label, scales = "free_x") + ylim(-0.2, 0.2) + theme_bw() +
+  ylab("Expected slope of B/B_MSY integrating out other predictors") +
+  xlab("Predictor value")
+ggsave("../figs/partial-sim-slope.pdf", width = 7, height = 5)
 
 partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
   dd <- gbm::plot.gbm(m, i.var = c(x, y), return.grid = TRUE, continuous.resolution = 20)
