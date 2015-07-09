@@ -24,13 +24,13 @@
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/hex-mean-sim-ram-cv.pdf}
-\caption{True (or assessed) population status (x axis) vs. predicted population status from individual models and ensembles with cross-validation (y axis).
+\caption{True (or assessed) population status (x axis) vs. predicted population status from individual models and ensemble methods with cross-validation (y axis).
 These scatterplots represent the aggregate results of repeated three-fold cross-validation tests where the ensemble models are built on two-thirds of the data and tested on the third.
 (a--d) Individual data-limited model estimates of $B/B_\mathrm{MSY}$ (biomass divided by biomass at maximum sustainable yield) in the last five years for a simulated dataset of known population status.
 (e--h) Ensemble estimates for the same populations. Shown are a mean, a linear model with two-way interactions (LM), a random forest ensemble (RF), and a generalised boosted regression model (GBM).
 (i--l) The same ensemble models, which were trained on the simulated dataset, applied to the RAM Legacy stock assessment database and compared to data-rich stock-assessed status.
 In the case of the RAM Legacy stock assessment data, the modified panel regression model (mPRM) was refit on each cross-validation split.
-The data were binned into hexagons for visual presentation. Darker areas indicate areas with greater density of data.}
+The data were binned into hexagons for visual presentation. Darker areas indicate areas with greater density of data. Yellow-red shading and yellow-blue shading distinguishes individual models from ensemble methods.}
 \label{hexagon}
 \end{center}
 \end{figure}
