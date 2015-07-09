@@ -28,7 +28,7 @@ Improving estimates of population status and trajectory with superensemble model
 
 \noindent
 Sean C. Anderson^1\*^, 
-Andrew B. Cooper^1^
+Andrew B. Cooper^1^,
 Olaf P. Jensen^4^, 
 C\'{o}il\'{i}n Minto^6^, 
 James T. Thorson^11^,
@@ -40,8 +40,10 @@ Catherine Longo^2^,
 Giacomo Chato Osio^7^, 
 Dan Ovando^8^, 
 Andrew A. Rosenberg^9^, 
-Elizabeth R. Selig^10^, 
-*(order to be determined and superscripts out of order)*
+Elizabeth R. Selig^10^
+
+\noindent
+\textit{order to be determined and superscripts out of order}
 
 \bigskip
 
@@ -97,7 +99,7 @@ E-mail: sean_anderson@sfu.ca
 <!--up to 350 words-->
 
 Ecological resource managers are often faced with reconciling multiple potentially
-conflicting estimates of population status and trajectory.  One solution is to
+conflicting estimates of population status and trajectory. One solution is to
 average these predictions in an ensemble, but this approach ignores covariance
 between models and may not optimally reduce bias and improve accuracy.
 Superensemble models, commonly used for climate and weather
@@ -109,9 +111,9 @@ dynamics to marine fish stocks and combine their estimates of the mean and
 slope of biomass at maximum sustainable yield ($B/B_\mathrm{MSY}$) with an
 ensemble average and three superensembles: a linear model, a random forest, and
 a boosted regression tree. 
-We selected data-limited models for their applicability across the majority of stocks world wide.
+We selected data-limited models for their applicability across the majority of fish stocks world wide.
 We build our models on a simulated dataset of 5760
-fish stocks and tested them with cross-validation and a global database of 
+stocks and tested them with cross-validation and a global database of 
 `r ram_stocks_n` stock assessments that have also been assessed with more data-intensive stock assessment models.
 We find that ensemble methods substantially improve estimates of population status and trajectory.
 Machine-learning superensembles performed the best for population status: accuracy improved
@@ -136,7 +138,7 @@ Keywords: data-limited fisheries, ensemble methods, multi-model averaging, popul
 
 # Introduction
 
-Population status and trajectory are two of the most fundamental values to quantify in ecological resource management [e.g. @mace2008; @iucn2015]. These properties are key to everything from global assessments of extinction risk [e.g. @stuart2004; @schipper2008; @juan-jorda2011] to setting hunting (REF) and fishing limits [e.g. @worm2009] (REFs). However, ecological resource managers are often faced with reconciling multiple uncertain and potentially conflicting estimates of status and trajectory [e.g. @branch2011] (REFs). Some models may suggest a population is at risk and declining in abundance while others may suggest it is not at risk and stable.
+Population status and trajectory are two of the most fundamental values to quantify in ecological resource management [e.g. @mace2008; @iucn2015]. These properties are key to everything from global assessments of extinction risk [e.g. @stuart2004; @schipper2008] to assessing hunting and fishing exploitation levels [e.g. @worm2009; @juan-jorda2011]. However, ecological resource managers are often faced with reconciling multiple uncertain and potentially conflicting estimates of status and trajectory [e.g. @brodziak2010; @branch2011]. Some models may suggest a population is at risk and declining in abundance while others may suggest it is not at risk and stable.
 
 One solution is to take the average or weighted average of an ensemble of model predictions. Such ensembles are typically more accurate and less biased than individual model estimates and can integrate uncertainty in model structure, initial conditions, and parameter estimation [@dietterich2000; @araujo2007]. This approach forms the basis of many machine learning methods [e.g. @dietterich2000], has helped reconcile climate forecasts from dozens of models [e.g. @murphy2004; @tebaldi2007; @ipcc2013], and even improved early warning signs of malaria outbreaks [@thomson2006]. In ecology, ensemble methods are frequently used to improve species distribution modelling [e.g. @araujo2007; @breiner2015] and indeed have been used to combine estimates of population status and trajectory [e.g. @brodziak2010] COSEWIC-IUCN REFS.
 
@@ -160,13 +162,14 @@ science [@murphy2004; @tebaldi2007; @pierce2009], and machine learning
 
 In fisheries science, the gold standard for determining status and trajectory
 of exploited fish populations are stock assessments that
-incorporate all available data (e.g., catches, size and age distributions,
+incorporate all available data (e.g. catches, size and age distributions,
 surveys, and tagging information) to quantify values such as 
 the biomass that can produce maximum sustainable yield ($B/B_\mathrm{MSY}$).
-However, these kinds of data are not available for the majority of stocks
+However, these kinds of data are not available for the majority of fish
+populations
 [@fao2014]. Therefore, a number of models have been proposed to assess
 $B/B_\mathrm{MSY}$ based on the limited data available for the majority of
-stocks: catches and a basic understanding of population productivity [e.g.
+fish stocks: catches and a basic understanding of population productivity [e.g.
 @vasconcellos2005; @martell2013]. Recently, @rosenberg2014 investigated the
 performance of four data-limited models through a large-scale simulation
 experiment. The four models frequently disagreed about population status and
@@ -276,7 +279,7 @@ summary:
   the simulated dataset, removes the maximum catch predictor since the absolute
   catch in the simulated dataset is arbitrary, and does not implement the bias
   correction needed in @costello2012 for deriving aggregate
-  estimates of mean status across multiple stocks.
+  estimates of median status across multiple stocks.
 
   <!--TODO: build in fig:didactic -->
 
@@ -380,7 +383,8 @@ $(\hat{b} - b)/b$, where $\hat{b}$ and $b$ represent estimated and 'true'
 (or stock-assessed) mean or slope of $B/B_\mathrm{MSY}$. We calculated median proportional
 error to measure bias, median absolute proportional error to measure accuracy,
 and Spearman's rank-order correlation to measure the ability to correctly rank
-populations.
+populations. Code to reproduce our analysis is available at
+<https://github.com/datalimited/ensembles>.
 
 # Results
 
@@ -423,7 +427,6 @@ slightly behind the best individual model for estimating fish stock status (CMSY
 the best individual model at predicting the trends of status (SSCOM; Fig.
 \ref{performance-sim-slope}).
 
-<!--TODO: check labels on Figure S4 – repeat of (d) and missing (f)-->
 The superensemble models were able to improve the predictions of status by
 exploiting the best properties of individual models, the covariance between
 individual models, and interactions with other covariates. For example, SSCOM
@@ -517,7 +520,8 @@ $B/B_\mathrm{MSY}$ and the slope of $B/B_\mathrm{MSY}$. The same set of model
 weights or non-linear relationships need not hold across different response
 variables. For example, SSCOM contributed little to the GBM superensemble estimate
 of status at higher levels of predicted $B/B_\mathrm{MSY}$, but contributed
-strongly to estimates of slope (TODO FIG). Formally, fitting superensemble models to
+strongly to estimates of slope (Fig. \ref{fig:partial-sim-slope}). Formally,
+fitting superensemble models to
 specific quantities of interest provides an additional calibration step
 [@rykiel1996]. Individual models are typically calibrated (i.e. parameters are
 estimated) based on a single response variable; however, this model might then
@@ -603,11 +607,13 @@ approval for publication.*
 
 # Acknowledgements
 
-TODO
-
-# Funding
-
-TODO
+We thank members of Phase I of the working group 'INSERT NAME HERE' who
+contributed to developing the data-limited methods and simulations used in our
+analysis.
+We thank J.A. Hutchings for helpful discussions on ensemble methods for
+assessing population status.
+We thank the Gordon and Betty Moore Foundation for funding of the working group
+'INSERT NAME HERE'.
 
 <!--Funding...-->
 
