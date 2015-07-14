@@ -597,16 +597,16 @@ As @box1987 noted, all models are wrong, but they may still be useful. The
 ensemble methods we investigated attempt to piece together the useful parts of
 candidate models to build a model with improved performance. Instead of viewing
 the superensemble as a black box, we think considerable mechanistic
-understanding can be gained by studying the structure of the superensemble. For
-example, when SSCOM estimates very low status this is likely the case,
-conversely when COMSIR estimates low status, the truth is likely that the status
-is high (Fig. \ref{partial-sim}). These models have two main differences: (1)
-the form of effort dynamics and (2) the allowance for both measurement and
-process error in SSCOM, whereas the implemented COMSIR admits measurement error
-only. Were the methods to differ only in effort dynamics, the results point
-towards a more suitable representation of effort dynamics at low biomasses in
-SSCOM. We think that such investigation of the parameters of a superensemble may
-lead to improvement in the mechanisms imparted to the individual models.
+understanding can be gained by studying its structure. For example, when SSCOM
+estimates very low status this is likely the case, conversely when COMSIR
+estimates low status, the truth is likely that the status is high (Fig.
+\ref{partial-sim}). These models have two main differences: (1) the form of
+effort dynamics and (2) the allowance for both measurement and process error in
+SSCOM, whereas the implemented COMSIR admits measurement error only. Were the
+methods to differ only in effort dynamics, the results point towards a more
+suitable representation of effort dynamics at low biomasses in SSCOM. We think
+that such investigation of the parameters of a superensemble may lead to
+improvement in the mechanisms imparted to the individual models.
 
 Combining predictions from multiple models via superensemble methods is also
 broadly useful in other subfields of ecology and fisheries science. Predictions
