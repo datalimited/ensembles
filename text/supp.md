@@ -1,65 +1,18 @@
 # Supporting Material
 
 <!--
-# Simulation model
+Supporting Information (i.e., online appendices) should be cited in the text of
+the paper. Every piece is cited as Supporting Information, not by specific
+appendix number. Before Literature Cited, insert a paragraph in the exact
+format shown below that provides a brief description of supporting information
+elements.
 
-Brief description of the simulation model based on the FAO report
+Supporting Information
 
-[@rosenberg2014]
-
-# Assessment methods
-
-## CMSY --- catch maximum sustainable yield
-
-## COMSIR --- catch only model with sample-importance-resampling
-
-\begin{equation}
-\hat{C}_{t+1} = P_{t+1} \left(B_t + r B_t \left(1 - \frac{B_t}{K}\right) - \hat{C}_t \right)
-\end{equation}
-
-\begin{equation}
-P_{t+1} = P \left(1 + x\left(\frac{B_t}{aK}-1\right)\right)
-\end{equation}
-
-\begin{equation}
-P_0 = \frac{C_0}{B_0}
-\end{equation}
-
-\begin{equation}
-B_\mathrm{MSY} = \frac{K}{2}
-\end{equation}
-
-Priors: 
-
-$a \sim \mathrm{uniform}(0, 1)$, $x \sim \mathrm{uniform}(0.000001, 1)$, $\log K \sim \mathrm{uniform}(\mathrm{max catch}, \log (100 \cdot \mathrm{max catch}))$
-
-## mPRM --- modified panel regression model
-
-## SSCOM --- state space catch-only-model
-
-Harvest dynamics model:
-
-\begin{equation}
-\hat{E}_{t+1} = E_t \left( \frac{B_t}{a \cdot B_0 / 2} \right) ^ 2
-\end{equation}
-
-\begin{equation}
-\hat{C}_t = E_t \cdot B_t
-\end{equation}
-
-Table summarizing these based on FAO report
-
-[@rosenberg2014]
-
-# Ensemble model descriptions
-
-Mean ensemble:
-
-Linear model ensemble:
-
-Random forest ensemble:
-
-Boosted regression ensemble:
+XXX (Appendix S1), XXX (Appendix S2), and a XXX translation of the article
+(Appendix S3) are available online. The authors are solely responsible for the
+content and functionality of these materials. Queries (other than absence of
+the material) should be directed to the corresponding author.
 -->
 
 # Supplementary Tables
