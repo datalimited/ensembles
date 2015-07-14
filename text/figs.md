@@ -1,5 +1,8 @@
 # Figures
 
+<!--The legends for all figures should be grouped on a page that precedes the
+figures. Do not place a figure and its legend on the same page.-->
+
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=3.7in]{../figs/motivate.pdf}
