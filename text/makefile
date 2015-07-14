@@ -18,6 +18,7 @@ all: $(TEXT).pdf
 	perl -p -i -e "s/vs\. /vs.~/g" $@
 	perl -p -i -e "s/Table /Table~/g" $@
 	perl -p -i -e "s/Figs\. /Figs.~/g" $@
+	rm ms.md
 
 $(TEXT).pdf: $(MS).tex $(SOM).tex $(FIGS).tex $(TEXT).tex $(REFS).bib
 	latexmk $(TEXT)
