@@ -6,7 +6,7 @@ get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
   collapse = "--", mre_digits = 2) {
 
   dat <- dat %>%
-    mutate(ensemble = ifelse(grepl("Ensemble", clean_method), TRUE, FALSE)) %>%
+    mutate(ensemble = ifelse(grepl("ensemble", clean_method), TRUE, FALSE)) %>%
     mutate(machine = ifelse(grepl("GBM|RF", clean_method), TRUE, FALSE))
 
   x <- list()
