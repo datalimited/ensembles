@@ -187,9 +187,9 @@ are key to everything from global assessments of extinction risk [e.g.
 fishing exploitation levels [e.g. @worm2009; @juan-jorda2011]. However,
 conservation and ecological resource managers are often faced with reconciling
 multiple uncertain and potentially conflicting estimates of status and
-trajectory [e.g. @brodziak2010; @branch2011]. Some models may suggest a
-population is at risk and declining in abundance while others may suggest it is
-not at risk and stable.
+trajectory [e.g. @brodziak2010; @branch2011; @deroba2015]. Some models may
+suggest a population is at risk and declining in abundance while others may
+suggest it is not at risk and stable.
 
 One solution is to take the average or weighted average of an ensemble of model
 predictions. Such ensembles are typically more accurate and less biased than
