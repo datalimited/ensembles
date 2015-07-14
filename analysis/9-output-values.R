@@ -16,8 +16,8 @@ get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
   ind <- dat %>% filter(ensemble == FALSE)
 
   x$mach_vs_ind_mare_fold <- c(
-    round(min(ind$mare) / max(mach$mare), digits_fold),
-    round(max(ind$mare) / min(mach$mare), digits_fold)
+    round((min(ind$mare) - max(mach$mare)) / max(mach$mare), digits_fold),
+    round((max(ind$mare) - min(mach$mare)) / min(mach$mare), digits_fold)
   ) * 100
 
 #   x$mach_vs_ind_bias <- c(
