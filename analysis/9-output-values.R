@@ -2,11 +2,13 @@
 # for example, ranges of MARE or correlation or AUC values. They get saved to
 # `../text/values.rda` and are input through knitr in `../text/ms.Rmd`.
 
+library(dplyr)
+
 get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
   collapse = "--", mre_digits = 2) {
 
   dat <- dat %>%
-    mutate(ensemble = ifelse(grepl("ensemble", clean_method), TRUE, FALSE)) %>%
+    mutate(ensemble = ifelse(grepl("ensemble", clean_method, ignore.case = TRUE), TRUE, FALSE)) %>%
     mutate(machine = ifelse(grepl("GBM|RF", clean_method), TRUE, FALSE))
 
   x <- list()
@@ -47,6 +49,10 @@ mean_ram <- get_performance_stats(re_ram_sum)
 d_slope_error <- readRDS("generated-data/d_slope_error.rds")
 slope_sim <- get_performance_stats(d_slope_error, mre_digits = 3L)
 
+range_slope_corr_non_sscom <- paste(round(range(filter(d_slope_error, !grepl("ensemble", clean_method, ignore.case = TRUE), clean_method != "SSCOM")$corr), 2), collapse = "--")
+
+slope_corr_sscom <- round(filter(d_slope_error, clean_method == "SSCOM")$corr, 2)
+
 auc_sim_mean <- readRDS("generated-data/auc_sim_mean.rds")
 auc_sim <- list()
 
@@ -59,4 +65,4 @@ auc_sim$ind_range <- auc_sim_mean %>% filter(grepl("Ensemble", clean_method) == 
 d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
 ram_stocks_n <- length(unique(d_ram$stockid))
 
-save(mean_sim, mean_ram, slope_sim, auc_sim, ram_stocks_n, file = "../text/values.rda")
+save(mean_sim, mean_ram, slope_sim, auc_sim, ram_stocks_n, slope_corr_sscom, range_slope_corr_non_sscom, file = "../text/values.rda")

@@ -17,7 +17,7 @@ figures. Do not place a figure and its legend on the same page.-->
 \begin{center}
 \includegraphics[width=4.2in]{../figs/didactic3.pdf}
 \caption{Using a superensemble model to predict population status.
-(Left panel) Individual models are fit to populations of known or assumed status. Estimates from these individual models, potential combined with additional covariates, are then used as coviarates in an additional statistical model fitted to the known or assumed population status as the response. (Right panel) Finally, the same individual models are fit to a population of interest and combined with the previously fitted ensemble model to derive the superensemble prediction of population status.}
+(Left panel) Individual models are fit to populations of known or assumed status. Estimates from these individual models, potential combined with additional covariates, are then used as coviarates in an additional statistical model fitted to the known or assumed population status as the response. (Right panel) Finally, the same individual models are fit to a population of interest and combined with the previously fitted ensemble model to derive the superensemble prediction of population status. \textit{There has been discussion about adding a figure that outlines the cross-validation procedure and/or a figure/table that describes the various superensemble methods. There isn't a lot of figure room left, but I may be able to squeeze another panel here.}}
 \label{didactic}
 \end{center}
 \end{figure}
