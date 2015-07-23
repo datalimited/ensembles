@@ -20,7 +20,7 @@ the material) should be directed to the corresponding author.
 \renewcommand{\thetable}{S\arabic{table}}
 \setcounter{table}{0}
 
-Table S1: Covariates in the ensemble models. The first four variables are predictions of the mean or slope of $B/B_\mathrm{MSY}$ in the last five years from the models described in Rosenberg et al. [@rosenberg2014]. The last two variables are additional covariates incorporated into the ensemble models. These two variables are derived from spectral analysis and represent spectral densities at long- and short-term frequencies.
+Table S1: Covariates in the ensemble models. The first four variables are predictions of the mean or slope of $B/B_\mathrm{MSY}$ in the last five years from the models described in @rosenberg2014. The last two variables are additional covariates incorporated into the ensemble models. These two variables are derived from spectral analysis and represent spectral densities at long- and short-term frequencies.
 
 \begin{longtable}{>{\RaggedRight}m{4.5cm}>{\RaggedRight}p{9.4cm}}
 \toprule
