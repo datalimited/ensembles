@@ -93,8 +93,9 @@ get_roc <- function(true, est) {
 }
 
 # get ROC and AUC for models applied to simulation data with b/bmsy as the response:
+# we'll use 0.5 B/Bmsy as the treshold as in US overfished definition
 d_sim_mean <- d_sim %>% filter(type == "mean") %>%
-  mutate(above1 = ifelse(bbmsy_true > 1, 1, 0))
+  mutate(above1 = ifelse(bbmsy_true > 0.5, 1, 0))
 rocs_sim_mean <- d_sim_mean %>% group_by(clean_method, order) %>%
   do({get_roc(true = .$above1, est = .$bbmsy_est)}) %>%
   as.data.frame
@@ -109,7 +110,7 @@ saveRDS(auc_sim_mean, file = "generated-data/auc_sim_mean.rds")
 
 # and do the same for the RAM data:
 d_ram_mean <- d_ram %>%
-  mutate(above1 = ifelse(bbmsy_true > 1, 1, 0))
+  mutate(above1 = ifelse(bbmsy_true > 0.5, 1, 0))
 rocs_ram_mean <- d_ram_mean %>% group_by(clean_method, order) %>%
   do({get_roc(true = .$above1, est = .$bbmsy_est)}) %>%
   as.data.frame
@@ -126,8 +127,8 @@ make_roc_curves <- function(dat) {
     geom_line() + coord_equal() +
     geom_abline(intercept = 1, slope = 1, lty = 2, col = "darkgrey") +
     xlim(1, 0) +
-    xlab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as < 1)) +
-    ylab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as > 1)) +
+    xlab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as <= 0.5)) +
+    ylab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as > 0.5)) +
     theme_bw() +
     theme(plot.background = element_blank(),
       panel.grid.major = element_blank(),
