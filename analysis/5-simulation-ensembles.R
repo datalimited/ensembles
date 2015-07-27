@@ -374,7 +374,6 @@ cv_sim_slope_long <- cv_sim_slope %>%
 
 cv_sim_long <- suppressWarnings(
   dplyr::bind_rows(cv_sim_mean_long, cv_sim_slope_long))
-saveRDS(cv_sim_long, "generated-data/cv_sim_long.rds")
 
 re <- cv_sim_long %>% mutate(
   sq_er = (bbmsy_est - bbmsy_true)^2,
