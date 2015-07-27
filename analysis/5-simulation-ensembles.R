@@ -378,7 +378,7 @@ saveRDS(cv_sim_long, "generated-data/cv_sim_long.rds")
 
 re <- cv_sim_long %>% mutate(
   sq_er = (bbmsy_est - bbmsy_true)^2,
-  re    = (bbmsy_est - bbmsy_true) / bbmsy_true)
+  re    = (bbmsy_est - bbmsy_true) / abs(bbmsy_true))
 
 re %>% saveRDS(file = "generated-data/cv_sim_long.rds")
 

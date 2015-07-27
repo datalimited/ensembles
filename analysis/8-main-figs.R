@@ -65,7 +65,7 @@ d_ram <- filter(d_ram, bbmsy_true < 4, bbmsy_est < 4)
 
 re_ram <- d_ram %>% mutate(
   sq_er = (bbmsy_est - bbmsy_true)^2,
-  re    = (bbmsy_est - bbmsy_true) / bbmsy_true)
+  re    = (bbmsy_est - bbmsy_true) / abs(bbmsy_true))
 
 re_ram_sum <- re_ram %>% group_by(clean_method) %>%
   summarise(mare = median(abs(re)),
