@@ -47,4 +47,4 @@ clean:
 	latexmk -c
 
 continuous:
-	latexmk -pvc $(TEXT)
+	while true; do make --silent; sleep 1; done
