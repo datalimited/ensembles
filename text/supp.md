@@ -75,7 +75,7 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=5in]{../figs/performance-slope-sim.pdf}
+\includegraphics[width=5in]{../figs/performance-slope-sim-inkscape.pdf}
 \caption{Same as Fig.~\ref{performance} but with the slope of $B/B_\mathrm{MSY}$ in
 the last five years as the response variable. This is based on the data shown in Fig.~\ref{scatter-sim-slope}.}
 \label{performance-sim-slope}
@@ -157,5 +157,3 @@ predictor on the slope of $B/B_\mathrm{MSY}$ after integrating out the other pre
 \label{partial-sim-slope}
 \end{center}
 \end{figure}
-
-
