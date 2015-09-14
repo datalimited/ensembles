@@ -14,7 +14,7 @@ if (Sys.info()[["user"]] == "seananderson") {
   all.stocks<-all.stocks[order(all.stocks)]
 
   ## old prior
-  setwd("../ensembles-old/RAM_Legacy_fits/All_fits/")
+  setwd("../../ensembles-old/RAM_Legacy_fits/All_fits/")
   load("../CMSY/cmsy_rlegacy_results_table_v0.RData")
   cmsy.oldprior.df<-cmsy.rlegacy.df0
   ## new prior
@@ -72,6 +72,6 @@ if (Sys.info()[["user"]] == "seananderson") {
     sscom.df[,keep.names]
     )
   all.fits.df$stock <- as.character(all.fits.df$stock)
-  setwd("../../../ensembles/")
+  setwd("../../../ensembles/analysis/")
   saveRDS(all.fits.df, "generated-data/ram-orig-fits.rds")
 }
