@@ -127,7 +127,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
 
   rows <- max(dat$order) / 4
   par(mfrow = c(rows, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
-    oma = oma, cex = 0.8, mar = c(0, 0, 0, 0),
+    oma = oma, cex = 0.8, mar = c(0, 0, 0.27, 0),
     xaxs = "i", yaxs = "i", col.axis = "grey60", col.lab = "grey50")
   #par(family="serif")
 
@@ -220,7 +220,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     if (m %in% 9:12) {
       pal_function <- colorRampPalette(hexcol_third_row, space = space, bias = bias[9])
       #add_hex <- FALSE
-      if (m %in% 9) par(mar = par("mar") + c(0, 0, 0.27, 0))
+      #if (m %in% 9) par(mar = par("mar") + c(0, 0, 0.27, 0))
     }
     if (add_hex) {
       pal <- pal_function(max(counts))
