@@ -5,7 +5,7 @@ figures. Do not place a figure and its legend on the same page.-->
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=4.2in]{../figs/didactic4.png}
+\includegraphics[width=4.2in]{../figs/didactic4.pdf}
 \caption{Using a superensemble model to predict population status.
 (a) Individual models are fit to data (dots) from populations of known or assumed status. (b) Estimates from these individual models, potentially combined with additional covariates, are then used as coviarates in a statistical model fitted to the known or assumed population status as the response. (c) Finally, the same individual models are fit to a population of interest and (d) combined using the previously fitted ensemble model to derive the superensemble prediction of population status.}
 \label{didactic}
@@ -16,7 +16,7 @@ figures. Do not place a figure and its legend on the same page.-->
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=3.7in]{../figs/motivate.png}
+\includegraphics[width=3.7in]{../figs/motivate.pdf}
 \caption{Different models can suggest conflicting population statuses and trends. Shown here are trajectories of estimated \bbmsy\\ from four data-limited assessment methods (colours) and a data-rich stock assessment (black). Lines indicate median fits and shaded regions interquartile ranges. Dashed horizontal line indicates $B/B_\mathrm{MSY} = 1$.}
 \label{motivate}
 \end{center}
@@ -27,7 +27,7 @@ figures. Do not place a figure and its legend on the same page.-->
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=\textwidth]{../figs/hex-mean-sim-ram-cv.png}
+\includegraphics[width=\textwidth]{../figs/hex-mean-sim-ram-cv.pdf}
 \caption{True (or assessed) population status (x axis) vs. predicted population status from individual models and ensemble methods with cross-validation (y axis).
 These scatterplots represent the aggregate results of repeated three-fold cross-validation tests where the ensemble models are built on two-thirds of the data and tested on the remaining third.
 (a--d) Individual data-limited model estimates of mean $B/B_\mathrm{MSY}$ (biomass divided by biomass at maximum sustainable yield) in the last five years for a simulated dataset of known population status.
@@ -43,7 +43,7 @@ The data were binned into hexagons for visual presentation. Darker areas indicat
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=6in]{../figs/performance-inkscape.png}
+\includegraphics[width=6in]{../figs/performance-inkscape.pdf}
 \caption{
 Performance metrics of individual and ensemble models predicting $B/B_\mathrm{MSY}$ (mean biomass divided by biomass at maximum sustainable yield) in the last five years fitted to a dataset with (a) known population statuses and (b) the RAM Legacy stock assessment database. 
 The x-axis represents within-population innaccuracy: median absolute proportional error (MAPE). 
