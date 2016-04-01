@@ -63,15 +63,15 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 
 \clearpage
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=\textwidth]{../figs/roc-sim.pdf}
-\caption{Receiver-operating-characteristic (ROC) curves from repeated three-fold cross-validation of the simulated data of known status. Shown are ROC curves for (a) ensemble methods and (b) individual data-limited model estimates based on estimates of $B/B_\mathrm{MSY}$ with the response variable representing whether true $B/B_\mathrm{MSY}$ was above or below 0.5, the threshold for declaring a stock overfished in the United States and Australia. The diagonal dashed line represents performance that is no better than flipping a coin. The area under the curve represents the probability that the model would correctly rank two randomly chosen stocks in terms of their mean $B/B_\mathrm{MSY}$ in the last five years. Sensitivity (y axis) represents the true positive rate (correctly categorizing a stock as having a $B/B_\mathrm{MSY}$ greater than 0.5). Specificity (x axis) refers to the true negative rate (correctly categorizing a stock as having a $B/B_\mathrm{MSY}$ less than one). The sensitivity and specificity values are shown across all possible decision thresholds (values of $B/B_\mathrm{MSY}$) at which one could divide the stocks into these two categories.}
-\label{roc-sim}
-\end{center}
-\end{figure}
+<!-- \begin{figure}[htbp] -->
+<!-- \begin{center} -->
+<!-- \includegraphics[width=\textwidth]{../figs/roc-sim.pdf} -->
+<!-- \caption{Receiver-operating-characteristic (ROC) curves from repeated three-fold cross-validation of the simulated data of known status. Shown are ROC curves for (a) ensemble methods and (b) individual data-limited model estimates based on estimates of $B/B_\mathrm{MSY}$ with the response variable representing whether true $B/B_\mathrm{MSY}$ was above or below 0.5, the threshold for declaring a stock overfished in the United States and Australia. The diagonal dashed line represents performance that is no better than flipping a coin. The area under the curve represents the probability that the model would correctly rank two randomly chosen stocks in terms of their mean $B/B_\mathrm{MSY}$ in the last five years. Sensitivity (y axis) represents the true positive rate (correctly categorizing a stock as having a $B/B_\mathrm{MSY}$ greater than 0.5). Specificity (x axis) refers to the true negative rate (correctly categorizing a stock as having a $B/B_\mathrm{MSY}$ less than one). The sensitivity and specificity values are shown across all possible decision thresholds (values of $B/B_\mathrm{MSY}$) at which one could divide the stocks into these two categories.} -->
+<!-- \label{roc-sim} -->
+<!-- \end{center} -->
+<!-- \end{figure} -->
 
-\clearpage
+<!-- \clearpage -->
 
 \begin{figure}[htbp]
 \begin{center}
