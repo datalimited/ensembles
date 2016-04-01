@@ -110,7 +110,7 @@ predictor on mean $B/B_\mathrm{MSY}$ after integrating out the other predictor v
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim-2d.pdf}
-\caption{Two-dimensional partial dependence plots for GBM ensemble models fitted to the simulated dataset of known status. Red shading indicates an expected $B/B_\mathrm{MSY}$ above one and blue shading an expected value below one. White shading represents an expected value of 1.}
+\caption{Two-dimensional partial dependence plots for GBM ensemble models fitted to the simulated dataset of known status. Red shading indicates an expected $B/B_\mathrm{MSY}$ above one and blue shading an expected value below one. White shading represents an expected value of 1. For example, in panel e $B/B_\mathrm{MSY}$ is estimated to be low if SSCOM estimates $B/B_\mathrm{MSY}$ to be low regardless of the estimate from CMSY. On the other hand, if CMSY estimates $B/B_\mathrm{MSY}$ to be between 1.0 and about 1.5, the ensemble estimates $B/B_\mathrm{MSY}$ to be high unless SSCOM estimates $B/B_\mathrm{MSY}$ to be very low.}
 \label{partial-2d-sim}
 \end{center}
 \end{figure}
