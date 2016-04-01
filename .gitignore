@@ -33,3 +33,7 @@ text/discussion.mindnode/
 *.rtf
 
 *.toc
+
+analysis/no-cmsy.pdf
+
+*.vim
