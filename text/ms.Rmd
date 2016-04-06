@@ -194,7 +194,7 @@ certain conditions, and the covariance between models may contain information
 that can improve predictive accuracy. For example, one model might perform
 well at estimating high levels of abundance but be biased at low levels of
 abundance, while another model might have the opposite properties. An optimal
-combination of these models is not simply an average of the two. 
+combination of these models is not simply an average of the two.
 
 We can exploit these characteristics by using the predictions from a group of
 models as inputs into a separate statistical model. This technique, sometimes
@@ -237,7 +237,7 @@ predictive performance against each other and the individual models.
 
 # Methods
 
-<!-- 
+<!--
 Structure of methods: summary of methods
  1. indiviudla models
  2. ensemble models
@@ -245,14 +245,18 @@ Structure of methods: summary of methods
  4. data used to test and cross validation,
  5. testing model perforance. -->
 
-<!-- TODO Add a summary of the methods here  --> 
+<!-- TODO Add a summary of the methods here  -->
 
 ## Individual models of population status
 
 We fit four individual data-limited models that use data on catch and basic
-life history parameters to estimate $B/B_\mathrm{MSY}$. We chose these models
-because TODO. Three of the models are mechanistic and based generally on
-Schaefer biomass dynamics [@schaefer1954] of the form
+life-history parameters to estimate $B/B_\mathrm{MSY}$. We chose these models
+because because they can be fit to the vast majority of fisheries around the
+world, are established in the literature, and have been extensively simulation
+tested [@rosenberg2014].
+
+Three of the models are mechanistic and based generally on Schaefer biomass
+dynamics [@schaefer1954] of the form
 
 $$\hat{B}_{t+1} = B_t + r B_t \left(1 - B_t / B_0 \right) - C_t,$$
 
@@ -300,10 +304,9 @@ these models at estimating $B/B_\mathrm{MSY}$ is variable. In summary:
   simulated dataset, removes the maximum catch predictor since the absolute
   catch in the simulated dataset is arbitrary, and does not implement the bias
   correction needed in @costello2012 since we do not derive estimates of
-  median status across multiple stocks. <!--TODO is this last sentence
-  necessary? -->
+  median status across multiple stocks.
 
-## Simulated data set to build the ensemble TODO: finish this 
+## Simulated data set to build the ensemble
 
 We first developed and tested ensemble methods on a fully factorial simulated
 dataset of fisheries [@rosenberg2014] with known status. These simulated data
@@ -327,40 +330,6 @@ models were built in the `FLR` packages [@kell2007,
 <http://flr-project.org>] for the statistical software R [@r2015]. Code to
 generate the simulations is available at
 <https://github.com/iagomosqueira/stockStatusFAO>.
-
-We also tested our ensemble methods on the RAM Legacy Stock Assessment
-Database [@ricard2012] --- a compilation of stock-assessment output from
-hundreds of exploited marine populations around the world. Our analysis of the
-stock-assessment database was based on version 2.5. After removing stocks for
-which at least one of the individual models described below did not converge
-(121), this database included `r ram_stocks_n` stocks.
-
-
-## Additional covariates
-
-<!--TODO Kristin and Mark: It might be a good idea to add a figure that
-illustrates the spectrum of ensemble/superensembles that are applied here and
-what is included (e.g., non-linear relationships, etc.). This will help the
-reader understand the progression in complexity of the ensemble approaches
-I think. Jess: probably add this below the section explaining superensembles-->
-<!-- TODO deal with removed spectral -->
-
-<!-- Superensemble models allow us to incorporate additional covariates and
-potentially leverage interactions between these covariates and individual model
-predictions. Additional covariates could be, for example, life-history
-characteristics, information on exploitation patterns, or statistical properties
-of the data. For simplicity, and since many possible covariates, such as fishing
-effort dynamics, would not be known for many real-world data-limited scenarios,
-we added only one set of additional covariates: spectral properties of the catch
-time series. Spectral analysis decomposes a time series into the frequency
-domain and provides a means of describing the cyclical shape of the catch series
-that is independent of time series length (except in affecting precision) and
-absolute magnitude of catch. We fit spectral models to the scaled catch time
-series (catch divided by maximum catch) with the `spec.ar` function in R and
-recorded representative short- and long-term spectral densities at frequencies
-of 0.20 and 0.05, which correspond to 5- and 20-year cycles. -->
-
-<!--*TODO add new supp. fig.?*-->
 
 ## Superensemble models
 
@@ -388,26 +357,25 @@ a boosted regression tree. We describe these models as estimating
 $\hat{\theta}$, which represents either the ensemble estimated $\log
 B/B_\mathrm{MSY}$ or slope of $B/B_\mathrm{MSY}$. The individual model
 estimates of $\log B/B_\mathrm{MSY}$ or slope of $B/B_\mathrm{MSY}$ are
-represented as $b$ for models $i$ $1$ through $n$ ($4$). The ensemble average
-was calculated as:
+represented as $b$ for models $i$ $1$ through $n$. The subscript $j$ indexes
+the fisheries from $1$ through $m$. The ensemble average was calculated as:
 
 \begin{equation}
-\hat{\theta} = \frac{1}{n} \sum_{i=1}^n \hat{b_i}.
+\hat{\theta_j} = \frac{1}{n} \sum_{i=1}^n \hat{b}_{i,j} , \quad
+\mathrm{for}\ j  =  1,...,m.
 \end{equation}
 
-$$ \hat{\theta} = \argmin_\theta \left( L(b \, | \, \hat{b}{\mathrm{ensemble}})
-\right) $$ $$ \hat{b}\mathrm{ensemble} = f \left( \hat{b}\mathrm{CMSY}, \,
-\hat{b}\mathrm{COM-SIR}, \, \hat{b}\mathrm{SSCOM}, \, \hat{b}\mathrm{mPRM}, \,
-S(0.2), \, S(0.5), \, | \, \theta \right) $$
+\noindent We fit the linear model superensemble with all second-order
+interactions:
 
-We fit the linear model superensemble with all second-order interactions:
-
-\begin{equation} \theta_{\mathrm{ensemble}(i)} = \beta_0 + \sum_{j=1}^m \beta_j
-\theta_{j(i)} + \sum_{j=1}^m \sum_{\substack{k =1 \ j \neq k}}^m \beta_{kj}
-\theta_{k(i)} \theta_{j(i)} + \epsilon_i, \quad \epsilon_i \sim
-\mathrm{Normal}(0, \sigma), \end{equation}
-
-TODO ADD EQN
+\begin{equation}
+\hat{\theta_j} = \beta_0 + \beta_1 \hat{b}_{j,0} + ... +
+\beta_{1,2} \hat{b}_{j,1} \hat{b}_{j,2} + ... +
+\epsilon_j,
+\quad
+\mathrm{Normal}(0, \sigma^2)
+\quad \mathrm{for}\ j  =  1,...,m
+\end{equation}
 
 Our two machine learning superensemble models, a random forest and a boosted
 regression tree, were based on regression trees. Regression trees sequentially
@@ -427,6 +395,41 @@ with 2000 trees, an interaction depth of $6$, a learning rate (shrinkage
 parameter) of $0.01$, and all other arguments at their default values:
 
 TODO ADD EQN
+
+
+We also tested our ensemble methods on the RAM Legacy Stock Assessment
+Database [@ricard2012] --- a compilation of stock-assessment output from
+hundreds of exploited marine populations around the world. Our analysis of the
+stock-assessment database was based on version 2.5. After removing stocks for
+which at least one of the individual models described below did not converge
+(121), this database included `r ram_stocks_n` stocks.
+
+## Additional covariates
+
+<!--TODO Kristin and Mark: It might be a good idea to add a figure that
+illustrates the spectrum of ensemble/superensembles that are applied here and
+what is included (e.g., non-linear relationships, etc.). This will help the
+reader understand the progression in complexity of the ensemble approaches
+I think. Jess: probably add this below the section explaining superensembles-->
+<!-- TODO deal with removed spectral -->
+
+<!-- Superensemble models allow us to incorporate additional covariates and
+potentially leverage interactions between these covariates and individual model
+predictions. Additional covariates could be, for example, life-history
+characteristics, information on exploitation patterns, or statistical properties
+of the data. For simplicity, and since many possible covariates, such as fishing
+effort dynamics, would not be known for many real-world data-limited scenarios,
+we added only one set of additional covariates: spectral properties of the catch
+time series. Spectral analysis decomposes a time series into the frequency
+domain and provides a means of describing the cyclical shape of the catch series
+that is independent of time series length (except in affecting precision) and
+absolute magnitude of catch. We fit spectral models to the scaled catch time
+series (catch divided by maximum catch) with the `spec.ar` function in R and
+recorded representative short- and long-term spectral densities at frequencies
+of 0.20 and 0.05, which correspond to 5- and 20-year cycles. -->
+
+<!--*TODO add new supp. fig.?*-->
+
 
 ## Testing model performance
 

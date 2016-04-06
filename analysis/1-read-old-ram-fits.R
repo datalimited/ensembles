@@ -2,6 +2,7 @@
 # analysis). Instead of running this script, you can skip it and load the
 # cached .rds file at the end in subsequent scripts.
 # I.e., you can safely ignore this code.
+#
 
 if (Sys.info()[["user"]] == "seananderson") {
   cdat <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors=FALSE)

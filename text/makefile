@@ -2,7 +2,7 @@ TEXT = anderson-etal-ensembles
 MS = ms
 SOM = supp
 FIGS = figs
-REFS = fisheries-ensembles
+REFS = ms
 
 all: $(TEXT).pdf
 
