@@ -174,37 +174,38 @@ predictions, i.e. an ensemble. Such ensembles are typically more accurate and
 less biased than individual model estimates and can integrate uncertainty in
 model structure, initial conditions, and parameter estimation
 [@dietterich2000; @araujo2007]. Ensembles are superior to individual models
-for at least three reasons including statistical, computational, and
-representational reasons [@dietterich2000]. Statistically by averaging across
-models representing different hypotheses about reality, computationally by
+for at least three reasons: statistically by averaging across models and
+therefore being less likely to pick the "wrong" model, computationally by
 reducing the risk of getting stuck in a local optima, and representationally
-he by expanding representational form<!--explain how this is possible.--> This
-approach forms the basis of many machine learning methods [e.g.
-@dietterich2000], has helped reconcile climate forecasts from dozens of models
-[e.g. @murphy2004; @tebaldi2007; @ipcc2013], and even improved early warning
-signs of malaria outbreaks [@thomson2006]. In ecology, ensemble methods are
-sometimes used to improve species distribution modelling [e.g. @araujo2007;
-@breiner2015] and indeed have been used to combine estimates of population
-status and trend [e.g. @brodziak2010].
+by expanding the range of hypotheses explored [@dietterich2000]. This approach
+forms the basis of many machine learning methods [e.g. @dietterich2000], has
+helped reconcile climate forecasts from dozens of models [e.g. @murphy2004;
+@tebaldi2007; @ipcc2013], and even improved early warning signs of malaria
+outbreaks [@thomson2006]. In ecology, ensemble methods are sometimes used to
+improve species distribution modelling [e.g. @araujo2007; @breiner2015] and
+indeed have been used to combine estimates of population status and trend
+[e.g. @brodziak2010].
 
 Whereas averages or weighted averages of model estimates may improve
 predictions compared to a single model, they may not optimally leverage
 available data. The best prediction does not necessarily lie in the middle of
 multiple model predictions, some models may perform better than others in
 certain conditions, and the covariance between models may contain information
-that can improve predictive accuracy. <!--can you give an example here? e.g. a
-model may behave poorly at estimating low biomass. By training the
-superensbmeles models with real data, it can identify the pros and cons of
-each model and incorporate them into the estimates. .--> We can exploit these
-characteristics by using the predictions from a group of models as inputs into
-a separate statistical model. This technique, sometimes called superensemble
-modelling [@krishnamurti1999], is common in climate and weather forecasting
-[e.g. @yun2005; @mote2015]. The superensemble is fit to a training dataset
-where outcomes are well known and then used to predict on a dataset of
-interest (Fig. \ref{didactic}). For example, @krishnamurti1999 combined
-predictions of wind and precipitation in Asian monsoons via a superensemble
-regression fit to observed data. Their superensemble was considerably more
-accurate than any individual prediction or weighted average of predictions.
+that can improve predictive accuracy. For example, one model might perform
+well at estimating high levels of abundance but be biased at low levels of
+abundance, while another model might have the opposite properties. An optimal
+combination of these models is not simply an average of the two. 
+
+We can exploit these characteristics by using the predictions from a group of
+models as inputs into a separate statistical model. This technique, sometimes
+called superensemble modelling [@krishnamurti1999], is common in climate and
+weather forecasting [e.g. @yun2005; @mote2015]. The superensemble is fit to a
+training dataset where outcomes are well known and then used to predict on a
+dataset of interest (Fig. \ref{didactic}). For example, @krishnamurti1999
+combined predictions of wind and precipitation in Asian monsoons via a
+superensemble regression fit to observed data. Their superensemble was
+considerably more accurate than any individual prediction or weighted average
+of predictions.
 
 In fisheries science, the commonly used operational models for determining
 status and trend of exploited fish populations are stock assessments, i.e.,
@@ -215,6 +216,7 @@ can produce maximum sustainable yield ($B_\mathrm{MSY}$) [@hilborn1992].
 However, the broad range of data required to conduct these stock assessments
 are not available for the majority of fish populations, including those of
 conservation concern and of economic interest to fisheries [@fao2014].
+
 Therefore, a number of models have been proposed to assess $B/B_\mathrm{MSY}$
 based on the limited data available for the majority of fish stocks: (1)
 a time series of the total biomass of catch and (2) a basic understanding of
@@ -233,54 +235,24 @@ four data-limited models. We apply four ensemble-method approaches of varying
 complexity to both simulated and real-world fish stocks and compare their
 predictive performance against each other and the individual models.
 
-<!-- TODO: It might be good to throw in a single sentence here describing the
-4 models, or at least listing them and maybe a couple key differences among
-  them.-->
-
 # Methods
 
-<!-- Structure of methods: summary of methods
+<!-- 
+Structure of methods: summary of methods
  1. indiviudla models
  2. ensemble models
  3. additional covariates
  4. data used to test and cross validation,
  5. testing model perforance. -->
 
-We first developed and tested ensemble methods on a fully factorial simulated
-dataset of fisheries [@rosenberg2014] with known status. These simulated data
-included the following scenarios: three fish life histories: small pelagic,
-demersal, and large pelagic; three levels of initial biomass depletion
-compared to carrying capacity: biomass at 100%, 70%, and 40% of carrying
-capacity; and four exploitation settings: (1) a constant exploitation rate,
-(2) an exploitation rate coupled with biomass to mimic an open-access
-single-species fishery, (3) a scenario where exploitation rate increased
-continuously, and (4) a 'roller-coaster' scenario where the exploitation rate
-increased and then decreased. Process noise (recruitment variability; i.e.
-unexplained variability in population dynamics) was introduced to the models
-at two magnitudes in log space, $N(0, 0.2^2)$ and $N(0, 0.6^2)$, and was
-either uncorrelated through time or had first-order autoregressive correlation
-of $0.6$. The simulation also included a scenario with $N(0, 0.2^2)$
-measurement error around log(catch) and one scenario without measurement
-error. @rosenberg2014 ran ten iterations for each combination of factors
-adding stochastic draws of recruitment and catch-recording variability each
-time to generate a total of 5760 stocks. The simulation models were built in
-the `FLR` packages [@kell2007, <http://flr-project.org>] for the statistical
-software R [@r2015]. Code to generate the simulations is available at
-<https://github.com/iagomosqueira/stockStatusFAO>.
-
-We also tested our ensemble methods on the RAM Legacy Stock Assessment
-Database [@ricard2012] --- a compilation of stock-assessment output from
-hundreds of exploited marine populations around the world. Our analysis of the
-stock-assessment database was based on version 2.5. After removing stocks for
-which at least one of the individual models described below did not converge
-(121), this database included `r ram_stocks_n` stocks.
+<!-- TODO Add a summary of the methods here  --> 
 
 ## Individual models of population status
 
 We fit four individual data-limited models that use data on catch and basic
-life history parameters to estimate $B/B_\mathrm{MSY}$. <!-- explain why we
-choose these models not others? --> Three of the models are mechanistic and
-based generally on Schaefer biomass dynamics [@schaefer1954] of the form
+life history parameters to estimate $B/B_\mathrm{MSY}$. We chose these models
+because TODO. Three of the models are mechanistic and based generally on
+Schaefer biomass dynamics [@schaefer1954] of the form
 
 $$\hat{B}_{t+1} = B_t + r B_t \left(1 - B_t / B_0 \right) - C_t,$$
 
@@ -330,6 +302,39 @@ these models at estimating $B/B_\mathrm{MSY}$ is variable. In summary:
   correction needed in @costello2012 since we do not derive estimates of
   median status across multiple stocks. <!--TODO is this last sentence
   necessary? -->
+
+## Simulated data set to build the ensemble TODO: finish this 
+
+We first developed and tested ensemble methods on a fully factorial simulated
+dataset of fisheries [@rosenberg2014] with known status. These simulated data
+included the following scenarios: three fish life histories: small pelagic,
+demersal, and large pelagic; three levels of initial biomass depletion
+compared to carrying capacity: biomass at 100%, 70%, and 40% of carrying
+capacity; and four exploitation settings: (1) a constant exploitation rate,
+(2) an exploitation rate coupled with biomass to mimic an open-access
+single-species fishery, (3) a scenario where exploitation rate increased
+continuously, and (4) a 'roller-coaster' scenario where the exploitation
+rate increased and then decreased. Process noise (recruitment variability;
+i.e. unexplained variability in population dynamics) was introduced to the
+models at two magnitudes in log space, $N(0, 0.2^2)$ and $N(0, 0.6^2)$,
+and was either uncorrelated through time or had first-order autoregressive
+correlation of $0.6$. The simulation also included a scenario with $N(0,
+0.2^2)$ measurement error around log(catch) and one scenario without
+measurement error. @rosenberg2014 ran ten iterations for each combination
+of factors adding stochastic draws of recruitment and catch-recording
+variability each time to generate a total of 5760 stocks. The simulation
+models were built in the `FLR` packages [@kell2007,
+<http://flr-project.org>] for the statistical software R [@r2015]. Code to
+generate the simulations is available at
+<https://github.com/iagomosqueira/stockStatusFAO>.
+
+We also tested our ensemble methods on the RAM Legacy Stock Assessment
+Database [@ricard2012] --- a compilation of stock-assessment output from
+hundreds of exploited marine populations around the world. Our analysis of the
+stock-assessment database was based on version 2.5. After removing stocks for
+which at least one of the individual models described below did not converge
+(121), this database included `r ram_stocks_n` stocks.
+
 
 ## Additional covariates
 
