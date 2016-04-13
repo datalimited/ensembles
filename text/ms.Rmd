@@ -163,28 +163,28 @@ averaging, population dynamics, sustainable resource management
 # Introduction
 
 Population status and trend are two of the most fundamental values to quantify
-in fisheries management [e.g. TODO NEW REFS]. However, fisheries managers are
-often faced with reconciling multiple uncertain and potentially conflicting
-estimates of status and trend [e.g. @brodziak2010; @branch2011; @deroba2015].
-For example, some models may suggest a population is at risk and declining in
-abundance while others may suggest it is not at risk and stable.
+in fisheries management. However, fisheries managers are often faced with
+reconciling multiple uncertain and potentially conflicting estimates of status
+and trend [e.g. @brodziak2010; @branch2011; @deroba2015]. For example, some
+models may suggest a population is at risk and declining in abundance while
+others may suggest it is not at risk and stable.
 
 One solution is to take the average or weighted average of several model
 predictions, i.e. an ensemble. Such ensembles are typically more accurate and
 less biased than individual model estimates and can integrate uncertainty in
 model structure, initial conditions, and parameter estimation
 [@dietterich2000; @araujo2007]. Ensembles are superior to individual models
-for at least three reasons: statistically by averaging across models and
-therefore being less likely to pick the "wrong" model, computationally by
-reducing the risk of getting stuck in a local optima, and representationally
-by expanding the range of hypotheses explored [@dietterich2000]. This approach
-forms the basis of many machine learning methods [e.g. @dietterich2000], has
-helped reconcile climate forecasts from dozens of models [e.g. @murphy2004;
-@tebaldi2007; @ipcc2013], and even improved early warning signs of malaria
-outbreaks [@thomson2006]. In ecology, ensemble methods are sometimes used to
-improve species distribution modelling [e.g. @araujo2007; @breiner2015] and
-indeed have been used to combine estimates of population status and trend
-[e.g. @brodziak2010].
+for at least three reasons: (1) statistically by averaging across models and
+therefore being less likely to pick the "wrong" model, (2) computationally by
+reducing the risk of getting stuck in a local optima, and (3)
+representationally by expanding the range of hypotheses explored
+[@dietterich2000]. This approach forms the basis of many machine learning
+methods [e.g. @dietterich2000], has helped reconcile climate forecasts from
+dozens of models [e.g. @murphy2004; @tebaldi2007; @ipcc2013], and even
+improved early warning signs of malaria outbreaks [@thomson2006]. In ecology,
+ensemble methods are sometimes used to improve species distribution modelling
+[e.g. @araujo2007; @breiner2015] and indeed have been used to combine
+estimates of population status and trend [e.g. @brodziak2010].
 
 Whereas averages or weighted averages of model estimates may improve
 predictions compared to a single model, they may not optimally leverage
@@ -222,8 +222,8 @@ based on the limited data available for the majority of fish stocks: (1)
 a time series of the total biomass of catch and (2) a basic understanding of
 population productivity [e.g. @vasconcellos2005; @martell2013]. Recently,
 @rosenberg2014 investigated the performance of four data-limited models
-through a large-scale simulation experiment. Three of these models are based
-on Schaefer (logistic) biomass dynamics and one is an empirical model fitted
+through a large-scale simulation experiment. Three of these models were based
+on Schaefer (logistic) biomass dynamics and one was an empirical model fitted
 to more data-rich stock assessment output. The four models frequently
 disagreed about population status, no one model had strong performance across
 all fish stocks, and some models performed better than others depending on
@@ -245,8 +245,6 @@ Structure of methods: summary of methods
  4. data used to test and cross validation,
  5. testing model perforance. -->
 
-<!-- TODO Add a summary of the methods here  -->
-
 ## Individual models of population status
 
 We fit four individual data-limited models that use data on catch and basic
@@ -261,14 +259,14 @@ dynamics [@schaefer1954] of the form
 $$\hat{B}_{t+1} = B_t + r B_t \left(1 - B_t / B_0 \right) - C_t,$$
 
 \noindent where $\hat{B}_{t+1}$ represents predicted biomass at time $t$ plus
-one year, $B_t$ represents biomass at time $t$, $r$ represents the intrinsic
+one year, $B_t$ represents biomass at time $t$, $r$ represents intrinsic
 population growth rate, $B_0$ represents unfished biomass or carrying capacity
-$K$, and $C$ represents catch. The fourth model is an empirically derived
-model based on the RAM Legacy Stock Assessment Database. @rosenberg2014
+$K$, and $C$ represents catch. The fourth model is an empirically derived model
+based on the RAM Legacy Stock Assessment Database [@ricard2012]. @rosenberg2014
 provide a full background on these four methods and code to fit all the models
 is available in an accompanying package `datalimited` for the statistical
-software R TODO ADD URL. As described in the Introduction, the performance of
-these models at estimating $B/B_\mathrm{MSY}$ is variable. In summary:
+software R <https://github.com/datalimited/datalimited> (*Private while in
+review*). In summary:
 
 * *CMSY* (catch-MSY) implements a stock-reduction analysis with Schaefer
   biomass dynamics [@martell2013]. It requires a prior distribution for $r$
@@ -306,7 +304,7 @@ these models at estimating $B/B_\mathrm{MSY}$ is variable. In summary:
   correction needed in @costello2012 since we do not derive estimates of
   median status across multiple stocks.
 
-## Simulated data set to build the ensemble
+## Simulated dataset to build the superensemble
 
 We first developed and tested ensemble methods on a fully factorial simulated
 dataset of fisheries [@rosenberg2014] with known status. These simulated data
@@ -331,7 +329,7 @@ models were built in the `FLR` packages [@kell2007,
 generate the simulations is available at
 <https://github.com/iagomosqueira/stockStatusFAO>.
 
-## Superensemble models
+## Building the superensemble models
 
 The individual models we seek to combine with superensembles provide time
 series of stock status ($B/B_\mathrm{MSY}$). Therefore, we can use
@@ -344,21 +342,22 @@ the time series on the calculated slope, we measured the slope as the
 Theil-Sen estimator of median slope [@theil1950].
 
 We used the mean or slope of $B/B_\mathrm{MSY}$ as the response variable and
-the predictions from the individual models <!--, and the spectral values, fix
-this explanation --> as predictors in our superensemble models. When modelling
-mean $B/B_\mathrm{MSY}$ --- a ratio bounded at zero --- we fit the
-superensemble models in log space and exponentiated the predictions. For the
-estimates of $B/B_\mathrm{MSY}$ slope, which are not bounded at zero, we fit
-superensemble models on the natural untransformed scale.
+the predictions from the individual models as predictors in our superensemble
+models. When modelling mean $B/B_\mathrm{MSY}$ --- a ratio bounded at zero ---
+we fit the superensemble models in log space and exponentiated the
+predictions. For the estimates of $B/B_\mathrm{MSY}$ slope, which are not
+bounded at zero, we fit superensemble models on the natural untransformed
+scale.
 
 We compared an ensemble average and three superensembles of varying
-complexity: a linear model with two-way interactions, a random forest, and
-a boosted regression tree. We describe these models as estimating
+complexity: a linear model with two-way interactions, a random forest, and a
+boosted regression tree. We describe these models as estimating
 $\hat{\theta}$, which represents either the ensemble estimated $\log
 B/B_\mathrm{MSY}$ or slope of $B/B_\mathrm{MSY}$. The individual model
 estimates of $\log B/B_\mathrm{MSY}$ or slope of $B/B_\mathrm{MSY}$ are
-represented as $b$ for models $i$ $1$ through $n$. The subscript $j$ indexes
-the fisheries from $1$ through $m$. The ensemble average was calculated as:
+represented as $\hat{b}$ for models $i$ $1$ through $n$. The subscript $j$
+indexes the simulated fisheries from $1$ through $m$. The ensemble average was
+calculated as:
 
 \begin{equation}
 \hat{\theta_j} = \frac{1}{n} \sum_{i=1}^n \hat{b}_{i,j} , \quad
@@ -373,36 +372,25 @@ interactions:
 \beta_{1,2} \hat{b}_{j,1} \hat{b}_{j,2} + ... +
 \epsilon_j,
 \quad
-\mathrm{Normal}(0, \sigma^2)
-\quad \mathrm{for}\ j  =  1,...,m
+\epsilon \sim \mathrm{Normal}(0, \sigma^2),
+\quad \mathrm{for}\ j  =  1,...,m.
 \end{equation}
 
-Our two machine learning superensemble models, a random forest and a boosted
-regression tree, were based on regression trees. Regression trees sequentially
-determine what value of a predictor best splits the response data into two
-'branches' based on a loss function [@breiman1984]. In random forests,
-a series of regression trees are built on a random subset of the data and
-random subset of the covariates of the model [@breiman2001]. In generalized
-boosted models (GBMs), each subsequent model is fit to the residuals from the
-previous model; data points that are fit poorly in a given model are given
-more weight in the next model [@elith2008]. Random forests and GBMs can
-provide strong predictive performance and fit highly non-linear relationships
-[@elith2008; @hastie2009]. We fit random forest models with the `randomForest`
-package [@liaw2002] for R with the default argument values. We fit boosted
-regression tree models with the `gbm` package [@ridgeway2015] for R. Based on
-initial tuning with the **caret** R package [@caret2008], we chose to fit GBMs
-with 2000 trees, an interaction depth of $6$, a learning rate (shrinkage
-parameter) of $0.01$, and all other arguments at their default values:
-
-TODO ADD EQN
-
-
-We also tested our ensemble methods on the RAM Legacy Stock Assessment
-Database [@ricard2012] --- a compilation of stock-assessment output from
-hundreds of exploited marine populations around the world. Our analysis of the
-stock-assessment database was based on version 2.5. After removing stocks for
-which at least one of the individual models described below did not converge
-(121), this database included `r ram_stocks_n` stocks.
+Our two machine learning superensemble models, a random forest and a
+generalized boosted model (GBM), were based on regression trees. Regression
+trees sequentially determine what value of a predictor best splits the
+response data into two 'branches' based on a loss function [@breiman1984]. In
+random forests, a series of regression trees are built on a random subset of
+the data and random subset of the covariates of the model [@breiman2001]. In
+GBMs, each subsequent model is fit to the residuals from the previous model;
+data points that are fit poorly in a given model are given more weight in the
+next model [@elith2008]. Random forests and GBMs can provide strong predictive
+performance and fit highly non-linear relationships [@elith2008; @hastie2009].
+We fit random forest models with the `randomForest` package [@liaw2002] for R
+with the default argument values. We fit boosted regression tree models with
+the `gbm` package [@ridgeway2015] for R. We fit GBMs with 2000 trees, an
+interaction depth of $6$, a learning rate (shrinkage parameter) of $0.01$, and
+all other arguments at their default values.
 
 ## Additional covariates
 
@@ -413,7 +401,7 @@ reader understand the progression in complexity of the ensemble approaches
 I think. Jess: probably add this below the section explaining superensembles-->
 <!-- TODO deal with removed spectral -->
 
-<!-- Superensemble models allow us to incorporate additional covariates and
+Superensemble models allow us to incorporate additional covariates and
 potentially leverage interactions between these covariates and individual model
 predictions. Additional covariates could be, for example, life-history
 characteristics, information on exploitation patterns, or statistical properties
@@ -423,52 +411,71 @@ we added only one set of additional covariates: spectral properties of the catch
 time series. Spectral analysis decomposes a time series into the frequency
 domain and provides a means of describing the cyclical shape of the catch series
 that is independent of time series length (except in affecting precision) and
-absolute magnitude of catch. We fit spectral models to the scaled catch time
-series (catch divided by maximum catch) with the `spec.ar` function in R and
-recorded representative short- and long-term spectral densities at frequencies
-of 0.20 and 0.05, which correspond to 5- and 20-year cycles. -->
+independent of absolute magnitude of catch. We fit spectral models to the
+scaled catch time series (catch divided by maximum catch) with the `spec.ar`
+function in R and recorded representative short- and long-term spectral
+densities at frequencies of 0.20 and 0.05, which correspond to 5- and 20-year
+cycles. We include the results of adding these additional covariates in the
+supplementary materials.
 
-<!--*TODO add new supp. fig.?*-->
+## Applying the superensemble models and testing performance
 
+Once the superensemble models are built, we can apply them to new stocks that
+we'd like to know the status of. To do this we applied the individual models
+to our stocks of interest and then applied these data to our already built
+superensemble models. In this paper we applied the superensemble models to
+subsets of the simulated data as a cross validation test and to the RAM Legacy
+Stock Assessment database to test on real stocks.
 
-## Testing model performance
+We used repeated three-fold cross validation to test predictive performance: we
+randomly divided the dataset into three sets, built superensemble models on
+two-thirds of the data, and evaluated predictive performance on the remaining
+third. We repeated this across each of the three splits and then repeated the
+whole procedure 50 times to account for bias that may result from any one set
+of validation splits. In the simulated dataset, there were 10 replicates of
+each unique combination of simulation parameters that differed only in
+stochastic variability. Since the dynamics of these populations were often
+similar, we grouped these stocks in the cross-validation process into either
+the training or testing split.
 
-A critical component to predictive modelling is to evaluate the performance of
-a model on new data [@hastie2009]. We used repeated three-fold cross validation
-to test predictive performance: we randomly divided the dataset into three sets,
-built superensemble models on two-thirds of the data, and evaluated predictive
-performance on the remaining third. We repeated this across each of the three
-splits and then repeated the whole procedure 50 times to account for bias that
-may result from any one set of validation splits. In the simulated dataset,
-there were 10 replicates of each unique combination of simulation parameters
-that differed only in stochastic variability. Since the dynamics of these
-populations were often similar, we grouped these stocks in the cross-validation
-process into either the training or testing split. We also validated the models
-using the RAM Legacy Stock Assessment database. In this case, we used
-superensembles trained on the entire simulation dataset. However, since mPRM is
-built on the same stock-assessment database, we applied three-fold
-cross-validation to the RAM Legacy Stock Assessment data underlying the mPRM
-model so that the dataset that mPRM was trained with (for the individual model
-and superensemble) was separate from the dataset it was tested on.
+We also tested our ensemble methods on the RAM Legacy Stock Assessment Database
+--- a compilation of stock-assessment output from hundreds of exploited marine
+populations around the world. Our analysis of the stock-assessment database was
+based on version 2.5. After removing stocks for which at least one of the
+individual models described below did not converge (121), this database
+included `r ram_stocks_n` stocks. We removed these stocks for all methods ---
+both for the individual and superensemble models. An alternative would be to
+fit superensemble models to subsets of the individual models that did converge,
+but for the purposes of this paper we will only use superensemble models that
+use all four individual models.
 
-Predictive performance can be evaluated with metrics that represent a variety of
-modelling goals. For continuous response variables such as the mean and slope of
-population status, performance metrics often measure some form of bias,
-precision, accuracy (a combination of bias and precision), or the ability to
-correctly rank or correlate across populations [e.g. @walther2005]. Here, we
-measure proportional error, defined as $(\hat{b} - b)/\abs{b}$, where $\hat{b}$
-and $b$ represent estimated and 'true' (or stock-assessed) mean or slope of
-$B/B_\mathrm{MSY}$. We calculated median proportional error to measure bias,
-median absolute proportional error to measure accuracy, and Spearman's
-rank-order correlation between predicted and 'true' values to measure the
-ability to correctly rank populations. When cross-validating against the RAM
-Legacy Stock Assessment database, we treated the estimates from these data-rich
-stock assessments as known without error. Thus, any error in the
-stock-assessment estimates of the mean or slope of $B/B_\mathrm{MSY}$ also
-contributes to our estimates of prediction error for each of the four
-data-limited models and the ensembles. Code to reproduce our analysis and an
-R package to fit the data-limited assessment models are available at
-<https://github.com/datalimited/ensembles> (*Private while in review*).
+In the case of the RAM Legacy Stock Assessment Database, we used superensembles
+trained on the entire simulation dataset. However, since mPRM is built on the
+same stock assessment database, we applied three-fold cross-validation to the
+data underlying the mPRM model so that the dataset with which mPRM was trained
+(for the individual model and superensemble) was separate from the dataset with
+which it was tested.
+
+Predictive performance can be evaluated with metrics that represent a variety
+of modelling goals. For continuous response variables such as the mean and
+slope of population status, performance metrics often measure some form of
+bias, precision, accuracy (a combination of bias and precision), or the ability
+to correctly rank or correlate across populations [e.g. @walther2005]. Here, we
+measure proportional error, defined as $(\hat{\theta} - \theta)/\abs{\theta}$,
+where $\hat{\theta}$ and $\theta$ represent estimated and 'true' (or
+stock-assessed) mean or slope of $B/B_\mathrm{MSY}$. We calculated median
+proportional error to measure bias, median absolute proportional error to
+measure accuracy, and Spearman's rank-order correlation between predicted and
+'true' values to measure the ability to correctly rank populations. When
+testing with the RAM Legacy Stock Assessment database, we treated the
+estimates from these data-rich stock assessments as known without error. Thus,
+any error in the stock assessment estimates of the mean or slope of
+$B/B_\mathrm{MSY}$ also contributes to our estimates of prediction error for
+each of the four data-limited models and the ensembles. Code to reproduce our
+analysis and an R package to fit the data-limited assessment models are
+available at <https://github.com/datalimited/ensembles> (*Private while in
+review*).
+
 
 <!-- TODO PE .... mean or slope of b/bmsy: Dan: logged or normal space? For the
 status regression where you are estimating log(B/Bmsy), wouldn't you need to
@@ -496,22 +503,14 @@ correlation = `r range_slope_corr_non_sscom`) with the exception of SSCOM
 Ensemble methods, and in particular the machine learning superensemble models
 (random forest and GBM), generally improved estimates of status and trend over
 any individual model (Fig. \ref{hexagon}e--h, Fig. \ref{scatter-sim-slope}e--h).
-Compared to the individual models, machine learning superensembles improved
-accuracy (median absolute proportional error) by `r
-mean_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r
-mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias
-(median proportional error) from `r mean_sim$ind_mre_range` to `r
-mean_sim$mach_mre_range` (Fig. \ref{performance}a). Results were similar when
-predicting trend: compared to individual models, machine learning superensembles
-improved accuracy by `r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order
-correlation from `r slope_sim$ind_corr_range` to `r slope_sim$mach_corr_range`,
-and reduced bias from `r slope_sim$ind_mre_range` to `r
-slope_sim$mach_mre_range` (Fig. \ref{performance-sim-slope}). The ensemble
-models that simply took a mean of the individual models ranked slightly behind
-the best individual model for estimating fish stock status (CMSY; Fig.
-\ref{performance}a) and had slightly lower correlation but higher accuracy than
-the best individual model at predicting the trends of status (SSCOM; Fig.
+Compared to the individual models, machine learning superensembles improved accuracy (median absolute proportional error) by `r mean_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias (median proportional error) from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range` (Fig. \ref{performance}a).
+Results were similar when predicting trend: compared to individual models, machine learning superensembles improved accuracy by `r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r slope_sim$ind_corr_range` to `r slope_sim$mach_corr_range`, and reduced bias from `r slope_sim$ind_mre_range` to `r slope_sim$mach_mre_range` (Fig.
 \ref{performance-sim-slope}).
+The ensemble models that simply took a mean of the individual models ranked
+slightly behind the best individual model for estimating fish stock status
+(CMSY; Fig. \ref{performance}a) and had slightly lower correlation but higher
+accuracy than the best individual model at predicting the trends of status
+(SSCOM; Fig. \ref{performance-sim-slope}).
 
 The superensemble models were able to improve the predictive performance by
 harnessing the best properties of individual models, the covariance between
@@ -531,7 +530,7 @@ improved ensemble fit, performance of the ensembles was only marginally degraded
 by removing these covariates (Fig. \ref{hexagon} vs. Fig.
 \ref{hexagon-sim-basic}).
 
-<!--TODO trash this?-->
+<!--> TODO update the result numbers to report the models that don't have the covariates -->
 
 When applied to the stock-assessment database, the superensemble models ---
 trained exclusively on the simulated dataset --- generally performed as well or
@@ -668,15 +667,16 @@ management actions when experimental or observational data are limited
 
 \noindent
 
-**Acknowledgements**: We thank members of Phase I of the working group
-'Developing new approaches to global stock status assessment and fishery
-production potential of the seas' who contributed to developing the data-limited
-methods and simulations used in our analysis. We thank E. Jardim, F. Scott, and
-J.A. Hutchings for helpful comments during the development of this project, and
-R.D. Methot for comments on an earlier version of the manuscript. We thank the
-Gordon and Betty Moore Foundation for funding the working group 'Applying
-data-limited stock status models and developing management guidance for
-unassessed fish stocks'.
+# Acknowledgments
+
+We thank members of Phase I of the working group 'Developing new approaches to
+global stock status assessment and fishery production potential of the seas'
+who contributed to developing the data-limited methods and simulations used in
+our analysis. We thank E. Jardim, F. Scott, and J.A. Hutchings for helpful
+comments during the development of this project, and R.D. Methot for comments
+on an earlier version of the manuscript. We thank the Gordon and Betty Moore
+Foundation for funding the working group 'Applying data-limited stock status
+models and developing management guidance for unassessed fish stocks'.
 
 <!--Funding...-->
 
@@ -771,3 +771,4 @@ f Chamberlin 1890).  multiple woring hypotheses
   52 Grueber et al. 2011).
 -->
 
+<!-- vim: set formatoptions=nroq: -->
