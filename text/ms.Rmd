@@ -2,6 +2,7 @@
 - [ ] add discussion of uncertainty (CIs) and ML (and incorporating uncertainty into pred.)
 - [ ] add back in the roc plot and sentence in the main text
 - [ ] rerun the main simulation analysis because the equations of change for the slope
+- [ ] update the magic number get inserted to use the equation that only has the basic model
 -->
 
 ```{r, echo=FALSE}
@@ -504,8 +505,17 @@ correlation = `r range_slope_corr_non_sscom`) with the exception of SSCOM
 Ensemble methods, and in particular the machine learning superensemble models
 (random forest and GBM), generally improved estimates of status and trend over
 any individual model (Fig. \ref{hexagon}e--h, Fig. \ref{scatter-sim-slope}e--h).
-Compared to the individual models, machine learning superensembles improved accuracy (median absolute proportional error) by `r mean_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias (median proportional error) from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range` (Fig. \ref{performance}a).
-Results were similar when predicting trend: compared to individual models, machine learning superensembles improved accuracy by `r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from `r slope_sim$ind_corr_range` to `r slope_sim$mach_corr_range`, and reduced bias from `r slope_sim$ind_mre_range` to `r slope_sim$mach_mre_range` (Fig.
+Compared to the individual models, machine learning superensembles improved
+accuracy (median absolute proportional error) by
+`r mean_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from
+`r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias
+(median proportional error) from `r mean_sim$ind_mre_range` to
+`r mean_sim$mach_mre_range` (Fig. \ref{performance}a).
+Results were similar when predicting trend: compared to individual models,
+machine learning superensembles improved accuracy by
+`r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from
+`r slope_sim$ind_corr_range` to `r slope_sim$mach_corr_range`, and reduced
+bias from `r slope_sim$ind_mre_range` to `r slope_sim$mach_mre_range` (Fig.
 \ref{performance-sim-slope}).
 The ensemble models that simply took a mean of the individual models ranked
 slightly behind the best individual model for estimating fish stock status
@@ -537,10 +547,10 @@ better than the best individual models. The mean, random forest, and GBM
 ensembles outperformed the mPRM method which is trained directly on the RAM
 Legacy Stock Assessment database itself (Fig. \ref{performance}b, Fig.
 \ref{hexagon-ram}). Compared to the individual models, the machine learning
-superensembles increased accuracy by `r mean_ram$mach_vs_ind_mare_fold`%,
-improved correlation from `r mean_ram$ind_corr_range` to `r
-mean_ram$mach_corr_range`, and reduced bias from `r mean_ram$ind_mre_range` to
-`r mean_ram$mach_mre_range`.
+superensembles increased accuracy by
+`r mean_ram$mach_vs_ind_mare_fold`%, improved correlation from
+`r mean_ram$ind_corr_range` to `r mean_ram$mach_corr_range`, and reduced bias
+from `r mean_ram$ind_mre_range` to `r mean_ram$mach_mre_range`.
 
 # Discussion
 
