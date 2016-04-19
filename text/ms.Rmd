@@ -538,9 +538,9 @@ linear model and GBM ensemble suggest that if mPRM and SSCOM predict high
 status, the true status also tends to be high (Figs \ref{lm-coefs},
 \ref{partial-2d-sim}l). The addition of spectral density covariates helped the
 superensemble models correctly predict higher status values (Fig.
-\ref{hexagon-sim-covariance}g, h). The performance of the ensembles was only
+\ref{hexagon-sim-covariates}g, h). The performance of the ensembles was only
 marginally improved by including these covariates (Fig.
-\ref{performance-with-covariance} vs. Fig. \ref{performance}.
+\ref{performance-with-covariates} vs. Fig. \ref{performance}).
 
 <!--> TODO update the result numbers to report the models that don't have the covariates -->
 
