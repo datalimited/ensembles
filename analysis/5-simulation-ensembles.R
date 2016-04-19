@@ -300,7 +300,7 @@ plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
         text(0.9, blocks[1], round(min(zlim), 1), pos = 2)
         text(0.9, 0.5, 1, pos = 2)
         text(0.9, blocks[length(blocks)], round(max(zlim), 1), pos = 2)
-        mtext(expression(B/B[MSY]), side = 2, las = 0, cex = 0.8)
+        mtext(expression(widehat(B/B[MSY])), side = 2, las = 0, cex = 0.8)
       }
     }
   }
