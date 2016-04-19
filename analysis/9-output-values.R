@@ -68,4 +68,5 @@ auc_sim$ind_range <- auc_sim_mean %>% filter(grepl("Ensemble", clean_method) == 
 d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
 ram_stocks_n <- length(unique(d_ram$stockid))
 
-save(mean_sim, mean_ram, slope_sim, auc_sim, ram_stocks_n, slope_corr_sscom, range_slope_corr_non_sscom, file = "../text/values.rda")
+save(mean_sim, mean_ram, slope_sim, auc_sim, ram_stocks_n, slope_corr_sscom,
+  range_slope_corr_non_sscom, mean_sim_basic, file = "../text/values.rda")
