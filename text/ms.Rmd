@@ -508,10 +508,10 @@ Ensemble methods, and in particular the machine learning superensemble models
 any individual model (Fig. \ref{hexagon}e--h, Fig. \ref{scatter-sim-slope}e--h).
 Compared to the individual models, machine learning superensembles improved
 accuracy (median absolute proportional error) by
-`r mean_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from
-`r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias
-(median proportional error) from `r mean_sim$ind_mre_range` to
-`r mean_sim$mach_mre_range` (Fig. \ref{performance}a).
+`r mean_sim_basic$mach_vs_ind_mare_fold`%, increased rank-order correlation from
+`r mean_sim_basic$ind_corr_range` to `r mean_sim_basic$mach_corr_range`, and reduced bias
+(median proportional error) from `r mean_sim_basic$ind_mre_range` to
+`r mean_sim_basic$mach_mre_range` (Fig. \ref{performance}a).
 These superensembles also generally had better ability to distinguish if
 simulated stocks were above or below $B/B_\mathrm{MSY} = 0.5$ (Fig. \ref{roc-sim}).
 Results were similar when predicting trend: compared to individual models,
