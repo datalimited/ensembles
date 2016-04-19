@@ -65,30 +65,6 @@ response variable.}
 
 \clearpage
 
-<!-- \begin{figure}[htbp] -->
-<!-- \begin{center} -->
-<!-- \includegraphics[width=\textwidth]{../figs/roc-sim.pdf} -->
-<!-- \caption{Receiver-operating-characteristic (ROC) curves from repeated
-three-fold cross-validation of the simulated data of known status. Shown are
-ROC curves for (a) ensemble methods and (b) individual data-limited model
-estimates based on estimates of $B/B_\mathrm{MSY}$ with the response variable
-representing whether true $B/B_\mathrm{MSY}$ was above or below 0.5, the
-threshold for declaring a stock overfished in the United States and Australia.
-The diagonal dashed line represents performance that is no better than
-flipping a coin. The area under the curve represents the probability that the
-model would correctly rank two randomly chosen stocks in terms of their mean
-$B/B_\mathrm{MSY}$ in the last five years. Sensitivity (y axis) represents the
-true positive rate (correctly categorizing a stock as having a
-$B/B_\mathrm{MSY}$ greater than 0.5). Specificity (x axis) refers to the true
-negative rate (correctly categorizing a stock as having a $B/B_\mathrm{MSY}$
-less than one). The sensitivity and specificity values are shown across all
-possible decision thresholds (values of $B/B_\mathrm{MSY}$) at which one could
-divide the stocks into these two categories.} -->
-<!-- \label{roc-sim} -->
-<!-- \end{center} -->
-<!-- \end{figure} -->
-
-<!-- \clearpage -->
 
 \begin{figure}[htbp]
 \begin{center}
@@ -107,12 +83,27 @@ in Fig.~\ref{scatter-sim-slope}.}
 \begin{center}
 \includegraphics[width=\textwidth]{../figs/partial-sim.pdf}
 \caption{Partial dependence plots for GBM ensemble models fitted to the
-simulation data. Lines represent the marginal non-linear effect of each
-predictor on mean $B/B_\mathrm{MSY}$ after integrating out the other predictor
-values. The marginal effect at a given predictor value is the average
-predicted response across all data points holding the given predictor at a
-specific value.}
+simulation data to predict the mean of $B/B_\mathrm{MSY}$. Lines
+represent the marginal non-linear effect of each predictor on mean
+$B/B_\mathrm{MSY}$ after integrating out the other predictor values. The
+marginal effect at a given predictor value is the average predicted response
+across all data points holding the given predictor at a specific value.}
 \label{partial-sim}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6.5in]{../figs/partial-sim-slope.pdf}
+\caption{Partial dependence plots for GBM ensemble models fitted to the
+simulation data to predict the slope of $B/B_\mathrm{MSY}$. Lines represent
+the marginal non-linear effect of each predictor on the slope of
+$B/B_\mathrm{MSY}$ after integrating out the other predictor values. The
+marginal effect at a given predictor value is the average predicted response
+across all data points holding the given predictor at a specific value.}
+\label{partial-sim-slope}
 \end{center}
 \end{figure}
 
@@ -138,12 +129,13 @@ errors from the mean.}
 \caption{Two-dimensional partial dependence plots for GBM ensemble models
 fitted to the simulated dataset of known status. Red shading indicates an
 expected $B/B_\mathrm{MSY}$ above one and blue shading an expected value below
-one. White shading represents an expected value of 1. For example, in panel e
-$B/B_\mathrm{MSY}$ is estimated to be low if SSCOM estimates
-$B/B_\mathrm{MSY}$ to be low regardless of the estimate from CMSY. On the
-other hand, if CMSY estimates $B/B_\mathrm{MSY}$ to be between 1.0 and about
-1.5, the ensemble estimates $B/B_\mathrm{MSY}$ to be high unless SSCOM
-estimates $B/B_\mathrm{MSY}$ to be very low.}
+one. White shading represents an expected value of 1. The specific shading
+refers to the average predicted $B/B_\mathrm{MSY}$ if the values on the y-axis
+and the x-axis are held constant and all other predictors are left at their
+original values. For example, in panel a we can see that a low estimate of
+$B/B_\mathrm{MSY}$ COMSIR is indicative of a high $B/B_\mathrm{MSY}$ if CMSY
+estimates $B/B_\mathrm{MSY}$ to be above about 0.5.
+}
 \label{partial-2d-sim}
 \end{center}
 \end{figure}
@@ -152,10 +144,48 @@ estimates $B/B_\mathrm{MSY}$ to be very low.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=6.5in]{../figs/hex-mean-sim-basic-cv.pdf}
-\caption{Same as Fig.~\ref{hexagon} but with simulation ensembles that have no
-additional covariates (spectral densities were not included in these models).}
-\label{hexagon-sim-basic}
+\includegraphics[width=\textwidth]{../figs/roc-sim.pdf}
+\caption{Receiver-operating-characteristic (ROC) curves from repeated
+three-fold cross-validation of the simulated data of known status. Shown are
+ROC curves for (a) ensemble methods and (b) individual data-limited model
+estimates based on estimates of $B/B_\mathrm{MSY}$ with the response variable
+representing whether true $B/B_\mathrm{MSY}$ was above or below 0.5, the
+threshold for declaring a stock overfished in the United States and Australia.
+The diagonal dashed line represents performance that is no better than
+flipping a coin. The area under the curve represents the probability that the
+model would correctly rank two randomly chosen stocks in terms of their mean
+$B/B_\mathrm{MSY}$ in the last five years. Sensitivity (y axis) represents the
+true positive rate (correctly categorizing a stock as having a
+$B/B_\mathrm{MSY}$ greater than 0.5). Specificity (x axis) refers to the true
+negative rate (correctly categorizing a stock as having a $B/B_\mathrm{MSY}$
+less than one). The sensitivity and specificity values are shown across all
+possible decision thresholds (values of $B/B_\mathrm{MSY}$) at which one could
+divide the stocks into these two categories.}
+\label{roc-sim}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6.5in]{../figs/hex-mean-sim-ram-cv.pdf}
+\caption{Same as Fig.~\ref{hexagon} but with simulation ensembles that have
+two additional covariates (spectral densities of the catch timeseries at two
+frequencies).}
+\label{hexagon-sim-covariates}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=6.5in]{../figs/performance.pdf}
+\caption{Same as Fig.~\ref{performance} but with simulation ensembles that have
+two additional covariates (spectral densities of the catch timeseries at two
+frequencies).}
+\label{performance-with-covariates}
 \end{center}
 \end{figure}
 
@@ -174,14 +204,6 @@ the lower row in Fig.~\ref{hexagon}.}
 
 \clearpage
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=6.5in]{../figs/partial-sim-slope.pdf}
-\caption{Partial dependence plots for GBM ensemble models fitted to the
-simulation data. Lines represent the marginal non-linear effect of each
-predictor on the slope of $B/B_\mathrm{MSY}$ after integrating out the other predictor values.}
-\label{partial-sim-slope}
-\end{center}
-\end{figure}
 
 <!-- vim: set formatoptions=nroq tw=78: -->
+
