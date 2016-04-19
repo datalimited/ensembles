@@ -512,6 +512,8 @@ accuracy (median absolute proportional error) by
 `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and reduced bias
 (median proportional error) from `r mean_sim$ind_mre_range` to
 `r mean_sim$mach_mre_range` (Fig. \ref{performance}a).
+These superensembles also generally had better ability to distinguish if
+simulated stocks were above or below $B/B_\mathrm{MSY} = 0.5$ (Fig. \ref{roc-sim}).
 Results were similar when predicting trend: compared to individual models,
 machine learning superensembles improved accuracy by
 `r slope_sim$mach_vs_ind_mare_fold`%, increased rank-order correlation from
