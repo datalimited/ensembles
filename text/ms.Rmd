@@ -1,7 +1,8 @@
 <!-- TODO
 - [ ] add discussion of uncertainty (CIs) and ML (and incorporating uncertainty into pred.)
-- [ ] add back in the roc plot and sentence in the main text
+- [x] add back in the roc plot and sentence in the main text
 - [ ] rerun the main simulation analysis because the equations of change for the slope
+- [ ] manually adjusted the labels in figure 4
 - [ ] update the magic number get inserted to use the equation that only has the basic model
 -->
 
