@@ -21,11 +21,11 @@ all: $(TEXT).pdf
 	#rm ms.md
 
 $(TEXT).pdf: $(MS).tex $(SOM).tex $(FIGS).tex $(TEXT).tex $(REFS).bib
-	latexmk $(TEXT)
-	#pdflatex $(TEXT)
-	#bibtex $(TEXT)
-	#pdflatex $(TEXT)
-	#pdflatex $(TEXT)
+	# latexmk $(TEXT)
+	pdflatex $(TEXT)
+	bibtex $(TEXT)
+	pdflatex $(TEXT)
+	pdflatex $(TEXT)
 
 dropbox: $(TEXT).pdf rtf
 	cp $(TEXT).pdf ~/Dropbox/Public/$(TEXT).pdf
