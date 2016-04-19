@@ -53,29 +53,19 @@ d_slope <- reshape2::dcast(ram_sum, stockid + scientificname ~ method,
 # bring in the simulation formatted data to build the simulation-trained models:
 d_mean_sim <- readRDS("generated-data/sim-mean-dat.rds")
 m_rf <- randomForest::randomForest(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
-    spec_freq_0.05 + spec_freq_0.2,
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM,
+    # spec_freq_0.05 + spec_freq_0.2,
   data = d_mean_sim, ntree = 1000L)
 
 m_gbm <- gbm::gbm(
-  log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
-    spec_freq_0.05 + spec_freq_0.2,
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM,
+    # spec_freq_0.05 + spec_freq_0.2,
   data = d_mean_sim, distribution = "gaussian",
   n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 
-m_lm0 <- lm(
-  log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
-      spec_freq_0.05 + spec_freq_0.2),
-  data = d_mean_sim)
-
 m_lm <- lm(
-  log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
-      spec_freq_0.05 + spec_freq_0.2)^2,
-  data = d_mean_sim)
-
-m_lm3 <- lm(
-  log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
-      spec_freq_0.05 + spec_freq_0.2)^3,
+  log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM)^2,
+      # spec_freq_0.05 + spec_freq_0.2)^2,
   data = d_mean_sim)
 
 pdf("../figs/lm-coefs.pdf", width = 5, height = 6)
@@ -86,23 +76,6 @@ arm::coefplot(arm::standardize(m_lm), main = "")
 par(xpd = NA)
 mtext("Standardized regression coefficient", side = 3, line = 3)
 dev.off()
-
-pdf("../figs/lm-coefs-3.pdf", width = 5.5, height = 6)
-par(mfrow = c(1, 1))
-par(mar = c(4, 16, 1, 3), cex = 0.9)
-par(xpd = FALSE)
-arm::coefplot(arm::standardize(m_lm3), main = "")
-par(xpd = NA)
-mtext("Standardized regression coefficient", side = 3, line = 3)
-dev.off()
-
-library("mgcv")
-m_gam <- mgcv::gam(
-  log(bbmsy_true_mean) ~ s(CMSY) + s(COMSIR) + s(mPRM) + s(SSCOM) +
-    + (CMSY:COMSIR) + (CMSY:mPRM) + (CMSY:SSCOM) + (COMSIR:mPRM) +
-    (COMSIR:SSCOM) + (mPRM:SSCOM) +
-    s(spec_freq_0.05) + s(spec_freq_0.2),
-  data = d_mean_sim)
 
 # load the RAM data formatted for mPRM:
 ram_prm_dat <- readRDS("generated-data/ram_prm_dat.rds")
@@ -202,7 +175,6 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
         d_test$mean_ensemble <- rowMeans(d_test[, individual_models])
       }
       d_test$lm_ensemble <- exp(predict(m_lm, newdata = d_test))
-      d_test$gam_ensemble <- exp(predict(m_gam, newdata = d_test))
       d_test$.n = .n # for identification purposes
       d_test
     } else {
