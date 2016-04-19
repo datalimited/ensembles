@@ -43,6 +43,9 @@ get_performance_stats <- function(dat, digits_fold = 1, digits_raw = 2,
 d_sim_perf_wide <- readRDS("generated-data/d_sim_perf_wide.rds")
 mean_sim <- get_performance_stats(d_sim_perf_wide)
 
+d_sim_perf_wide_basic <- readRDS("generated-data/d_sim_perf_wide_basic.rds")
+mean_sim_basic <- get_performance_stats(d_sim_perf_wide_basic)
+
 re_ram_sum <- readRDS("generated-data/re_ram_sum.rds")
 mean_ram <- get_performance_stats(re_ram_sum)
 

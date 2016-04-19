@@ -56,6 +56,7 @@ saveRDS(d_sim_perf_wide, "generated-data/d_sim_perf_wide.rds")
 d_sim_basic <- readRDS("generated-data/cv_sim_mean_basic_long.rds")
 d_sim_basic <- suppressWarnings(inner_join(d_sim_basic, clean_names))
 d_sim_perf_wide_basic <- get_performance(d_sim_basic)
+saveRDS(d_sim_perf_wide_basic, "generated-data/d_sim_perf_wide_basic.rds")
 d_sim_basic$bbmsy_est[d_sim_basic$bbmsy_est > 10] <- NA
 d_sim_basic <- na.omit(d_sim_basic)
 
