@@ -3,7 +3,7 @@
 - [x] add back in the roc plot and sentence in the main text
 - [ ] rerun the main simulation analysis because the equations of change for the slope
 - [ ] manually adjusted the labels in figure 4
-- [ ] update the magic number get inserted to use the equation that only has the basic model
+- [x] update the magic number get inserted to use the equation that only has the basic model
 -->
 
 ```{r, echo=FALSE}
@@ -479,13 +479,6 @@ analysis and an R package to fit the data-limited assessment models are
 available at <https://github.com/datalimited/ensembles> (*Private while in
 review*).
 
-
-<!-- TODO PE .... mean or slope of b/bmsy: Dan: logged or normal space? For the
-status regression where you are estimating log(B/Bmsy), wouldn't you need to
-correct for the retransformation bias in the estimating median proportional
-error later down? I could be missing something though in whether that applied
-once you've calculated proportional error-->
-
 # Results
 
 Applied to the simulated dataset of known stock status, the individual models
@@ -542,8 +535,6 @@ superensemble models correctly predict higher status values (Fig.
 marginally improved by including these covariates (Fig.
 \ref{performance-with-covariates} vs. Fig. \ref{performance}).
 
-<!--> TODO update the result numbers to report the models that don't have the covariates -->
-
 When applied to the stock-assessment database, the superensemble models ---
 trained exclusively on the simulated dataset --- generally performed as well or
 better than the best individual models. The mean, random forest, and GBM
@@ -569,20 +560,19 @@ these conflicting signals. So, this ensemble method, as I interpret it, is
 helpful for resolving conflicts within metric, but doesn't necesarily resolve
 conflicts across metrics (if I'm understanding these methods right) -->
 
-Ensemble methods provide a useful approach to situations where conservation and
-environmental resource management decisions must be made on the basis of
-multiple, potentially contrasting estimates of status --- a situation common to
-many settings beyond fisheries. Compared to individual models of fish population
-status, ensemble methods were consistently the best or among the best across
-three performance dimensions (accuracy, bias, and rank-order correlation), two
-response variables (status and trend), two datasets (simulated and global
-fisheries), and multiple ensemble methods (from a simple average to machine
-learning superensembles). Our results suggest choosing a superensemble model
-that allows for non-parametric relationships, such as machine learning methods.
-These methods provide added insight into individual model behavior and generally
-performed the best; however, even a simple average of predictions across
-multiple models may provide a more useful measure of the desired parameter than
-a single model in many cases.
+Ensemble methods provide a useful approach to situations where environmental
+resource management decisions must be made on the basis of multiple,
+potentially contrasting estimates of status. Compared to individual models of
+fish population status, ensemble methods were consistently the best or among
+the best across three performance dimensions (accuracy, bias, and rank-order
+correlation), two response variables (status and trend), two datasets
+(simulated and global fisheries), and multiple ensemble methods (from a simple
+average to machine learning superensembles). Our results suggest choosing a
+superensemble model that allows for non-parametric relationships, such as
+machine learning methods. These methods provide added insight into individual
+model behavior and generally performed the best; however, even a simple average
+of predictions across multiple models may provide a more useful measure of the
+desired parameter than a single model in many cases.
 
 Certain conditions will make some ensemble models more effective than others.
 First, ensembles will be most effective when they are comprised of diverse
@@ -590,20 +580,20 @@ individual models that choose different structural model forms, explore
 contrasting but plausible ranges of parameter values, or make uncorrelated
 errors [@ali1996; @dietterich2000; @tebaldi2007]. Such individual models would
 be expected to perform well in different conditions and an ensemble model can
-exploit the best predictive performance of each <!-- is this only true for
-superensembles?-->. Second, ensemble models will be most effective when they are
-not overfit to the training dataset. Cross-validation testing [@caruana2004;
-@hastie2009] and methods that are robust to overfitting such as random forests
-[@breiman2001], may help avoid overfitting ensemble models. We note that our
-simplest ensemble model, an average of individual model predictions, performed
-approximately as well as complex machine learning models when we trained our
-superensembles on the simulation dataset and tested them on a separate 'real'
-dataset (i.e. the RAM Legacy Stock Assessment database, Fig.
-\ref{performance}b). Third, ensemble models will be most effective when they are
-trained on data that are representative of the dataset of interest [@knutti2009;
-@weigel2010]. Cross-validation within a training dataset will provide an
-optimistically biased impression of predictive performance if the training
-dataset fundamentally differs from the dataset of interest [@hastie2009].
+exploit the best predictive performance of each superensembles? Second,
+ensemble models will be most effective when they are not overfit to the
+training dataset. Cross-validation testing [@caruana2004; @hastie2009] and
+methods that are robust to overfitting such as random forests [@breiman2001],
+may help avoid overfitting ensemble models. We note that our simplest ensemble
+model, an average of individual model predictions, performed approximately as
+well as complex machine learning models when we trained our superensembles on
+the simulation dataset and tested them on a separate 'real' dataset (i.e. the
+RAM Legacy Stock Assessment database, Fig. \ref{performance}b). Third, ensemble
+models will be most effective when they are trained on data that are
+representative of the dataset of interest [@knutti2009; @weigel2010].
+Cross-validation within a training dataset will provide an optimistically
+biased impression of predictive performance if the training dataset
+fundamentally differs from the dataset of interest [@hastie2009].
 
 Multi-model inference in the form of coefficient averaging weighted by
 information theoretics such as the Akaike Information Criterion (AIC) is
