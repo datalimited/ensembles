@@ -140,6 +140,14 @@ m_slope <- gbm::gbm(bbmsy_true_slope ~ CMSY + COMSIR + mPRM + SSCOM +
     spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
   data = d_slope, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
 
+m_basic <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM,
+  distribution = "gaussian",
+  data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
+
+m_slope_basic <- gbm::gbm(bbmsy_true_slope ~ CMSY + COMSIR + mPRM + SSCOM,
+  distribution = "gaussian",
+  data = d_slope, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
+
 p1 <- ggplot(d_mean, aes(CMSY, gbm_pred)) + geom_point()
 p2 <- ggplot(d_mean, aes(COMSIR, gbm_pred)) + geom_point()
 p3 <- ggplot(d_mean, aes(mPRM, gbm_pred)) + geom_point()
@@ -160,52 +168,52 @@ pdf("../figs/predictor-vs-truth-gbm.pdf", width = 10, height = 5)
 gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
 dev.off()
 
-make_partial_resid_gbm <- function(var = "SSCOM") {
-  d_temp <- d_mean
-  d_temp$x <- d_mean[,var]
-  d_temp[,var] <- mean(d_temp[,var])
-  d_temp$p <- predict(m, n.trees = m$n.trees, type = "response",
-    newdata = d_temp)
-  d_temp$res <- log(d_temp$bbmsy_true_mean) - d_temp$p
-  # ggplot(d_temp, aes(x, exp(res))) + geom_point() + stat_smooth(se = FALSE, col = "red", method = "loess")
+## make_partial_resid_gbm <- function(var = "SSCOM") {
+##   d_temp <- d_mean
+##   d_temp$x <- d_mean[,var]
+##   d_temp[,var] <- mean(d_temp[,var])
+##   d_temp$p <- predict(m, n.trees = m$n.trees, type = "response",
+##     newdata = d_temp)
+##   d_temp$res <- log(d_temp$bbmsy_true_mean) - d_temp$p
+##   # ggplot(d_temp, aes(x, exp(res))) + geom_point() + stat_smooth(se = FALSE, col = "red", method = "loess")
+##
+##   d_temp2 <- d_mean
+##   all_vars <- c("CMSY", "COMSIR", "mPRM", "spec_freq_0.05", "spec_freq_0.2", "SSCOM")
+##   other_vars <- all_vars[which(!var == all_vars)]
+##   d_temp2[,other_vars] <-
+##     matrix(apply(
+##       d_temp2[,other_vars], 2, mean),
+##       ncol = 5, nrow = nrow(d_temp), byrow = TRUE)
+##   d_temp2$p <- predict(m, n.trees = m$n.trees, type = "response",
+##     newdata = d_temp2)
+##
+##   p <- ggplot(d_temp, aes(x, res)) + geom_point(alpha = 0.1) +
+##     geom_line(data = d_temp2, aes_string(var, "p"), col = "red", lwd = 1)+
+##     # geom_line(data = subset(partial, predictor == var),
+##       # aes(predictor_value, y), col = "red", lwd = 1) +
+##     xlab(var) + ylab("Partial residual")
+##   p
+## }
+## p1 <- make_partial_resid_gbm("CMSY")
+## p2 <- make_partial_resid_gbm("SSCOM")
+## p3 <- make_partial_resid_gbm("COMSIR")
+## p4 <- make_partial_resid_gbm("mPRM")
+## p5 <- make_partial_resid_gbm("spec_freq_0.05")
+## p6 <- make_partial_resid_gbm("spec_freq_0.2")
+## pdf("../figs/gbm-partial-residuals.pdf", width = 10, height = 5)
+## gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
+## dev.off()
 
-  d_temp2 <- d_mean
-  all_vars <- c("CMSY", "COMSIR", "mPRM", "spec_freq_0.05", "spec_freq_0.2", "SSCOM")
-  other_vars <- all_vars[which(!var == all_vars)]
-  d_temp2[,other_vars] <-
-    matrix(apply(
-      d_temp2[,other_vars], 2, mean),
-      ncol = 5, nrow = nrow(d_temp), byrow = TRUE)
-  d_temp2$p <- predict(m, n.trees = m$n.trees, type = "response",
-    newdata = d_temp2)
-
-  p <- ggplot(d_temp, aes(x, res)) + geom_point(alpha = 0.1) +
-    geom_line(data = d_temp2, aes_string(var, "p"), col = "red", lwd = 1)+
-    # geom_line(data = subset(partial, predictor == var),
-      # aes(predictor_value, y), col = "red", lwd = 1) +
-    xlab(var) + ylab("Partial residual")
-  p
-}
-p1 <- make_partial_resid_gbm("CMSY")
-p2 <- make_partial_resid_gbm("SSCOM")
-p3 <- make_partial_resid_gbm("COMSIR")
-p4 <- make_partial_resid_gbm("mPRM")
-p5 <- make_partial_resid_gbm("spec_freq_0.05")
-p6 <- make_partial_resid_gbm("spec_freq_0.2")
-pdf("../figs/gbm-partial-residuals.pdf", width = 10, height = 5)
-gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
-dev.off()
-
-partial <- plyr::ldply(seq_len(nvar), function(i) {
-  dd <- gbm::plot.gbm(m, i.var = i, return.grid = TRUE)
+partial <- plyr::ldply(seq_len(4L), function(i) {
+  dd <- gbm::plot.gbm(m_basic, i.var = i, return.grid = TRUE)
   dd$predictor <- names(dd)[1]
   names(dd)[1] <- "predictor_value"
   dd$y <- exp(dd$y)
   dd
 })
 
-partial_slope <- plyr::ldply(seq_len(nvar), function(i) {
-  dd <- gbm::plot.gbm(m_slope, i.var = i, return.grid = TRUE)
+partial_slope <- plyr::ldply(seq_len(4L), function(i) {
+  dd <- gbm::plot.gbm(m_slope_basic, i.var = i, return.grid = TRUE)
   dd$predictor <- names(dd)[1]
   names(dd)[1] <- "predictor_value"
   dd
@@ -218,20 +226,29 @@ partial_names <- data_frame(
     "(f) Long-term spectral density", "(e) Short-term spectral density"))
 partial <- inner_join(partial, partial_names)
 partial_slope <- inner_join(partial_slope, partial_names)
+
 # partial dependence plot:
 p <- ggplot(partial, aes(predictor_value, y)) + geom_line() +
   facet_wrap(~predictor_label, scales = "free_x") + ylim(0.3, 1.6) + theme_bw() +
-  ylab("Expected B/B_MSY integrating out other predictors") +
-  xlab("Predictor value")
+  ylab(expression(Average~widehat(B/B[MSY]))) +
+  xlab("Predictor value") +
+  xlim(0, 2) +
+  theme(panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.background = element_rect(fill = "white"))
 ggsave("../figs/partial-sim.pdf", width = 7, height = 5)
 
 p <- ggplot(partial_slope, aes(predictor_value, y)) + geom_line() +
   facet_wrap(~predictor_label, scales = "free_x") + ylim(-0.2, 0.2) + theme_bw() +
-  ylab("Expected slope of B/B_MSY integrating out other predictors") +
-  xlab("Predictor value")
+  ylab(expression(Average~predicted~slope~of~B/B[MSY])) +
+  xlab("Predictor value") +
+  theme(panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.background = element_rect(fill = "white")) +
+      xlim(-0.4, 0.4)
 ggsave("../figs/partial-sim-slope.pdf", width = 7, height = 5)
 
-partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
+partial_2d <- plyr::ldply(1:4, function(x) plyr::ldply(1:4, function(y) {
   dd <- gbm::plot.gbm(m, i.var = c(x, y), return.grid = TRUE, continuous.resolution = 20)
   dd$var1 <- names(dd)[1]
   dd$var2 <- names(dd)[2]
@@ -243,7 +260,7 @@ partial_2d <- plyr::ldply(1:nvar, function(x) plyr::ldply(1:nvar, function(y) {
 }))
 
 # check colour pallete:
-zlim <- c(min(partial_2d$z)+0.11, max(partial_2d$z))
+zlim <- c(min(partial_2d$z)+0.21, max(partial_2d$z))
 pal <- rev(colorRampPalette(c("red", "white", "blue"), space = "Lab")(13))[-c(1:1)]
 # white should line up with 1: (adjust the above 2 lines as needed)
 
@@ -251,13 +268,14 @@ pdf("../figs/partial-2d-col-check.pdf", width = 6, height = 4)
 plot(seq(min(zlim), max(zlim), length.out = 12), 1:12, bg = pal, pch = 21, cex = 3);abline(v = 1)
 dev.off()
 
+nvar_basic <- 4L
 ii <<- 0
 lab <<- 0
-panels <- matrix(NA, ncol = nvar, nrow = nvar, byrow = TRUE) %>% upper.tri %>%
+panels <- matrix(NA, ncol = nvar_basic, nrow = nvar_basic, byrow = TRUE) %>% upper.tri %>%
   t %>% as.vector
 
-pdf("../figs/partial-sim-2d.pdf", width = 10, height = 8.5)
-par(mfrow = c(nvar-1, nvar), mar = c(3.5,3.5,1,1), oma = c(1, 1, 0.5, 0.5), cex = 0.7)
+pdf("../figs/partial-sim-2d.pdf", width = 7, height = 5.5)
+par(mfrow = c(nvar_basic-1, nvar_basic), mar = c(3.5,3.5,1,1), oma = c(1, 1, 0.5, 0.5), cex = 0.7)
 par(xpd = NA, mgp = c(1.7, 0.5, 0), tck = -0.03, las = 1)
 plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
   ii <<- ii + 1
@@ -270,7 +288,7 @@ plyr::d_ply(partial_2d, c("var1", "var2"), function(x) {
     lab <<- lab + 1
     add_label(0, -0.08, label = paste0("(", letters[lab], ")"))
   } else {
-    if (ii < nvar^2 - nvar) {
+    if (ii < nvar_basic^2 - nvar_basic) {
       plot(1, 1, type = "n", axes = FALSE, xlab = "", ylab = "", ylim = c(0, 1))
       if (ii == 1) {
         blocks <- seq(0.1, 0.9, length.out = length(pal))
@@ -321,16 +339,16 @@ cv_sim_mean_basic$cv_id <- NULL
 cv_sim_slope <- plyr::ldply(seq_len(20), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
-      gbm_formula = paste0("bbmsy_true_slope ~ ", eq),
-      lm_formula = paste0("bbmsy_true_slope ~ (", eq, ")^2")))
+      gbm_formula = paste0("bbmsy_true_slope ~ ", eq_basic),
+      lm_formula = paste0("bbmsy_true_slope ~ (", eq_basic, ")^2")))
 cv_sim_slope$cv_id <- NULL
 
 cv_sim_binary <- plyr::ldply(seq_len(1), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean,
       id = "sim-binary", distribution = "bernoulli",
-      gbm_formula = paste0("above_bbmsy1_true ~ ", eq),
-      glm_formula = paste0("above_bbmsy1_true ~ (", eq, ")^2")))
+      gbm_formula = paste0("above_bbmsy1_true ~ ", eq_basic),
+      glm_formula = paste0("above_bbmsy1_true ~ (", eq_basic, ")^2")))
 cv_sim_binary$cv_id <- NULL
 
 # now switch to long format data, summarize, and compare:
@@ -381,4 +399,8 @@ re <- cv_sim_long %>% mutate(
 
 re %>% saveRDS(file = "generated-data/cv_sim_long.rds")
 
-saveRDS(cv_sim_mean_basic_long, file = "generated-data/cv_sim_mean_basic_long.rds")
+re <- cv_sim_mean_basic_long %>% mutate(
+  sq_er = (bbmsy_est - bbmsy_true)^2,
+  re    = (bbmsy_est - bbmsy_true) / abs(bbmsy_true))
+
+re %>% saveRDS(file = "generated-data/cv_sim_mean_basic_long.rds")
