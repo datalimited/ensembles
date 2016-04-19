@@ -1,9 +1,7 @@
 <!-- TODO
-- [ ] trash slope?
-- [ ] trash covariates?
 - [ ] add discussion of uncertainty (CIs) and ML (and incorporating uncertainty into pred.)
-- [ ] add table of fish methods and ensemble models
-- [ ] add flow chart of cross validation / methods
+- [ ] add back in the roc plot and sentence in the main text
+- [ ] rerun the main simulation analysis because the equations of change for the slope
 -->
 
 ```{r, echo=FALSE}
@@ -158,16 +156,16 @@ which they are applied. *TODO: Still need to cut ~30 words*
 \noindent Keywords: data-limited fisheries, ensemble methods, multi-model
 averaging, population dynamics, sustainable resource management
 
-\tableofcontents
+<!-- \tableofcontents -->
 
 # Introduction
 
-Population status and trend are two of the most fundamental values to quantify
-in fisheries management. However, fisheries managers are often faced with
-reconciling multiple uncertain and potentially conflicting estimates of status
-and trend [e.g. @brodziak2010; @branch2011; @deroba2015]. For example, some
-models may suggest a population is at risk and declining in abundance while
-others may suggest it is not at risk and stable.
+Status and trend are two of the most fundamental values to quantify in the
+management of ecological populations [e.g. @iucn2015]. However, managers are
+often faced with reconciling multiple uncertain and potentially conflicting
+estimates of status and trend [e.g. @brodziak2010; @branch2011; @deroba2015].
+For example, one models may suggest a population is at risk and declining in
+abundance while others may suggest it is not at risk and stable.
 
 One solution is to take the average or weighted average of several model
 predictions, i.e. an ensemble. Such ensembles are typically more accurate and
@@ -201,7 +199,7 @@ models as inputs into a separate statistical model. This technique, sometimes
 called superensemble modelling [@krishnamurti1999], is common in climate and
 weather forecasting [e.g. @yun2005; @mote2015]. The superensemble is fit to a
 training dataset where outcomes are well known and then used to predict on a
-dataset of interest (Fig. \ref{didactic}). For example, @krishnamurti1999
+dataset of interest. For example, @krishnamurti1999
 combined predictions of wind and precipitation in Asian monsoons via a
 superensemble regression fit to observed data. Their superensemble was
 considerably more accurate than any individual prediction or weighted average
@@ -244,6 +242,9 @@ Structure of methods: summary of methods
  3. additional covariates
  4. data used to test and cross validation,
  5. testing model perforance. -->
+
+<!--TODO Add in the reference to (Fig. \ref{didactic}) and reorder the figures and add
+in the figure with the partial dependence -->
 
 ## Individual models of population status
 
@@ -516,19 +517,17 @@ The superensemble models were able to improve the predictive performance by
 harnessing the best properties of individual models, the covariance between
 individual models, and interactions with other covariates. For example, SSCOM
 had strong predictive ability when it predicted low $B/B_\mathrm{MSY}$ (Fig.
-\ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were approximately
-linearly related to $B/B_\mathrm{MSY}$ within the low and high clusters of
-predictions (Fig. \ref{partial-sim}). Superensembles also exploited the
-covariance between individual model predictions. For instance, both the linear
-model and GBM ensemble suggest that if mPRM and SSCOM predict high status, the
-true status also tends to be high (Figs \ref{lm-coefs}, \ref{partial-2d-sim}l).
-The addition of spectral density covariates helped the superensemble models
-correctly predict higher status values (Fig. \ref{hexagon}g, h) due to the
-interactions between the spectral density predictors and the individual model
-predictors (Fig. \ref{partial-2d-sim}). Although the additional covariates
-improved ensemble fit, performance of the ensembles was only marginally degraded
-by removing these covariates (Fig. \ref{hexagon} vs. Fig.
-\ref{hexagon-sim-basic}).
+\ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were
+approximately linearly related to $B/B_\mathrm{MSY}$ within the low and high
+clusters of predictions (Fig. \ref{partial-sim}). Superensembles also exploited
+the covariance between individual model predictions. For instance, both the
+linear model and GBM ensemble suggest that if mPRM and SSCOM predict high
+status, the true status also tends to be high (Figs \ref{lm-coefs},
+\ref{partial-2d-sim}l). The addition of spectral density covariates helped the
+superensemble models correctly predict higher status values (Fig.
+\ref{hexagon-sim-covariance}g, h). The performance of the ensembles was only
+marginally improved by including these covariates (Fig.
+\ref{performance-with-covariance} vs. Fig. \ref{performance}.
 
 <!--> TODO update the result numbers to report the models that don't have the covariates -->
 
