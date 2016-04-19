@@ -4,8 +4,6 @@ library(ggplot2)
 source("0-ensemble-functions.R")
 
 # bring in the simulated data and shape it for plotting:
-d_sim <- readRDS("generated-data/cv_sim_long.rds")
-
 clean_names <- dplyr::data_frame(
   method = c("CMSY", "COMSIR", "mPRM", "SSCOM",
     "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
@@ -19,42 +17,47 @@ clean_names <- dplyr::data_frame(
     0, -0.02,0.03,0.04,
     0, 0.02,0,-0.02))
 
+d_sim <- readRDS("generated-data/cv_sim_long.rds")
 d_sim <- suppressWarnings(inner_join(d_sim, clean_names))
 
-d_sim_perf <- d_sim %>% group_by(test_iter, type, clean_method, order, label_fudge_x, label_fudge_y) %>%
-  summarise(
-    mare = median(abs(re)),
-    mre = median(re),
-    corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
-      use = "pairwise.complete.obs"))
+get_performance <- function(validation_data) {
+  d_sim_perf <- validation_data %>% group_by(test_iter, type, clean_method, order, label_fudge_x, label_fudge_y) %>%
+    summarise(
+      mare = median(abs(re)),
+      mre = median(re),
+      corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
+        use = "pairwise.complete.obs"))
 
-d_sim_perf$clean_method <- as.factor(d_sim_perf$clean_method)
-d_sim_perf$clean_method <- reorder(d_sim_perf$clean_method, d_sim_perf$order)
+  d_sim_perf$clean_method <- as.factor(d_sim_perf$clean_method)
+  d_sim_perf$clean_method <- reorder(d_sim_perf$clean_method, d_sim_perf$order)
 
-d_sim_perf_slope <- filter(d_sim_perf, type == "slope")
-d_sim_perf <- filter(d_sim_perf, type == "mean")
+  d_sim_perf_slope <- filter(d_sim_perf, type == "slope")
+  d_sim_perf <- filter(d_sim_perf, type == "mean")
 
-d_sim_perf_long <- reshape2::melt(d_sim_perf,
-  id.vars = c("test_iter", "clean_method", "type", "order", "label_fudge_x", "label_fudge_y"))
-d_sim_perf_summ <- d_sim_perf_long %>%
-  group_by(clean_method, order, variable, label_fudge_x, label_fudge_y) %>%
-  summarise(
-    m = median(value),
-    l = quantile(value, 0.25),
-    u = quantile(value, 0.75)) %>%
-  as.data.frame
-d_sim_perf_summ$text_col <- ifelse(grepl("ensemble", d_sim_perf_summ$clean_method, ignore.case = TRUE),
-  "grey20", "grey50")
-d_sim_perf_wide <- reshape2::dcast(d_sim_perf_summ, clean_method + order ~ variable,
-  value.var = "m")
-
+  d_sim_perf_long <- reshape2::melt(d_sim_perf,
+    id.vars = c("test_iter", "clean_method", "type", "order", "label_fudge_x", "label_fudge_y"))
+  d_sim_perf_summ <- d_sim_perf_long %>%
+    group_by(clean_method, order, variable, label_fudge_x, label_fudge_y) %>%
+    summarise(
+      m = median(value),
+      l = quantile(value, 0.25),
+      u = quantile(value, 0.75)) %>%
+    as.data.frame
+  d_sim_perf_summ$text_col <- ifelse(grepl("ensemble", d_sim_perf_summ$clean_method, ignore.case = TRUE),
+    "grey20", "grey50")
+  d_sim_perf_wide_temp <- reshape2::dcast(d_sim_perf_summ, clean_method + order ~ variable,
+    value.var = "m")
+  d_sim_perf_wide_temp
+}
+d_sim_perf_wide <- get_performance(d_sim)
 saveRDS(d_sim_perf_wide, "generated-data/d_sim_perf_wide.rds")
 
 # Format basic simulation ensemble without covariates for plotting:
 d_sim_basic <- readRDS("generated-data/cv_sim_mean_basic_long.rds")
+d_sim_basic <- suppressWarnings(inner_join(d_sim_basic, clean_names))
+d_sim_perf_wide_basic <- get_performance(d_sim_basic)
 d_sim_basic$bbmsy_est[d_sim_basic$bbmsy_est > 10] <- NA
 d_sim_basic <- na.omit(d_sim_basic)
-d_sim_basic <- suppressWarnings(inner_join(d_sim_basic, clean_names))
 
 # Format the RAM ensemble data for plotting:
 d_ram <- readRDS("generated-data/ram-ensemble-predicted.rds")
@@ -94,7 +97,7 @@ get_roc <- function(true, est) {
 
 # get ROC and AUC for models applied to simulation data with b/bmsy as the response:
 # we'll use 0.5 B/Bmsy as the treshold as in US overfished definition
-d_sim_mean <- d_sim %>% filter(type == "mean") %>%
+d_sim_mean <- d_sim_basic %>% filter(type == "mean") %>%
   mutate(above1 = ifelse(bbmsy_true > 0.5, 1, 0))
 rocs_sim_mean <- d_sim_mean %>% group_by(clean_method, order) %>%
   do({get_roc(true = .$above1, est = .$bbmsy_est)}) %>%
@@ -148,38 +151,42 @@ p <- make_roc_curves(rocs_ram_mean)
 ggsave("../figs/roc-ram.pdf", width = 8, height = 5)
 
 ## Hexagon figures:
-d_mean_plot <- filter(d_sim, type == "mean")
-d_mean_plot$bbmsy_est[d_mean_plot$bbmsy_est > 10] <- NA
-d_mean_plot <- na.omit(d_mean_plot)
+main_hexagon_plot <- function(data_to_plot, file_name) {
+  d_mean_plot <- filter(data_to_plot, type == "mean")
+  d_mean_plot$bbmsy_est[d_mean_plot$bbmsy_est > 10] <- NA
+  d_mean_plot <- na.omit(d_mean_plot)
 
-d_mean_sim_and_ram <- bind_rows(
-  mutate(d_mean_plot, data = "Simulated"),
-  filter(d_ram, grepl("ensemble", clean_method, ignore.case = TRUE)) %>%
-    mutate(order = order + 4, data = "RAM Legacy"))
+  d_mean_sim_and_ram <- bind_rows(
+    mutate(d_mean_plot, data = "Simulated"),
+    filter(d_ram, grepl("ensemble", clean_method, ignore.case = TRUE)) %>%
+      mutate(order = order + 4, data = "RAM Legacy"))
 
-ram_third_row_lims <- filter(d_ram, grepl("ensemble", clean_method, ignore.case = TRUE)) %>%
-  summarise(lower = min(c(bbmsy_est, bbmsy_true)), upper = max(c(bbmsy_est, bbmsy_true))) %>%
-  as.numeric
+  ram_third_row_lims <- filter(d_ram, grepl("ensemble", clean_method, ignore.case = TRUE)) %>%
+    summarise(lower = min(c(bbmsy_est, bbmsy_true)), upper = max(c(bbmsy_est, bbmsy_true))) %>%
+    as.numeric
 
-# Basic hexagon plot for simulation mean bbmsy:
-# pdf("../figs/hex-mean-sim-cv.pdf", width = 7, height = 3.9)
-# plot_hex_fig(d_mean_plot, xbins = 100L)
-# dev.off()
+  # Basic hexagon plot for simulation mean bbmsy:
+  # pdf("../figs/hex-mean-sim-cv.pdf", width = 7, height = 3.9)
+  # plot_hex_fig(d_mean_plot, xbins = 100L)
+  # dev.off()
 
-# Same as above but add the RAM ensembles as a third row:
-pdf("../figs/hex-mean-sim-ram-cv.pdf", width = 7.0, height = 4.6)
-plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 25L,
-  lims_hex3 = ram_third_row_lims, count_transform3 = 12,
-  oma = c(3.5, 3.5, .5, 2.5), count_transform = 1,
-  alpha = 15, bias = c(rep(3, 8), rep(1.8, 4)))
-par(xpd = NA)
-mtext("Simulated data", side = 4, outer = TRUE, line = 0.4, las = 0, col = "grey20",
-  adj = 0.75, cex = 0.9)
-mtext("Stock assessment", side = 4, outer = TRUE, line = 0.4, las = 0,
-  col = "grey20", adj = 0, cex = 0.9)
-mtext("database", side = 4, outer = TRUE, line = 1.4, las = 0,
-  col = "grey20", adj = 0.1)
-dev.off()
+  # Same as above but add the RAM ensembles as a third row:
+  pdf(file_name, width = 7.0, height = 4.6)
+  plot_hex_fig(d_mean_sim_and_ram, xbins = 100L, xbins3 = 25L,
+    lims_hex3 = ram_third_row_lims, count_transform3 = 12,
+    oma = c(3.5, 3.5, .5, 2.5), count_transform = 1,
+    alpha = 15, bias = c(rep(3, 8), rep(1.8, 4)))
+  par(xpd = NA)
+  mtext("Simulated data", side = 4, outer = TRUE, line = 0.4, las = 0, col = "grey20",
+    adj = 0.75, cex = 0.9)
+  mtext("Stock assessment", side = 4, outer = TRUE, line = 0.4, las = 0,
+    col = "grey20", adj = 0, cex = 0.9)
+  mtext("database", side = 4, outer = TRUE, line = 1.4, las = 0,
+    col = "grey20", adj = 0.1)
+  dev.off()
+}
+main_hexagon_plot(d_sim, file_name = "../figs/hex-mean-sim-ram-cv.pdf")
+main_hexagon_plot(d_sim_basic, file_name = "../figs/hex-mean-sim-ram-basic-cv.pdf")
 
 d_slope_plot <- filter(d_sim, type == "slope")
 d_slope_plot$bbmsy_est[d_slope_plot$bbmsy_est > 10] <- NA
@@ -197,16 +204,12 @@ plot_hex_fig(d_ram, add_hex = TRUE, alpha = 80,
   count_transform = 20)
 dev.off()
 
-pdf("../figs/hex-mean-sim-basic-cv.pdf", width = 8, height = 4)
-plot_hex_fig(d_sim_basic, xbins = 100L)
-dev.off()
-
-all <- bind_rows(d_sim_perf_wide, re_ram_sum)
-pal <- RColorBrewer::brewer.pal(11, "RdBu") %>% colorRampPalette
-pal_df <- data_frame(mre = seq(-max(abs(all$mre)+0.05), max(abs(all$mre)+0.05), length.out = 100),
-  col = pal(100))
-d_sim_perf_wide$col <- pal_df$col[findInterval(d_sim_perf_wide$mre, pal_df$mre)]
-re_ram_sum$col <- pal_df$col[findInterval(re_ram_sum$mre, pal_df$mre)]
+# d_mean_plot <- filter(d_sim, type == "mean")
+# d_mean_plot$bbmsy_est[d_mean_plot$bbmsy_est > 10] <- NA
+# d_mean_plot <- na.omit(d_mean_plot)
+# pdf("../figs/hex-mean-sim-covariates-cv.pdf", width = 8, height = 4)
+# plot_hex_fig(d_sim, xbins = 100L, count_transform = 1, alpha = 15)
+# dev.off()
 
 perf <- function(dat, xlim = range(dat$mare) + c(-0.07, 0.025),
   ylim = range(dat$corr) + c(-0.05, 0.02),
@@ -227,46 +230,64 @@ perf <- function(dat, xlim = range(dat$mare) + c(-0.07, 0.025),
   box(col = "grey50")
 
 }
-pdf("../figs/performance.pdf", width = 6.9, height = 3.3)
-par(mfrow = c(1, 2))
-par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
-  oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
-  xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-#par(family="serif")
 
-perf(d_sim_perf_wide, label = "(a) Simulation")
+pal <- RColorBrewer::brewer.pal(11, "RdBu") %>% colorRampPalette
 
-# colour legend:
-blocks <- seq(0, 0.2, length.out = 100)
-leg_x <- 0.26
+main_performance_plot <- function(data_to_plot, file_name, include_ram = TRUE) {
 
-for(i in 1:99) {
-  rect(leg_x, blocks[i], leg_x + 0.03, blocks[i+1]+0.001, border = NA, col = pal(100)[i])
+  all <- bind_rows(data_to_plot, re_ram_sum)
+  pal_df <- data_frame(mre = seq(-max(abs(all$mre)+0.05), max(abs(all$mre)+0.05), length.out = 100),
+    col = pal(100))
+  data_to_plot$col <- pal_df$col[findInterval(data_to_plot$mre, pal_df$mre)]
+  re_ram_sum$col <- pal_df$col[findInterval(re_ram_sum$mre, pal_df$mre)]
+
+  pdf(file_name, width = 6.9, height = 3.3)
+  par(mfrow = c(1, 2))
+  par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
+    oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
+    xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
+  #par(family="serif")
+
+  perf(data_to_plot, label = "(a) Simulation")
+
+  # colour legend:
+  blocks <- seq(0, 0.2, length.out = 100)
+  leg_x <- 0.26
+
+  for(i in 1:99) {
+    rect(leg_x, blocks[i], leg_x + 0.03, blocks[i+1]+0.001, border = NA, col = pal(100)[i])
+  }
+  if(0.4 >= max(pal_df$mre)) stop("Colour ticks are too wide for the observed MPE.")
+  tick1 <- findInterval(-0.4, pal_df$mre)
+  tick3 <- findInterval(0.4, pal_df$mre)
+
+  text(rep(leg_x + 0.025, 3),
+    blocks[c(tick1, 50, tick3)], labels = c("-0.4", "  0", "  0.4"), pos = 4,
+    col = "grey50", cex = 0.9)
+  text(leg_x - 0.01, 0.22, "Bias (MPE)", col = "grey20", pos = 4)
+
+  segments(
+    x0 = rep(leg_x + 0.025, 3),
+    y0 = blocks[c(tick1, 50, tick3)],
+    x1 = rep(leg_x + 0.030, 3),
+    y1 = blocks[c(tick1, 50, tick3)], col = "grey80")
+  # end colour legend
+
+  if (include_ram) {
+    perf(re_ram_sum, label = "(b) Stock assessment database")
+  }
+  mtext("Inaccuracy (MAPE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
+    cex = 1)
+  par(xpd = NA)
+  mtext("Rank-order correlation", cex = 1, side = 2, outer = TRUE, line = -0.9,
+    col = "grey20", las = 0)
+  dev.off()
 }
-if(0.4 >= max(pal_df$mre)) stop("Colour ticks are too wide for the observed MPE.")
-tick1 <- findInterval(-0.4, pal_df$mre)
-tick3 <- findInterval(0.4, pal_df$mre)
 
-text(rep(leg_x + 0.025, 3),
-  blocks[c(tick1, 50, tick3)], labels = c("-0.4", "  0", "  0.4"), pos = 4,
-  col = "grey50", cex = 0.9)
-text(leg_x - 0.01, 0.22, "Bias (MPE)", col = "grey20", pos = 4)
-
-segments(
-  x0 = rep(leg_x + 0.025, 3),
-  y0 = blocks[c(tick1, 50, tick3)],
-  x1 = rep(leg_x + 0.030, 3),
-  y1 = blocks[c(tick1, 50, tick3)], col = "grey80")
-# end colour legend
-
-perf(re_ram_sum, label = "(b) Stock assessment database")
-
-mtext("Inaccuracy (MAPE)", side = 1, outer = TRUE, line = 1.5, col = "grey20",
-  cex = 1)
-par(xpd = NA)
-mtext("Rank-order correlation", cex = 1, side = 2, outer = TRUE, line = -0.9,
-  col = "grey20", las = 0)
-dev.off()
+main_performance_plot(d_sim_perf_wide, file_name = "../figs/performance.pdf",
+  include_ram = FALSE)
+main_performance_plot(d_sim_perf_wide_basic,
+  file_name = "../figs/performance-basic.pdf")
 
 # error metrics for slope:
 d_slope_error <- d_slope_plot %>%
