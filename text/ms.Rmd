@@ -1,9 +1,11 @@
 <!-- TODO
 - [ ] add discussion of uncertainty (CIs) and ML (and incorporating uncertainty into pred.)
 - [x] add back in the roc plot and sentence in the main text
-- [ ] rerun the main simulation analysis because the equations of change for the slope
+- [x] rerun the main simulation analysis because the equations of change for the slope
 - [ ] manually adjusted the labels in figure 4
 - [x] update the magic number get inserted to use the equation that only has the basic model
+- [ ] check figure order
+- [ ] check all remaining in-text todo items
 -->
 
 ```{r, echo=FALSE}
@@ -42,8 +44,11 @@ Improving estimates of population status and trend with superensemble models
 Alternative 1: Combining stock-assessment output with ensemble modelling
 
 \noindent
-Alternative 2: Ensembles of data-limited stock-assessments can improve accuracy
+Alternative 2: Ensembles of data-limited stock assessments improve accuracy
 and reduce bias of $B/B_\mathrm{MSY}$ estimates
+
+\noindent Running title: Superensembles of population status
+
 
 \bigskip
 
@@ -114,8 +119,6 @@ California Santa Barbara, Santa Barbara, CA, 93106-5131, USA
 Fishery Sciences, Box 355020, University of Washington, Seattle, WA  98195, USA
 E-mail: sandrsn@uw.edu
 
-\noindent Running title: Superensembles of population status
-
 \clearpage
 <!--up to 250 words-->
 
@@ -142,10 +145,13 @@ stocks and tested them with cross-validation and against a global database of
 `r ram_stocks_n` real stock assessments. We found that ensemble methods
 substantially improved estimates of population status and trend. Random forest
 and boosted regression trees performed the best for estimating population
-status: accuracy improved `r mean_sim$mach_vs_ind_mare_fold`%, rank-order
-correlation between predicted and true status improved from `r
-mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range` across models?, and
-bias (median proportional error) declined from `r mean_sim$ind_mre_range` to
+status: accuracy improved
+`r mean_sim$mach_vs_ind_mare_fold`%, rank-order
+correlation between predicted and true status improved from
+`r mean_sim$ind_corr_range` to
+`r mean_sim$mach_corr_range` across models, and
+bias (median proportional error) declined from
+`r mean_sim$ind_mre_range` to
 `r mean_sim$mach_mre_range`. We found similar improvements when predicting the
 trend of status and when applying the simulation-trained superensembles to
 catch data for global fish stocks. Ensemble methods can improve estimates of
@@ -166,7 +172,7 @@ Status and trend are two of the most fundamental values to quantify in the
 management of ecological populations [e.g. @iucn2015]. However, managers are
 often faced with reconciling multiple uncertain and potentially conflicting
 estimates of status and trend [e.g. @brodziak2010; @branch2011; @deroba2015].
-For example, one models may suggest a population is at risk and declining in
+For example, one model may suggest a population is at risk and declining in
 abundance while others may suggest it is not at risk and stable.
 
 One solution is to take the average or weighted average of several model
@@ -174,7 +180,7 @@ predictions, i.e. an ensemble. Such ensembles are typically more accurate and
 less biased than individual model estimates and can integrate uncertainty in
 model structure, initial conditions, and parameter estimation
 [@dietterich2000; @araujo2007]. Ensembles are superior to individual models
-for at least three reasons: (1) statistically by averaging across models and
+in at least three ways: (1) statistically by averaging across models and
 therefore being less likely to pick the "wrong" model, (2) computationally by
 reducing the risk of getting stuck in a local optima, and (3)
 representationally by expanding the range of hypotheses explored
@@ -218,16 +224,16 @@ are not available for the majority of fish populations, including those of
 conservation concern and of economic interest to fisheries [@fao2014].
 
 Therefore, a number of models have been proposed to assess $B/B_\mathrm{MSY}$
-based on the limited data available for the majority of fish stocks: (1)
-a time series of the total biomass of catch and (2) a basic understanding of
+based on the limited data available for the majority of fish stocks: (1) a time
+series of the total biomass of catch and (2) a basic understanding of
 population productivity [e.g. @vasconcellos2005; @martell2013]. Recently,
-@rosenberg2014 investigated the performance of four data-limited models
-through a large-scale simulation experiment. Three of these models were based
-on Schaefer (logistic) biomass dynamics and one was an empirical model fitted
-to more data-rich stock assessment output. The four models frequently
-disagreed about population status, no one model had strong performance across
-all fish stocks, and some models performed better than others depending on
-circumstances (e.g. Fig. \ref{motivate}).
+@rosenberg2014 investigated the performance of four data-limited models through
+a large-scale simulation experiment. Three of these models were based on
+Schaefer (logistic) biomass dynamics and one was an empirical model fitted to
+more data-rich stock-assessment output. The four models frequently disagreed
+about population status (e.g. Fig. \ref{motivate}), no one model had strong
+performance across all fish stocks, and some models performed better than
+others depending on circumstances.
 
 Here, we estimate population status and trend of exploited fish populations
 using ensembles and superensembles (collectively 'ensemble methods') of these
@@ -268,7 +274,7 @@ $K$, and $C$ represents catch. The fourth model is an empirically derived model
 based on the RAM Legacy Stock Assessment Database [@ricard2012]. @rosenberg2014
 provide a full background on these four methods and code to fit all the models
 is available in an accompanying package `datalimited` for the statistical
-software R <https://github.com/datalimited/datalimited> (*Private while in
+software R [@r2015] (<https://github.com/datalimited/datalimited>) (*Private while in
 review*). In summary:
 
 * *CMSY* (catch-MSY) implements a stock-reduction analysis with Schaefer
@@ -328,7 +334,7 @@ measurement error. @rosenberg2014 ran ten iterations for each combination
 of factors adding stochastic draws of recruitment and catch-recording
 variability each time to generate a total of 5760 stocks. The simulation
 models were built in the `FLR` packages [@kell2007,
-<http://flr-project.org>] for the statistical software R [@r2015]. Code to
+<http://flr-project.org>] for the statistical software R. Code to
 generate the simulations is available at
 <https://github.com/iagomosqueira/stockStatusFAO>.
 
@@ -351,6 +357,8 @@ we fit the superensemble models in log space and exponentiated the
 predictions. For the estimates of $B/B_\mathrm{MSY}$ slope, which are not
 bounded at zero, we fit superensemble models on the natural untransformed
 scale.
+
+TODO: standardize notation of the following with figure 2
 
 We compared an ensemble average and three superensembles of varying
 complexity: a linear model with two-way interactions, a random forest, and a
@@ -421,6 +429,8 @@ densities at frequencies of 0.20 and 0.05, which correspond to 5- and 20-year
 cycles. We include the results of adding these additional covariates in the
 supplementary materials.
 
+TODO add short description of spectral densities
+
 ## Applying the superensemble models and testing performance
 
 Once the superensemble models are built, we can apply them to new stocks that
@@ -454,7 +464,7 @@ use all four individual models.
 
 In the case of the RAM Legacy Stock Assessment Database, we used superensembles
 trained on the entire simulation dataset. However, since mPRM is built on the
-same stock assessment database, we applied three-fold cross-validation to the
+same stock-assessment database, we applied three-fold cross-validation to the
 data underlying the mPRM model so that the dataset with which mPRM was trained
 (for the individual model and superensemble) was separate from the dataset with
 which it was tested.
@@ -472,11 +482,10 @@ measure accuracy, and Spearman's rank-order correlation between predicted and
 'true' values to measure the ability to correctly rank populations. When
 testing with the RAM Legacy Stock Assessment database, we treated the
 estimates from these data-rich stock assessments as known without error. Thus,
-any error in the stock assessment estimates of the mean or slope of
+any error in the stock-assessment estimates of the mean or slope of
 $B/B_\mathrm{MSY}$ also contributes to our estimates of prediction error for
 each of the four data-limited models and the ensembles. Code to reproduce our
-analysis and an R package to fit the data-limited assessment models are
-available at <https://github.com/datalimited/ensembles> (*Private while in
+analysis is available at <https://github.com/datalimited/ensembles> (*Private while in
 review*).
 
 # Results
