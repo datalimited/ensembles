@@ -256,9 +256,9 @@ in the figure with the partial dependence -->
 
 ## Individual models of population status
 
-We fit four individual data-limited models that use data on catch and basic
+We fit four individual data-limited models that use catch data and basic
 life-history parameters to estimate $B/B_\mathrm{MSY}$. We chose these models
-because because they can be fit to the vast majority of fisheries around the
+because they can be fit to the vast majority of fisheries around the
 world, are established in the literature, and have been extensively simulation
 tested [@rosenberg2014].
 
@@ -415,13 +415,12 @@ I think. Jess: probably add this below the section explaining superensembles-->
 Superensemble models allow us to incorporate additional covariates and
 potentially leverage interactions between these covariates and individual model
 predictions. Additional covariates could be, for example, life-history
-characteristics, information on exploitation patterns, or statistical properties
-of the data. For simplicity, and since many possible covariates, such as fishing
-effort dynamics, would not be known for many real-world data-limited scenarios,
-we added only one set of additional covariates: spectral properties of the catch
-time series. Spectral analysis decomposes a time series into the frequency
-domain and provides a means of describing the cyclical shape of the catch series
-that is independent of time series length (except in affecting precision) and
+characteristics, information on exploitation patterns, or statistical
+properties of the data. We tested the performance benefits of including one set
+of additional covariates: spectral properties of the catch time series.
+Spectral analysis decomposes a time series into the frequency domain and
+provides a means of describing the cyclical shape of the catch series that is
+independent of time series length (except in affecting precision) and
 independent of absolute magnitude of catch. We fit spectral models to the
 scaled catch time series (catch divided by maximum catch) with the `spec.ar`
 function in R and recorded representative short- and long-term spectral
@@ -437,7 +436,7 @@ Once the superensemble models are built, we can apply them to new stocks that
 we'd like to know the status of. To do this we applied the individual models
 to our stocks of interest and then applied these data to our already built
 superensemble models. In this paper we applied the superensemble models to
-subsets of the simulated data as a cross validation test and to the RAM Legacy
+subsets of the simulated data as a cross-validation test and to the RAM Legacy
 Stock Assessment database to test on real stocks.
 
 We used repeated three-fold cross validation to test predictive performance: we
@@ -459,8 +458,8 @@ individual models described below did not converge (121), this database
 included `r ram_stocks_n` stocks. We removed these stocks for all methods ---
 both for the individual and superensemble models. An alternative would be to
 fit superensemble models to subsets of the individual models that did converge,
-but for the purposes of this paper we will only use superensemble models that
-use all four individual models.
+but for simplicity we will only use superensemble models fitted to all four
+individual models.
 
 In the case of the RAM Legacy Stock Assessment Database, we used superensembles
 trained on the entire simulation dataset. However, since mPRM is built on the
@@ -589,7 +588,7 @@ individual models that choose different structural model forms, explore
 contrasting but plausible ranges of parameter values, or make uncorrelated
 errors [@ali1996; @dietterich2000; @tebaldi2007]. Such individual models would
 be expected to perform well in different conditions and an ensemble model can
-exploit the best predictive performance of each superensembles? Second,
+exploit the best predictive performance of each superensembles. Second,
 ensemble models will be most effective when they are not overfit to the
 training dataset. Cross-validation testing [@caruana2004; @hastie2009] and
 methods that are robust to overfitting such as random forests [@breiman2001],
@@ -606,14 +605,14 @@ fundamentally differs from the dataset of interest [@hastie2009].
 
 Multi-model inference in the form of coefficient averaging weighted by
 information theoretics such as the Akaike Information Criterion (AIC) is
-a common analytical approach in ecology [@burnham2002; @johnson2004;
+a common analytical approach in fisheries and ecology [@burnham2002; @johnson2004;
 @grueber2011]. The ensemble methods described in this paper share similarities
 with coefficient averaging but differ in other important ways. Ensemble methods
 and coefficient averaging share the long-held notion that multiple working
 hypotheses can contribute useful information for inference [@chamberlin1890].
 A fundamental difference is that coefficient averaging focuses on averaging
 *coefficients* whereas ensembles instead average *predictions*. Thus, ensembles
-provide a more general purpose tool: they do not require information theoretics
+provide a general purpose tool: they do not require information theoretics
 and they can combine different types of models (e.g. parametric and
 non-parametric models or frequentist and Bayesian predictions). Furthermore,
 superensembles extend these benefits by allowing model predictions to be
