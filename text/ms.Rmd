@@ -127,44 +127,14 @@ E-mail: sandrsn@uw.edu
 
 \bigskip
 
-\noindent \textbf{Abstract:} Fishery managers must often reconcile conflicting
-estimates of population status and trend. One solution is to average
-predictions using an ensemble method, but this approach ignores covariance
-between models and may not optimally reduce bias and improve accuracy.
-Superensemble models, commonly used in climate and weather forecasting, may
-provide a superior solution. Superensembles use predictions from multiple
-models as covariates in an additional model. By training this superensemble
-model using known data, we can then use it to predict unknown situations. We
-evaluated the potential for ensemble and superensemble models ('ensemble
-methods') to improve estimates of population status and trend for fisheries.
-We fit four widely applicable data-limited models that estimate stock biomass
-relative to the equilibrium biomass at maximum sustainable yield
-($B/B_\mathrm{MSY}$). We combined the models' estimates to build four ensemble
-methods: an ensemble average and three superensembles (a linear model,
-a random forest, and a boosted regression tree). We used the ensemble methods
-to predict both (i) fishery status and (ii) recent trends of
-$B/B_\mathrm{MSY}$. We trained our models on a simulated dataset of 5760
-stocks and tested them with cross-validation and against a global database of
-`r ram_stocks_n` real stock assessments. We found that ensemble methods
-substantially improved estimates of population status and trend. Random forest
-and boosted regression trees performed the best for estimating population
-status: accuracy improved
-`r mean_sim$mach_vs_ind_mare_fold`%, rank-order
-correlation between predicted and true status improved from
-`r mean_sim$ind_corr_range` to
-`r mean_sim$mach_corr_range` across models, and
-bias (median proportional error) declined from
-`r mean_sim$ind_mre_range` to
-`r mean_sim$mach_mre_range`. We found similar improvements when predicting the
-trend of status and when applying the simulation-trained superensembles to
-catch data for global fish stocks. Ensemble methods can improve estimates of
-status and trends; however, they must be tested, formed from a diverse set of
-accurate models, and built on a dataset representative of the populations to
-which they are applied. *TODO: Still need to cut ~30 words*
+\noindent \textbf{Abstract:}
+Fishery managers must often reconcile conflicting estimates of population status and trend. Superensemble models, commonly used in climate and weather forecasting, may provide an effective solution. This approach uses predictions from multiple models as covariates in an additional "superensemble" model fitted to known data. We evaluated the potential for ensemble averages and superensemble models ("ensemble methods") to improve estimates of population status and trend for fisheries. We fit four widely applicable data-limited models that estimate stock biomass relative to the equilibrium biomass at maximum sustainable yield ($B/B_\mathrm{MSY}$). We combined estimates of recent fishery status and trends in $B/B_\mathrm{MSY}$ with four ensemble methods: an ensemble average and three superensembles (a linear model, random forest, and boosted regression tree). We trained our superensembles on a simulated dataset of 5760 stocks and tested them with cross-validation and against a global database of `r ram_stocks_n` stock assessments. Ensemble methods substantially improved estimates of population status and trend. Random forest and boosted regression trees performed the best at estimating population status: accuracy improved `r mean_sim$mach_vs_ind_mare_fold`%, rank-order correlation between predicted and true status improved from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and bias (median proportional error) declined from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`. We found similar improvements when predicting trend and when applying the simulation-trained superensembles to catch data for global fish stocks. Ensemble methods can improve estimates of status and trends; however, they must be tested, formed from a diverse set of accurate models, and built on a dataset representative of the populations to which they are applied.
+
+
 
 \bigskip
 
-\noindent Keywords: data-limited fisheries, ensemble methods, multi-model
+\noindent Keywords: CMSY, data-limited fisheries, ensemble methods, multi-model
 averaging, population dynamics, sustainable resource management
 
 \tableofcontents
