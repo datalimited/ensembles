@@ -1,4 +1,4 @@
-# Figures
+# Figure captions
 
 <!--The legends for all figures should be grouped on a page that precedes the
 figures. Do not place a figure and its legend on the same page.-->
@@ -7,9 +7,10 @@ figures. Do not place a figure and its legend on the same page.-->
 \noindent Figure 1: Different models can suggest conflicting population
 statuses and trends. Shown here are trajectories of estimated \bbmsy\\ from
 four data-limited assessment methods (colours) and a data-rich stock
-assessment (black). Lines indicate median fits and shaded regions indicate
-interquartile ranges. Dashed horizontal line indicates $B/B_\mathrm{MSY} =
-1$.
+assessment (black) for Southern blue whiting (*Micromesistius australis*) on
+Campbell Island Rise, New Zealand. Lines indicate median fits and shaded
+regions indicate interquartile ranges. Dashed horizontal line indicates
+$B/B_\mathrm{MSY} = 1$.
 
 \bigskip
 
@@ -28,7 +29,7 @@ this linear model. The $i$ subscripts represent individual fish stocks from
 $1$ to $n$, and $y$ represents the known status. (b) The superensemble can
 then be used to predict on new stocks of interest. The same individual models
 are fit to populations of interest and then combined using the previously
-fitted superensemble mode. Here, the $j$ subscripts represent individual fish
+fitted superensemble model. Here, the $j$ subscripts represent individual fish
 stocks from $1$ to $m$, and $\hat{y}$ represents the predicted status. The
 $\hat{\beta}$ represent the parameters estimated when the superensemble was
 fit in panel a.
@@ -71,6 +72,8 @@ metrics are derived from the data in Fig. \ref{hexagon} and based on repeated
 three-fold cross-validation testing.
 
 \clearpage
+
+# Figures
 
 \begin{figure}[htbp]
 \begin{center}

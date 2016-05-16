@@ -26,6 +26,7 @@ $(TEXT).pdf: $(MS).tex $(SOM).tex $(FIGS).tex $(TEXT).tex $(REFS).bib
 	bibtex $(TEXT)
 	pdflatex $(TEXT)
 	pdflatex $(TEXT)
+	pdflatex $(TEXT)
 
 dropbox: $(TEXT).pdf rtf
 	cp $(TEXT).pdf ~/Dropbox/Public/$(TEXT).pdf
