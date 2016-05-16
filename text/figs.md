@@ -15,24 +15,24 @@ $B/B_\mathrm{MSY} = 1$.
 \bigskip
 
 \noindent Figure 2: Using a superensemble model to predict population status.
-The process is illustrated graphically on the left and with R pseudocode on
-the right. (a) Individual models (red and blue lines) are fit to training data
-(dots) from populations of known or assumed status (known status shown by
-black line). The shaded gray boxes indicate the recent time period that we are
+The process is illustrated graphically on the left and with R pseudocode on the
+right. (a) Individual models (red and blue lines) are fit to training data
+(dots) from populations of known or assumed status (known status shown by black
+line). The shaded gray boxes indicate the recent time period that we are
 interested in for this paper. Estimates from these individual models,
-potentially combined with additional covariates, are then used as covariates
-in a statistical model fitted to the known or assumed population status as the
-response (here represented as a linear model). The symbols $\beta$ and $X$
-represent estimated parameters in the linear model and the status estimates
-from models 1 and 2, respectively. The symbol $\epsilon$ represents error in
-this linear model. The $i$ subscripts represent individual fish stocks from
-$1$ to $n$, and $y$ represents the known status. (b) The superensemble can
-then be used to predict on new stocks of interest. The same individual models
-are fit to populations of interest and then combined using the previously
-fitted superensemble model. Here, the $j$ subscripts represent individual fish
-stocks from $1$ to $m$, and $\hat{y}$ represents the predicted status. The
-$\hat{\beta}$ represent the parameters estimated when the superensemble was
-fit in panel a.
+potentially combined with additional covariates, are then used as covariates in
+a statistical model fitted to the known or assumed population status as the
+response (here represented as a linear model). The symbols $\beta$ and $\hat{b}$
+represent parameters in the linear model and the status estimates from
+individual models, respectively. The symbol $\epsilon$ represents error in this
+linear model. The $i$ subscripts represent individual fish stocks from $1$ to
+$n$, and $\theta$ represents the known status. (b) The superensemble can then be
+used to predict on new stocks of interest. The same individual models are fit to
+populations of interest and then combined using the previously fitted
+superensemble model. Here, the $j$ subscripts represent individual fish stocks
+from $1$ to $m$, and $\hat{\theta}$ represents the predicted status. The
+$\hat{\beta}$ represent the parameters estimated when the superensemble was fit
+in panel a.
 
 \bigskip
 

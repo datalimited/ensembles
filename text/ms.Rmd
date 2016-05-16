@@ -219,7 +219,7 @@ of predictions.
 
 In fisheries science, the commonly used operational models for determining
 status and trend of exploited fish populations are stock assessments, i.e.,
-population models coupled to an observation model, that incorporate all
+population models coupled to an observation model that incorporate all
 appropriate data (e.g. catches, size and age distributions, surveys, and
 tagging information) to quantify values such as the biomass of a stock that
 can produce maximum sustainable yield ($B_\mathrm{MSY}$) [@hilborn1992].
@@ -239,15 +239,14 @@ performance across all fish stocks, and some models performed better than
 others depending on circumstances.
 
 Here, we estimate population status and trend of exploited fish populations
-using ensembles and superensembles (collectively 'ensemble methods') of these
+using ensembles and superensembles (collectively "ensemble methods") of these
 four data-limited models. We apply four ensemble-method approaches of varying
 complexity to both simulated and real-world fish stocks and compare their
 predictive performance against each other and the individual models.
 
 # Methods
 
-<!--TODO Add in the reference to (Fig. \ref{didactic}) and reorder the figures and add
-in the figure with the partial dependence -->
+TODO ADD OVERVIEW HERE.
 
 ## Individual models of population status
 
@@ -335,32 +334,31 @@ generate the simulations is available at
 
 ## Building the superensemble models
 
-The individual models we seek to combine with superensembles provide time
-series of stock status ($B/B_\mathrm{MSY}$). Therefore, we can use
-superensembles to estimate any property of these time series. Here, we focus
-on two properties: the mean and slope of $B/B_\mathrm{MSY}$ in the last five
-years. Together, these quantities address the recent state and trend of stock
-status, which are both of management and conservation interest [e.g. @hutchings2010; @iucn2015]. To avoid undue influence of the time series end points
-on the calculated slope, we measured the slope as the Theil-Sen estimator of median slope [@theil1950].
+The individual models we seek to combine with superensembles provide time series
+of stock status ($B/B_\mathrm{MSY}$). Therefore, we can use superensembles to
+estimate any property of these time series. Here, we focus on two properties:
+the mean and slope of $B/B_\mathrm{MSY}$ in the last five years. Together, these
+quantities address the recent state and trend of stock status, which are both of
+management and conservation interest [e.g. @hutchings2010; @iucn2015]. To avoid
+undue influence of the time series end points on the calculated slope, we
+measured the slope as the Theil-Sen estimator of median slope [@theil1950].
 
-We used the mean or slope of $B/B_\mathrm{MSY}$ as the response variable and
-the predictions from the individual models as predictors in our superensemble
-models. When modelling mean $B/B_\mathrm{MSY}$ --- a ratio bounded at zero ---
-we fit the superensemble models in log space and exponentiated the
-predictions. For the estimates of $B/B_\mathrm{MSY}$ slope, which are not
-bounded at zero, we fit superensemble models on the natural untransformed
-scale.
+We used the mean or slope of $B/B_\mathrm{MSY}$ as the response variable and the
+predictions from the individual models as predictors in our superensemble models
+(Fig. \ref{didactic}a). When modelling mean $B/B_\mathrm{MSY}$ --- a ratio
+bounded at zero --- we fit the superensemble models in log space and
+exponentiated the predictions. For the estimates of $B/B_\mathrm{MSY}$ slope,
+which are not bounded at zero, we fit superensemble models on the natural
+untransformed scale.
 
-TODO: standardize notation of the following with figure 2
-
-We compared an ensemble average and three superensembles of varying
-complexity: a linear model with two-way interactions, a random forest, and a
-boosted regression tree. We describe these models as estimating
-$\hat{\theta}$, which represents either the ensemble estimated $\log
-B/B_\mathrm{MSY}$ or slope of $B/B_\mathrm{MSY}$. The individual model
-estimates of $\log B/B_\mathrm{MSY}$ or slope of $B/B_\mathrm{MSY}$ are
-represented as $\hat{b}$ for models $i$ $1$ through $4$ (CMSY, SSCOM, COM-SIR, mPRM).
-The ensemble average for each fishery $i$ was calculated as:
+We compared an ensemble average and three superensembles of varying complexity:
+a linear model with two-way interactions, a random forest, and a boosted
+regression tree. We describe these models as estimating $\hat{\theta}$, which
+represents either the ensemble estimated $\log B/B_\mathrm{MSY}$ or slope of
+$B/B_\mathrm{MSY}$. The individual model estimates of $\log B/B_\mathrm{MSY}$ or
+slope of $B/B_\mathrm{MSY}$ are represented as $\hat{b}$ for models $i$ $1$
+through $4$ (CMSY, COM-SIR, SSCOM, mPRM). The ensemble average for each fishery
+$i$ was calculated as:
 
 \begin{equation}
 \hat{\theta_i} = \left( \hat{b}_{i,1} + \hat{b}_{i,2} + \hat{b}_{i,3} + \hat{b}_{i,4} \right) / 4, \quad
@@ -417,12 +415,12 @@ TODO add short description of spectral densities
 
 ## Applying the superensemble models and testing performance
 
-Once the superensemble models are built, we can apply them to new stocks that
-we'd like to know the status of. To do this we applied the individual models
-to our stocks of interest and then applied these data to our already built
-superensemble models. In this paper we applied the superensemble models to
-subsets of the simulated data as a cross-validation test and to the RAM Legacy
-Stock Assessment database to test on real stocks.
+Once the superensemble models are built, we can apply them to new stocks to
+estimate their status (Fig. \ref{didactic}b). To do this we applied the
+individual models to our stocks of interest and then applied these data to our
+already built superensemble models. In this paper we applied the superensemble
+models to subsets of the simulated data as a cross-validation test and to the
+RAM Legacy Stock Assessment database to test on real stocks.
 
 We used repeated three-fold cross validation to test predictive performance: we
 randomly divided the dataset into three sets, built superensemble models on
@@ -516,12 +514,13 @@ The superensemble models were able to improve the predictive performance by
 harnessing the best properties of individual models, the covariance between
 individual models, and interactions with other covariates. For example, SSCOM
 had strong predictive ability when it predicted low $B/B_\mathrm{MSY}$ (Fig.
-\ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were
-approximately linearly related to $B/B_\mathrm{MSY}$ within the low and high
-clusters of predictions (Fig. \ref{partial-sim}). SSCOM contributed most strongly on its own to determining trend (Fig. \ref{partial-sim-slope}). Superensembles also exploited
-the covariance between individual model predictions. For instance, both the
-linear model and GBM ensemble suggest that if mPRM and SSCOM predict high
-status, the true status also tends to be high (Figs \ref{lm-coefs},
+\ref{hexagon}c, Fig. \ref{partial-sim}c) and CMSY predictions were approximately
+linearly related to $B/B_\mathrm{MSY}$ within the low and high clusters of
+predictions (Fig. \ref{partial-sim}). SSCOM contributed most strongly on its own
+to determining trend (Fig. \ref{partial-sim-slope}). Superensembles also
+exploited the covariance between individual model predictions. For instance,
+both the linear model and GBM ensemble suggest that if mPRM and SSCOM predict
+high status, the true status also tends to be high (Figs \ref{lm-coefs},
 \ref{partial-2d-sim}l). The addition of spectral density covariates helped the
 superensemble models correctly predict higher status values (Fig.
 \ref{hexagon-sim-covariates}g, h). The performance of the ensembles was only
@@ -540,18 +539,6 @@ superensembles increased accuracy by
 from `r mean_ram$ind_mre_range` to `r mean_ram$mach_mre_range`.
 
 # Discussion
-
-<!-- Dan: Lastly, it's worth noting that this approach, as laid out here is for
-helping improve potentially conflicting estimates of the same metric, B/Bmsy. In
-many cases though a fishery is going to be basing its decisions on streams of
-multiple indicators, e.g trends in SPR and B/Bmsy. While the ensemble methods
-here can help refine estimates of individual metrics, it's still worth looking
-at what alternative data streams are telling you if possible. E.g. if a purely
-catch based B/Bmsy estimate is high and has a positive slope, but mean lengths
-and SPR are decreasing, managers will still need to think about how to deal with
-these conflicting signals. So, this ensemble method, as I interpret it, is
-helpful for resolving conflicts within metric, but doesn't necesarily resolve
-conflicts across metrics (if I'm understanding these methods right) -->
 
 Ensemble methods provide a useful approach to situations where environmental
 resource management decisions must be made on the basis of multiple,
@@ -654,10 +641,6 @@ increase the robustness of spatial predictions when designing networks of
 protected areas [@rassweiler2014] or to forecast potential spatial shifts in
 species distribution given climate impacts [@harsch2014].
 
-<!-- TODO put back when space: or to evaluate the effect of conservation
-management actions when experimental or observational data are limited
-[@walsh2012].-->
-
 \noindent
 
 # Acknowledgments
@@ -670,98 +653,3 @@ comments during the development of this project, and R.D. Methot for comments
 on an earlier version of the manuscript. We thank the Gordon and Betty Moore
 Foundation for funding the working group "Applying data-limited stock status
 models and developing management guidance for unassessed fish stocks".
-
-<!--Funding...-->
-
-<!--# Citation notes-->
-
-<!--
-- @breiner2015 ensemble models of species distribution models for rare species
-
-- @jones2015 ensemble models of species distribution models - globally for
-  marine biodiversity
-
-- [@greene2006] example similar to ours but with climate models (Bayesian
-  multilevel ensemble)
-
-- [@kell2007] FLR
-
-- multiple learners book [@alpaydin2010]
-
-- [@caruana2004] nice paper on ensemble models; prob of overfitting increases
-  with more models, bagging important
-
-- [@tebaldi2007] key paper: review of 'multi-model ensembles for climate projections'
-
-- famous ensemble is DEMETER: Development of a European Multi-model Ensemble
-  System for Seasonal to Interannual Prediction @hagedorn2005 is a good
-  reference
-
-- Examples of where ensemble models are shown to be better than any one:
-  @thomson2006 (public health - malaria), @cantelaube2005 (agriculture - crop
-  yield) (citations taken from @tebaldi2007)
-
-- simple averages are used very commonly in climate science - e.g. IPCC 2001
-
-- @tebaldi2007: weighting obviously makes sense, but how do we define a
-  performance metric that is based on past observations that is relevant to the
-  future?
-
-- @tebaldi2007: model independence important
-
-- for climate, weighted averages perform better than simple averages [@min2006],
-  but are those same weights applicable to the future (or in our case other
-  fisheries)?
-
-Why do ensemble methods work?
-
-- error cancellation is one but not the only reason for superiority of ensemble
-  models [@hagedorn2005]
-
-- ensemble model may be only marginally better than the best single model in
-  any given case, but we don't usually know which is the best single model
-  [@hagedorn2005]
-
-- ensemble models useful for regional climate models too; as an example,
-  @pierce2009 use 42 metrics to characterize model performance in regional
-  climate model ensembles; found that ensemble models were superior to any one
-  model --- especially when considering multiple metrics
-
-- @knutti2009: key review paper on motivation and challenges of combining
-  climate projection models; performance on testing / current data may only
-  weakly relate to future / other datasets
-
-- @murphy2004: Nature paper on ensembles of climate model simulations; weighted
-  average better performance than unweighted average
-
-- @dietterich2000: highly cited book chapter "Ensemble Methods in Machine
-  Learning"; ensembles are often much more accurate than the "individual
-  classifiers that make them up"; but components must be diverse and accurate
-
-- @dietterich2000: a main justification for ensembles: they are
-  representational --- no one model usually can contain all hypothetical
-  functional forms, but many separate models can cover more hypotheses
-
-- strong paper showing that ensemble models are most accurate when the various
-  individual models make errors in uncorrelated ways [@ali1996]
-
-- without substantial training-testing data, appropriate model weights can be
-  very hard to deduce and can cause more harm than good (compared to equal
-  weighting) [@weigel2010] (they give the example of seasonal forecasting where
-  a ton of hind cast testing can be done, vs. long-term climate) (asymmetrical
-  loss function)
-
-- [@weigel2010] optimal weights are always as good or better than equal
-  weights, but if you get the weights wrong, you can be better off just using
-  equal weights; but averaging was almost always better than any one model
-
-- @rykiel1996 "Testing ecological models: the meaning of validation" (see for
-  performance criteria, theory on model testing and assessment)
-
-model averaging AIC:
-f Chamberlin 1890).  multiple woring hypotheses
-  (e.g., Johnson and Omland 2004, Hobbs and Hilborn 2006, Burnham et al. 2011,
-  52 Grueber et al. 2011).
--->
-
-<!-- vim: set formatoptions=nroq: -->
