@@ -2,9 +2,9 @@
 - [ ] add discussion of uncertainty (CIs) and ML (and incorporating uncertainty into pred.)
 - [x] add back in the roc plot and sentence in the main text
 - [x] rerun the main simulation analysis because the equations of change for the slope
-- [ ] manually adjusted the labels in figure 4
+- [x] manually adjusted the labels in figure 4
 - [x] update the magic number get inserted to use the equation that only has the basic model
-- [ ] check figure order
+- [x] check figure order
 - [ ] check all remaining in-text todo items
 -->
 
@@ -216,7 +216,8 @@ predictive performance against each other and the individual models.
 
 # Methods
 
-TODO ADD OVERVIEW HERE.
+To test the ability of superensembles to improve estimates of status and trend in data-limited fish stocks, we first fit four individual assessment models to a large simulated dataset of fish stocks. We then built and tested the performance of superensembles using cross-validation of the simulated dataset. Finally, we tested superensembles built with the entire simulated dataset against a database of global fish sticks. We describe these steps in detail below and illustrate the general approach both with illustrations and pseudocode in Fig. 2.
+
 
 ## Individual models of population status
 
