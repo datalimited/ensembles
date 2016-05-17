@@ -121,20 +121,6 @@ across all data points holding the given predictor at a specific value.}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=0.6\textwidth]{../figs/lm-coefs.pdf}
-\caption{Standardized regression coefficients from a linear model ensemble
-predicting log mean $B/B_\mathrm{MSY}$ in the last five years. Coefficients
-are centered (mean of each predictor is subtracted) and scaled (divided by two
-standard deviations). Thick and thin lines represent +/- one and two standard
-errors from the mean.}
-\label{lm-coefs}
-\end{center}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[htbp]
-\begin{center}
 \includegraphics[width=6.5in]{../figs/partial-sim-slope.pdf}
 \caption{Partial dependence plots for GBM ensemble models fitted to the
 simulation data to predict the slope of $B/B_\mathrm{MSY}$. Lines represent
@@ -143,6 +129,20 @@ $B/B_\mathrm{MSY}$ after integrating out the other predictor values. The
 marginal effect at a given predictor value is the average predicted response
 across all data points holding the given predictor at a specific value.}
 \label{partial-sim-slope}
+\end{center}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../figs/lm-coefs.pdf}
+\caption{Standardized regression coefficients from a linear model ensemble
+predicting log mean $B/B_\mathrm{MSY}$ in the last five years. Coefficients
+are centered (mean of each predictor is subtracted) and scaled (divided by two
+standard deviations). Thick and thin lines represent +/- one and two standard
+errors from the mean.}
+\label{lm-coefs}
 \end{center}
 \end{figure}
 
