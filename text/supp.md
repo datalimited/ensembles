@@ -93,7 +93,7 @@ divide the stocks into these two categories.}
 <!-- TODO fix inkscape version of slope fig-->
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=5in]{../figs/performance-slope-sim-inkscape.pdf}
+\includegraphics[width=5in]{../figs/performance-slope-sim.pdf}
 \caption{Same as Fig.~\ref{performance} but with the slope of $B/B_\mathrm{MSY}$ in
 the last five years as the response variable. This is based on the data shown
 in Fig.~\ref{scatter-sim-slope}.}
@@ -206,4 +206,3 @@ the lower row in Fig.~\ref{hexagon}.}
 
 
 <!-- vim: set formatoptions=nroq tw=78: -->
-
