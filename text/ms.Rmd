@@ -143,10 +143,10 @@ superensembles on a simulated dataset of 5760 stocks and tested them with
 cross-validation and against a global database of `r ram_stocks_n` stock
 assessments. Ensemble methods substantially improved estimates of population
 status and trend. Random forest and boosted regression trees performed the best
-at estimating population status: accuracy improved `r
-mean_sim$mach_vs_ind_mare_fold`%, rank-order correlation between predicted and
-true status improved from `r mean_sim$ind_corr_range` to `r
-mean_sim$mach_corr_range`, and bias (median proportional error) declined from
+at estimating population status: accuracy improved
+`r mean_sim$mach_vs_ind_mare_fold`%, rank-order correlation between predicted and
+true status improved from `r mean_sim$ind_corr_range` to
+`r mean_sim$mach_corr_range`, and bias (median proportional error) declined from
 `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`.
 We found similar improvements when predicting trend and when applying the
 simulation-trained superensembles to catch data for global fish stocks.
