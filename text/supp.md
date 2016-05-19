@@ -15,7 +15,7 @@ content and functionality of these materials. Queries (other than absence of
 the material) should be directed to the corresponding author.
 -->
 
-## Supplementary Tables
+<!-- ## Supplementary Tables
 
 \renewcommand{\thetable}{S\arabic{table}}
 \setcounter{table}{0}
@@ -46,7 +46,7 @@ Spectral density 0.20 & Spectral density (of fraction of maximum catch) at 5 yea
 \label{tab:predictors}
 \end{longtable}
 
-\clearpage
+\clearpage -->
 
 ## Supplementary Figures
 
@@ -122,7 +122,7 @@ across all data points holding the given predictor at a specific value.}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=6.5in]{../figs/partial-sim-slope.pdf}
-\caption{Partial dependence plots for GBM ensemble models fitted to the
+\caption{Partial dependence plots for GBM superensemble models fitted to the
 simulation data to predict the slope of $B/B_\mathrm{MSY}$. Lines represent
 the marginal non-linear effect of each predictor on the slope of
 $B/B_\mathrm{MSY}$ after integrating out the other predictor values. The
@@ -182,9 +182,9 @@ frequencies).}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=6.5in]{../figs/performance.pdf}
-\caption{Same as Fig.~\ref{performance} but with simulation ensembles that have
+\caption{Same as Fig.~\ref{performance}a but with simulation ensembles that have
 two additional covariates (spectral densities of the catch timeseries at two
-frequencies).}
+frequencies). This is based on cross-validation with the simulated dataset.}
 \label{performance-with-covariates}
 \end{center}
 \end{figure}
@@ -194,10 +194,11 @@ frequencies).}
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=6.5in]{../figs/hex-mean-ram-cv.pdf}
-\caption{RAM stocks fit with individual data-limited assessment methods (a--d)
-and ensemble models (e--h) that were trained on the simulated dataset. These
-are based on 3-fold cross-validation of the mPRM model. Panels e--h duplicate
-the lower row in Fig.~\ref{hexagon}.}
+\caption{Estimates of $B/B_\mathrm{MSY}$ for RAM stocks fit with
+individual data-limited assessment methods (a--d) and ensemble methods (e--h)
+that were trained on the simulated dataset. These are based on 3-fold
+cross-validation of the mPRM model. Panels e--h duplicate the lower row in
+Fig.~\ref{hexagon}.}
 \label{hexagon-ram}
 \end{center}
 \end{figure}

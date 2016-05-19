@@ -14,20 +14,20 @@ $B/B_\mathrm{MSY} = 1$.
 
 \bigskip
 
-\noindent Figure 2: Using a superensemble model to predict population status.
+\noindent Figure 2: Using a superensemble model to predict population status from two individual models.
 The process is illustrated graphically on the left and with R pseudocode on the
 right. (a) Individual models (red and blue lines) are fit to training data
 (dots) from populations of known or assumed status (known status shown by black
 line). The shaded gray boxes indicate the recent time period that we are
-interested in for this paper. Estimates from these individual models,
+interested in for this paper. Estimates of status from these individual models ($\hat{b}_{i,1}$
+and $\hat{b}_{i,2}$),
 potentially combined with additional covariates, are then used as covariates in
 a statistical model fitted to the known or assumed population status as the
-response (here represented as a linear model). The symbols $\beta$ and $\hat{b}$
-represent parameters in the linear model and the status estimates from
-individual models, respectively. The symbol $\epsilon$ represents error in this
-linear model. The $i$ subscripts represent individual fish stocks from $1$ to
+response (here represented as a linear model). The symbols $\beta$ and $\epsilon$
+represent parameters and error in the linear model, respectively.
+The $i$ subscripts represent individual fish stocks from $1$ to
 $n$, and $\theta$ represents the known status. (b) The superensemble can then be
-used to predict on new stocks of interest. The same individual models are fit to
+used to make predictions for new stocks of interest. The same individual models are fit to
 populations of interest and then combined using the previously fitted
 superensemble model. Here, the $j$ subscripts represent individual fish stocks
 from $1$ to $m$, and $\hat{\theta}$ represents the predicted status. The
@@ -44,8 +44,8 @@ built on two-thirds of the data and tested on the remaining third. (a--d)
 Individual data-limited model estimates of mean \bbmsy\\ (biomass divided by
 biomass at maximum sustainable yield) in the last five years for a simulated
 dataset of known population status. (e--h) Ensemble estimates for the same
-populations. Shown are a mean, a linear model with two-way interactions (LM),
-a random forest ensemble (RF), and a generalised boosted regression model
+populations. Shown are a mean ensemble, a linear superensemble model with two-way interactions (LM),
+a random forest superensemble (RF), and a generalised boosted regression model superensemble
 (GBM). (i--l) The same ensemble models, which were trained on the simulated
 dataset, applied to the RAM Legacy stock assessment database and compared to
 data-rich stock assessed status. In the case of the RAM Legacy stock
@@ -60,7 +60,7 @@ from ensemble methods.
 \noindent Figure 4: Performance metrics of individual and ensemble models
 predicting \bbmsy\\ (mean biomass divided by biomass at maximum sustainable
 yield) in the last five years fitted to a dataset with (a) known population
-statuses and (b) the RAM Legacy stock assessment database. The x-axis
+status and (b) the RAM Legacy stock assessment database. The x-axis
 represents within-population inaccuracy: median absolute proportional error
 (MAPE). The y-axis represents across-population Spearman rank-order
 correlation. The top-left corner contains methods with the best performance

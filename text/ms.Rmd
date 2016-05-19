@@ -127,10 +127,32 @@ E-mail: sandrsn@uw.edu
 
 \bigskip
 
-\noindent \textbf{Abstract:}
-Fishery managers must often reconcile conflicting estimates of population status and trend. Superensemble models, commonly used in climate and weather forecasting, may provide an effective solution. This approach uses predictions from multiple models as covariates in an additional "superensemble" model fitted to known data. We evaluated the potential for ensemble averages and superensemble models ("ensemble methods") to improve estimates of population status and trend for fisheries. We fit four widely applicable data-limited models that estimate stock biomass relative to the equilibrium biomass at maximum sustainable yield ($B/B_\mathrm{MSY}$). We combined estimates of recent fishery status and trends in $B/B_\mathrm{MSY}$ with four ensemble methods: an ensemble average and three superensembles (a linear model, random forest, and boosted regression tree). We trained our superensembles on a simulated dataset of 5760 stocks and tested them with cross-validation and against a global database of `r ram_stocks_n` stock assessments. Ensemble methods substantially improved estimates of population status and trend. Random forest and boosted regression trees performed the best at estimating population status: accuracy improved `r mean_sim$mach_vs_ind_mare_fold`%, rank-order correlation between predicted and true status improved from `r mean_sim$ind_corr_range` to `r mean_sim$mach_corr_range`, and bias (median proportional error) declined from `r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`. We found similar improvements when predicting trend and when applying the simulation-trained superensembles to catch data for global fish stocks. Ensemble methods can improve estimates of status and trends; however, they must be tested, formed from a diverse set of accurate models, and built on a dataset representative of the populations to which they are applied.
-
-
+\noindent \textbf{Abstract:} Fishery managers must often reconcile conflicting
+estimates of population status and trend. Superensemble models, commonly used in
+climate and weather forecasting, may provide an effective solution. This
+approach uses predictions from multiple models as covariates in an additional
+"superensemble" model fitted to known data. We evaluated the potential for
+ensemble averages and superensemble models ("ensemble methods") to improve
+estimates of population status and trend for fisheries. We fit four widely
+applicable data-limited models that estimate stock biomass relative to the
+equilibrium biomass at maximum sustainable yield ($B/B_\mathrm{MSY}$). We
+combined these estimates of recent fishery status and trends in $B/B_\mathrm{MSY}$
+with four ensemble methods: an ensemble average and three superensembles (a
+linear model, random forest, and boosted regression tree).  We trained our
+superensembles on a simulated dataset of 5760 stocks and tested them with
+cross-validation and against a global database of `r ram_stocks_n` stock
+assessments. Ensemble methods substantially improved estimates of population
+status and trend. Random forest and boosted regression trees performed the best
+at estimating population status: accuracy improved `r
+mean_sim$mach_vs_ind_mare_fold`%, rank-order correlation between predicted and
+true status improved from `r mean_sim$ind_corr_range` to `r
+mean_sim$mach_corr_range`, and bias (median proportional error) declined from
+`r mean_sim$ind_mre_range` to `r mean_sim$mach_mre_range`.
+We found similar improvements when predicting trend and when applying the
+simulation-trained superensembles to catch data for global fish stocks.
+Superensembles can optimally leverage multiple model predictions;
+however, they must be tested, formed from a diverse set of accurate models, and
+built on a dataset representative of the populations to which they are applied.
 
 \bigskip
 
@@ -143,15 +165,15 @@ averaging, population dynamics, sustainable resource management
 # Introduction
 
 Status and trend are two of the most fundamental values to quantify in the
-management of ecological populations [e.g. @hutchings2010; @iucn2015]. However,
+management of ecological populations [e.g., @hutchings2010; @iucn2015]. However,
 managers are often faced with reconciling multiple uncertain and potentially
-conflicting estimates of status and trend [e.g. @brodziak2010; @branch2011;
+conflicting estimates of status and trend [e.g., @brodziak2010; @branch2011;
 @deroba2015]. For example, one model may suggest a population is at risk and
 declining in abundance while others may suggest it is not at risk and stable.
 
 One solution is to take the average or weighted average of several model
-predictions, i.e. an ensemble. Such ensembles are typically more accurate and
-less biased than individual model estimates and can integrate uncertainty in
+predictions, i.e., an ensemble. Such ensembles are typically more accurate and
+less biased than individual model estimates and can incorporate various types of  uncertainty, such as uncertainty in
 model structure, initial conditions, and parameter estimation
 [@dietterich2000; @araujo2007]. Ensembles are superior to individual models
 in at least three ways: (1) statistically by averaging across models and
@@ -159,12 +181,12 @@ therefore being less likely to pick the "wrong" model, (2) computationally by
 reducing the risk of getting stuck in a local optima, and (3)
 representationally by expanding the range of hypotheses explored
 [@dietterich2000]. This approach forms the basis of many machine learning
-methods [e.g. @dietterich2000], has helped reconcile climate forecasts from
-dozens of models [e.g. @murphy2004; @tebaldi2007; @ipcc2013], and even
+methods [e.g., @dietterich2000], has helped reconcile climate forecasts from
+dozens of models [e.g., @murphy2004; @tebaldi2007; @ipcc2013], and even
 improved early warning signs of malaria outbreaks [@thomson2006]. In ecology,
 ensemble methods are sometimes used to improve species distribution modelling
-[e.g. @araujo2007; @breiner2015] and indeed have been used to combine
-estimates of population status and trend [e.g. @brodziak2010].
+[e.g., @araujo2007; @breiner2015] and indeed have been used to combine
+estimates of population status and trend [e.g., @brodziak2010].
 
 Whereas averages or weighted averages of model estimates may improve
 predictions compared to a single model, they may not optimally leverage
@@ -179,7 +201,7 @@ combination of these models is not simply an average of the two.
 We can exploit these characteristics by using the predictions from a group of
 models as inputs into a separate statistical model. This technique, sometimes
 called superensemble modelling [@krishnamurti1999], is common in climate and
-weather forecasting [e.g. @yun2005; @mote2015]. The superensemble is fit to a
+weather forecasting [e.g., @yun2005; @mote2015]. The superensemble is fit to a
 training dataset where outcomes are well known and then used to predict on a
 dataset of interest. For example, @krishnamurti1999
 combined predictions of wind and precipitation in Asian monsoons via a
@@ -190,7 +212,7 @@ of predictions.
 In fisheries science, the commonly used operational models for determining
 status and trend of exploited fish populations are stock assessments, i.e.,
 population models coupled to an observation model that incorporate all
-appropriate data (e.g. catches, size and age distributions, surveys, and
+appropriate data (e.g., catches, size and age distributions, surveys, and
 tagging information) to quantify values such as the biomass of a stock that
 can produce maximum sustainable yield ($B_\mathrm{MSY}$) [@hilborn1992].
 However, the broad range of data required to conduct these stock assessments
@@ -198,13 +220,13 @@ are not available for the majority of fish populations, including those of
 conservation concern and of economic interest to fisheries [@fao2014].
 Therefore, a number of models have been proposed to assess $B/B_\mathrm{MSY}$
 based on the limited data available for the majority of fish stocks: (1) a time
-series of the total biomass of catch and (2) a basic understanding of
-population productivity [e.g. @vasconcellos2005; @martell2013]. Recently,
+series of the total weight of catch and (2) a basic understanding of
+population productivity [e.g., @vasconcellos2005; @martell2013]. Recently,
 @rosenberg2014 investigated the performance of four data-limited models through
 a large-scale simulation experiment. Three of these models were based on
 Schaefer (logistic) biomass dynamics and one was an empirical model fitted to
 more data-rich stock-assessment output. The four models frequently disagreed
-about population status (e.g. Fig. \ref{motivate}), no one model had strong
+about population status (e.g., Fig. \ref{motivate}), no one model had strong
 performance across all fish stocks, and some models performed better than
 others depending on circumstances.
 
@@ -216,7 +238,13 @@ predictive performance against each other and the individual models.
 
 # Methods
 
-To test the ability of superensembles to improve estimates of status and trend in data-limited fish stocks, we first fit four individual assessment models to a large simulated dataset of fish stocks. We then built and tested the performance of superensembles using cross-validation of the simulated dataset. Finally, we tested superensembles built with the entire simulated dataset against a database of global fish sticks. We describe these steps in detail below and illustrate the general approach both with illustrations and pseudocode in Fig. 2.
+To test the ability of superensembles to improve estimates of status and trend
+in data-limited fish stocks, we first fit four individual assessment models to a
+large simulated dataset of fish stocks. We then built and tested the performance
+of superensembles using cross-validation of the simulated dataset. Finally, we
+tested superensembles built with the entire simulated dataset against a database
+of global fish stocks. We describe these steps in detail below and illustrate
+the general approach both with illustrations and pseudocode in Fig. 2.
 
 
 ## Individual models of population status
@@ -243,10 +271,9 @@ software R [@r2015] (<https://github.com/datalimited/datalimited>) (*Private whi
 review*). In summary:
 
 * *CMSY* (catch-MSY) implements a stock-reduction analysis with Schaefer
-  biomass dynamics [@martell2013]. It requires a prior distribution for $r$
-  and a prior on the relative proportion of biomass at the end of the time
-  series compared to unfished biomass (depletion), which is derived from the
-  percentage of maximum catch at the end of the time series. The version of
+  biomass dynamics [@martell2013]. It requires a prior distributions on $r$ and $K$
+  as well as priors on the relative proportion of biomass at the beginning and end of the time
+  series compared to unfished biomass (depletion). The version of
   the model used in @rosenberg2014 was modified from @martell2013 to generate
   biomass trends from all viable $r$-$K$ pairs and produce an estimate of
   $B/B_\mathrm{MSY}$ from the median trend.
@@ -290,7 +317,7 @@ capacity; and four exploitation settings: (1) a constant exploitation rate,
 single-species fishery, (3) a scenario where exploitation rate increased
 continuously, and (4) a "roller-coaster" scenario where the exploitation
 rate increased and then decreased. Process noise (recruitment variability;
-i.e. unexplained variability in population dynamics) was introduced to the
+i.e., unexplained variability in population dynamics) was introduced to the
 models at two magnitudes in log space, $N(0, 0.2^2)$ and $N(0, 0.6^2)$,
 and was either uncorrelated through time or had first-order autoregressive
 correlation of $0.6$. The simulation also included a scenario with $N(0,
@@ -310,7 +337,7 @@ of stock status ($B/B_\mathrm{MSY}$). Therefore, we can use superensembles to
 estimate any property of these time series. Here, we focus on two properties:
 the mean and slope of $B/B_\mathrm{MSY}$ in the last five years. Together, these
 quantities address the recent state and trend of stock status, which are both of
-management and conservation interest [e.g. @hutchings2010; @iucn2015]. To avoid
+management and conservation interest [e.g., @hutchings2010; @iucn2015]. To avoid
 undue influence of the time series end points on the calculated slope, we
 measured the slope as the Theil-Sen estimator of median slope [@theil1950].
 
@@ -382,27 +409,27 @@ densities at frequencies of 0.20 and 0.05, which correspond to 5- and 20-year
 cycles. We include the results of adding these additional covariates in the
 supplementary materials.
 
-TODO add short description of spectral densities
-
 ## Applying the superensemble models and testing performance
 
-Once the superensemble models are built, we can apply them to new stocks to
-estimate their status (Fig. \ref{didactic}b). To do this we applied the
-individual models to our stocks of interest and then applied these data to our
+Once the superensemble models are built and trained using the simulated stocks
+(or any dataset with "known" status), we can use the superensembles to estimate
+the status of new stocks (Fig. \ref{didactic}b). To do this we applied the
+individual models to our stocks of interest (i.e., CMSY, COM-SIR, SSCOM, mPRM)
+and then used these individual model estimates of status or trend as data in our
 already built superensemble models. In this paper we applied the superensemble
-models to subsets of the simulated data as a cross-validation test and to the
-RAM Legacy Stock Assessment database to test on real stocks.
+models to subsets of the simulated data as a cross-validation test to test
+predictive performance and to the RAM Legacy Stock Assessment database to test
+predictive performance on real stocks.
 
-We used repeated three-fold cross validation to test predictive performance: we
-randomly divided the dataset into three sets, built superensemble models on
-two-thirds of the data, and evaluated predictive performance on the remaining
-third. We repeated this across each of the three splits and then repeated the
-whole procedure 50 times to account for bias that may result from any one set
-of validation splits. In the simulated dataset, there were 10 replicates of
-each unique combination of simulation parameters that differed only in
-stochastic variability. Since the dynamics of these populations were often
-similar, we grouped these stocks in the cross-validation process into either
-the training or testing split.
+We used repeated three-fold cross validation: we randomly divided the dataset
+into three sets, built superensemble models on two-thirds of the data, and
+evaluated predictive performance on the remaining third. We repeated this across
+each of the three splits and then repeated the whole procedure 50 times to
+account for bias that may result from any one set of validation splits. In the
+simulated dataset, there were 10 replicates of each unique combination of
+simulation parameters that differed only in stochastic variability. Since the
+dynamics of these populations were often similar, we grouped these stocks in the
+cross-validation process into either the training or testing split.
 
 We also tested our ensemble methods on the RAM Legacy Stock Assessment Database
 --- a compilation of stock-assessment output from hundreds of exploited marine
@@ -426,7 +453,7 @@ Predictive performance can be evaluated with metrics that represent a variety
 of modelling goals. For continuous response variables such as the mean and
 slope of population status, performance metrics often measure some form of
 bias, precision, accuracy (a combination of bias and precision), or the ability
-to correctly rank or correlate across populations [e.g. @walther2005]. Here, we
+to correctly rank or correlate across populations [e.g., @walther2005]. Here, we
 measure proportional error, defined as $(\hat{\theta} - \theta)/\abs{\theta}$,
 where $\hat{\theta}$ and $\theta$ represent estimated and "true" (or
 stock-assessed) mean or slope of $B/B_\mathrm{MSY}$. We calculated median
@@ -444,7 +471,7 @@ review*).
 # Results
 
 Applied to the simulated dataset of known stock status, the individual models
-had variable success at recovering the mean (status) and slope (trend) of
+had variable success at estimating the mean (status) and slope (trend) of
 $B/B_\mathrm{MSY}$ in the last five years. All models exhibited a high degree of
 scatter around the one-to-one line of perfect status prediction (Fig.
 \ref{hexagon}). In contrast to the known unimodal distribution of status, CMSY
@@ -520,9 +547,8 @@ correlation), two response variables (status and trend), two datasets
 (simulated and global fisheries), and multiple ensemble methods (from a simple
 average to machine learning superensembles). Our results suggest choosing a
 superensemble model that allows for non-linear relationships, such as
-machine learning methods. These methods provide added insight into individual
-model behavior and generally performed the best; however, even a simple average
-of predictions across multiple models may provide a more useful metric than a single model in many cases.
+machine learning methods; these models provided added insight into individual
+model behavior and generally performed the best.
 
 Certain conditions will make some ensemble models more effective than others.
 First, ensembles will be most effective when they are comprised of diverse
@@ -537,7 +563,7 @@ methods that are robust to overfitting such as random forests [@breiman2001],
 may help avoid overfitting ensemble models. We note that our simplest ensemble
 model, an average of individual model predictions, performed approximately as
 well as complex machine learning models when we trained our superensembles on
-the simulation dataset and tested them on a separate "real" dataset (i.e. the
+the simulation dataset and tested them on a separate "real" dataset (i.e., the
 RAM Legacy Stock Assessment database, Fig. \ref{performance}b). Third, ensemble
 models will be most effective when they are trained on data that are
 representative of the dataset of interest [@knutti2009; @weigel2010].
@@ -547,7 +573,7 @@ fundamentally differs from the dataset of interest [@hastie2009].
 
 Multi-model inference in the form of coefficient averaging weighted by
 information theoretics such as the Akaike Information Criterion (AIC) is
-a common analytical approach in fisheries and ecology [e.g. @burnham2002; @johnson2004;
+a common analytical approach in fisheries and ecology [e.g., @burnham2002; @johnson2004;
 @grueber2011]. The ensemble methods described in this paper share similarities
 with coefficient averaging but differ in other important ways. Ensemble methods
 and coefficient averaging share the long-held notion that multiple working
@@ -555,7 +581,7 @@ hypotheses can contribute useful information for inference [@chamberlin1890].
 A fundamental difference is that coefficient averaging focuses on averaging
 *coefficients* whereas ensembles instead average *predictions*. Thus, ensembles
 provide a general purpose tool: they do not require information theoretics
-and they can combine different types of models (e.g. parametric and
+and they can combine different types of models (e.g., parametric and
 non-parametric models or frequentist and Bayesian predictions). Furthermore,
 superensembles extend these benefits by allowing model predictions to be
 combined via non-linear functions that are tuned to known data.
@@ -568,16 +594,17 @@ variables. For instance, SSCOM contributed little to the GBM superensemble
 estimate of status at higher levels of predicted $B/B_\mathrm{MSY}$ (Fig.
 \ref{partial-sim}), but contributed strongly to estimates of trend (Fig.
 \ref{partial-sim-slope}). Formally, fitting superensemble models to specific
-quantities of interest provides an additional calibration step [@rykiel1996].
-Individual models are typically calibrated (i.e. parameters are estimated) based
-on a single response variable; however, this model might then provide a biased
-or inaccurate estimate of other quantities of interest. Ensemble methods provide
-a final calibration step to a quantity of interest. This ensemble calibration
-could further include a loss function tailored to the goals of the model, say
-placing greater weight on accuracy at lower rather than higher status levels.
-Conversely, because superensembles are tailored to a specific response and loss
-function, superensembles force a modeller to choose an operational purpose for
-their model up front [*sensu* @dickey-collas2014].
+quantities of interest (such as the slope of $B/B_\mathrm{MSY}$) provides an additional
+calibration step [@rykiel1996]. Individual models are typically calibrated
+(i.e., parameters are estimated) based on a single response variable; however,
+this model might then provide a biased or inaccurate estimate of other
+quantities of interest. Ensemble methods provide a final calibration step to a
+quantity of interest. This ensemble calibration could include a loss function
+tailored to the goals of the model, say placing greater weight on accuracy at
+lower rather than higher status levels. Conversely, because superensembles are
+tailored to a specific response and loss function, superensembles force a
+modeller to choose an operational purpose for their model up front [*sensu*
+@dickey-collas2014].
 
 As @box1987 noted, all models are wrong, but some may still be useful. The
 ensemble methods we investigated attempt to piece together the useful parts of
@@ -596,15 +623,15 @@ improvement in the mechanisms assumed in the individual models.
 
 Combining predictions from multiple models via superensemble methods is
 broadly useful in other subfields of fisheries science and ecology in general.
-Predictions about extinction risk are widely used at the national (e.g. the US Endangered
-Species Act and the Canadian Species at Risk Act) and international [e.g. the
+Predictions about extinction risk are widely used at the national (e.g., the US Endangered
+Species Act and the Canadian Species at Risk Act) and international [e.g., the
 IUCN Red List, @iucn2015] levels. These risk assessments generally involve
 fitting regression models to outcomes for individual species along with
-predictors of extinction risk [e.g. @anderson2011a; @pinsky2011], or fitting population-dynamic models to data for individual species [e.g. @dfo2010]. Both types of
+predictors of extinction risk [e.g., @anderson2011a; @pinsky2011], or fitting population-dynamic models to data for individual species [e.g., @dfo2010]. Both types of
 models are prone to error caused by model-misspecification and therefore results
 are sensitive to decisions about model structure [@brooks2015]. Although there
 are options to account for potential model-misspecification in determination of
-species risk [e.g. coefficient averaging, @burnham2002; generalized modeling,
+species risk [e.g., coefficient averaging, @burnham2002; generalized modeling,
 @yeakel2011; or semi-parametric methods, @thorson2014], ensemble methods are
 a relatively simple way to combine predictions in a transparent manner. Beyond
 estimates of status and trend, ensemble methods could be used, for example, to
