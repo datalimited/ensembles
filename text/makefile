@@ -21,11 +21,13 @@ all: $(TEXT).pdf
 	#rm ms.md
 
 $(TEXT).pdf: $(MS).tex $(SOM).tex $(FIGS).tex $(TEXT).tex $(REFS).bib
-	# latexmk $(TEXT)
-	pdflatex $(TEXT)
-	bibtex $(TEXT)
-	pdflatex $(TEXT)
-	pdflatex $(TEXT)
+	latexmk $(TEXT)
+	# pdflatex $(TEXT)
+	# bibtex $(TEXT)
+	# pdflatex $(TEXT)
+	# pdflatex $(TEXT)
+	# pdflatex $(TEXT)
+	cp toc.toc anderson-etal-ensembles.toc
 	pdflatex $(TEXT)
 
 dropbox: $(TEXT).pdf rtf
