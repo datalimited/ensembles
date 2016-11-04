@@ -131,6 +131,14 @@ nvar <- 6L
 
 # -------------------
 
+mlm <- lm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
+  spec_freq_0.05 + spec_freq_0.2, data = d_mean)
+mlm2 <- lm(log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
+ spec_freq_0.05 + spec_freq_0.2)^2, data = d_mean)
+mlm3 <- lm(log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
+ spec_freq_0.05 + spec_freq_0.2)^3, data = d_mean)
+bbmle::AICtab(mlm, mlm2, mlm3)
+
 m <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
     spec_freq_0.05 + spec_freq_0.2, distribution = "gaussian",
   data = d_mean, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
