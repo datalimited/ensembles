@@ -613,12 +613,13 @@ fundamentally differs from the dataset of interest [@hastie2009].
 <!-- estimates. --> 
 \R{B}
 We illustrated that superensembles can improve point
-estimates of status and trends in status; however, there is no reason why
+estimates of population status and trends in status; however, there is no reason why
 superensembles cannot also be used to
 provide measures of uncertainty around those point estimates. 
-First, the same approaches to deriving measures of uncertainty from any regression model are available to a superensemble. 
+The same approaches to deriving measures of uncertainty from any regression model are available to a superensemble. 
 For example, likelihood profile confidence intervals or Bayesian credible intervals 
-are available for superensembles fit via maximum likelihood or Bayesian procedures.
+are available for superensembles fit via 
+maximum likelihood or Bayesian procedures, respectively.
 Measures of predictive uncertainty can be generated for machine learning
 methods such as random forests or GBMs using 
 bootstrap procedures [e.g. @hastie2009; @finnegan2015].
@@ -681,7 +682,25 @@ improvement in the mechanisms assumed in individual models.
 
 Combining predictions from multiple models via superensemble methods is broadly
 useful in other subfields of fisheries science and ecology in general.
-Predictions about extinction risk are widely used at the national (e.g., the US
+\R{A}In fisheries science, superensembles provide an 
+additional tool to assist with some longstanding issues.
+For example, superensembles assist since modelers need not 
+decide on one model ---
+instead of deciding on dome versus asymptotic fisheries 
+selectivity [e.g., @sampson2012], 
+or on whether to fix or estimate natural mortality [e.g., @johnson2014],
+superensembles can use multiple models to draw inference.
+Furthermore, the relative contributions of individual models can help tease apart 
+the conditions under which various model assumptions 
+result in the most accurate predictions.
+Finally, superensembles can be used to directly 
+estimate other quantities of interest in fisheries science. 
+For instance, superensembles could help assess overfishing by estimating 
+fishing mortality compared to fishing mortality at MSY ($F/F_\mathrm{MSY}$)
+or be trained to estimate natural mortality.
+
+More broadly, in ecology 
+predictions about extinction risk are widely used at national (e.g., the US
 Endangered Species Act and the Canadian Species at Risk Act) and international
 [e.g., the IUCN Red List, @iucn2015] levels. These risk assessments generally
 involve fitting regression models to outcomes for individual species along with
@@ -698,26 +717,9 @@ ensemble methods could be used, for example, to increase the robustness of
 spatial predictions when designing networks of protected areas
 [@rassweiler2014] or to forecast potential spatial shifts in species
 distribution given climate impacts [@harsch2014].
-
-\R{A}Superensembles provide an additional tool to assist with some longstanding
-issues in fisheries science.
-For example, superensembles assist by not needing to decide on one model ---
-instead of deciding on dome versus asymptotic fisheries 
-selectivity [e.g., @sampson2012], 
-or on whether to fix or estimate natural mortality [e.g., @johnson2014],
-superensembles can use multiple models to draw inference.
-Furthermore, the relative contributions of individual models can help tease apart 
-the conditions under which various model assumptions 
-result in the most accurate predictions.
-Finally, superensembles can be used to directly 
-estimate other quantities of interest in fisheries science. 
-For instance, superensembles could be used to estimate 
-fishing mortality compared to fishing mortality at MSY ($F/F_\mathrm{MSY}$)
-or a fisheries selectivity curve parameter.
-However, superensembles are not a panacea 
+In any case, superensembles are not a panacea 
 and are ultimately limited by the quality, breadth, and representativeness
 of simulated or trusted data to which they are calibrated.
-
 
 \noindent
 
