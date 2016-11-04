@@ -699,7 +699,7 @@ spatial predictions when designing networks of protected areas
 [@rassweiler2014] or to forecast potential spatial shifts in species
 distribution given climate impacts [@harsch2014].
 
-\R{A}Superensembles may be able to assist with some longstanding
+\R{A}Superensembles provide an additional tool to assist with some longstanding
 issues in fisheries science.
 For example, superensembles assist by not needing to decide on one model ---
 instead of deciding on dome versus asymptotic fisheries 
