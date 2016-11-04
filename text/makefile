@@ -4,7 +4,7 @@ SOM = supp
 FIGS = figs
 REFS = ms
 
-all: $(TEXT).pdf
+all: response-letter.tex $(TEXT).pdf
 
 %.md: %.Rmd
 	Rscript -e "knitr::knit('$<')"
