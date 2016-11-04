@@ -392,6 +392,11 @@ interactions:
 \quad \mathrm{for}\ i  =  1,...,n.
 \end{equation}
 
+\noindent \R{A5}For this illustrative example 
+we chose this level of model complexity *a priori*
+but a modeller could apply model selection via information-theoretic
+or cross-validation approaches. 
+
 Our two machine learning superensemble models, a random forest and a
 generalized boosted model (GBM), were based on regression trees. Regression
 trees sequentially determine what value of a predictor best splits the
@@ -658,7 +663,7 @@ tailored to the goals of the model, say placing greater weight on accuracy at
 lower rather than higher status levels. Conversely, because superensembles are
 tailored to a specific response and loss function, superensembles force a
 modeller to choose an operational purpose for their model upfront [*sensu*
-@dickey-collas2014]. For instance, one could have an ensemble 
+@dickey-collas2014]. \R{E}For instance, one could have an ensemble 
 estimate of $B$ and an ensemble estimate of $B_0$, but their
 ratio may not be the same as an ensemble estimate of $B/B_0$.
 A modeller might therefore choose to focus on $B/B_0$, 
