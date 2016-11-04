@@ -207,8 +207,8 @@ training dataset where outcomes are well known and then used to predict on a
 dataset of interest. For example, @krishnamurti1999
 combined predictions of wind and precipitation in Asian monsoons via a
 superensemble regression fit to observed data. Their superensemble was
-considerably more accurate than any individual prediction or weighted average
-of predictions.
+considerably more accurate than any individual prediction or an average
+of the predictions.
 
 In fisheries science, the commonly used operational models for determining
 status and trend of exploited fish populations are stock assessments, i.e.,
@@ -328,6 +328,7 @@ natural mortality,
 a selectivity function,
 and a Beverton-Holt stock-recruitment function\R{A4}
 using the life-history relationships derived in @gislason2008.
+
 Fishing scenarios included three levels of initial biomass depletion
 compared to carrying capacity: biomass at 100%, 70%, and 40% of carrying
 capacity; and four exploitation patterns: (1) a constant exploitation rate,
@@ -339,7 +340,7 @@ i.e., unexplained variability in population dynamics) was introduced to the
 models at two magnitudes in log space, $N(0, 0.2^2)$ and $N(0, 0.6^2)$,
 and was either uncorrelated through time or had first-order autoregressive
 correlation of $0.6$. The simulation also included a scenario with $N(0,
-0.2^2)$ measurement error around log(catch) and one scenario without
+0.2^2)$ measurement error around log catch  and one scenario without
 measurement error. @rosenberg2014 ran ten iterations for each combination
 of factors adding stochastic draws of recruitment and catch-recording
 variability each time to generate a total of 5760 stocks. 
@@ -423,13 +424,14 @@ scaled catch time series (catch divided by maximum catch) with the `spec.ar`
 function in R and recorded representative short- and long-term spectral
 densities at frequencies of 0.20 and 0.05, which correspond to 5- and 20-year
 cycles. For the linear model superensemble, we incorporated the two spectral
-covariates (S1, S2) along with all second-order interactions as:\R{D}
+covariates ($S1$, $S2$) along with all second-order interactions as:\R{D}
 
 \begin{equation}
 \hat{\theta_i} = \beta_0 + \beta_1 \hat{b}_{i,1} + ... +
 \beta_{1,2} \hat{b}_{i,1} \hat{b}_{i,2} + ... +
 \beta_{S1} S1_i + 
 \beta_{S2} S2_i + 
+\beta_{S1,S2} S1_i S2_i + 
 \beta_{1,S2} \hat{b}_{i,1} S2_i + ... +
 \epsilon_i,
 \end{equation}
@@ -466,11 +468,11 @@ We also tested our ensemble methods on the RAM Legacy Stock Assessment Database
 --- a compilation of stock-assessment output from hundreds of exploited marine
 populations around the world. Our analysis of the stock-assessment database was
 based on version 2.5. After removing stocks for which at least one of the
-individual models described below did not converge (121), this database
+individual models did not converge (121), this database
 included `r ram_stocks_n` stocks. We removed these stocks for all methods ---
 both for the individual and superensemble models. An alternative would be to
 fit separate superensemble models to subsets of the individual models that did converge,
-but for simplicity we will only use superensemble models fitted to all four
+but for simplicity we only used superensemble models fitted to all four
 individual models.\R{A6}
 
 In the case of the RAM Legacy Stock Assessment Database, we used superensembles
@@ -607,6 +609,24 @@ Cross-validation within a training dataset will provide an optimistically
 biased impression of predictive performance if the training dataset
 fundamentally differs from the dataset of interest [@hastie2009].
 
+<!-- It is often important to provide measures of uncertainty with quantitative -->
+<!-- estimates. --> 
+\R{B}
+We illustrated that superensembles can improve point
+estimates of status and trends in status; however, there is no reason why
+superensembles cannot also be used to
+provide measures of uncertainty around those point estimates. 
+First, the same approaches to deriving measures of uncertainty from any regression model are available to a superensemble. 
+For example, likelihood profile confidence intervals or Bayesian credible intervals 
+are available for superensembles fit via maximum likelihood or Bayesian procedures.
+Measures of predictive uncertainty can be generated for machine learning
+methods such as random forests or GBMs using 
+bootstrap procedures [e.g. @hastie2009; @finnegan2015].
+Furthermore, uncertainty from the component models could 
+be included in superensembles.
+These superensembles could be fit using any errors-in-variables or
+measurement-error modelling approach [e.g. @carroll2006]
+
 Multi-model inference in the form of coefficient averaging weighted by
 information theoretics such as the Akaike Information Criterion (AIC) is
 a common analytical approach in fisheries and ecology [e.g., @burnham2002; @johnson2004;
@@ -636,8 +656,13 @@ This ensemble calibration could include a loss function
 tailored to the goals of the model, say placing greater weight on accuracy at
 lower rather than higher status levels. Conversely, because superensembles are
 tailored to a specific response and loss function, superensembles force a
-modeller to choose an operational purpose for their model up front [*sensu*
-@dickey-collas2014].
+modeller to choose an operational purpose for their model upfront [*sensu*
+@dickey-collas2014]. For instance, one could have an ensemble 
+estimate of $B$ and an ensemble estimate of $B_0$, but their
+ratio may not be the same as an ensemble estimate of $B/B_0$.
+A modeller might therefore choose to focus on $B/B_0$, 
+which provides a unitless ratio, is easier to compare across stocks, 
+and the ratio is often a more stable estimate across models [@deroba2015].
 
 As @box1987 noted, all models are wrong, but some may still be useful. The
 ensemble methods we investigated attempt to piece together the useful parts of
@@ -652,7 +677,7 @@ SSCOM, whereas the implemented COMSIR admits measurement error only. Were the
 methods to differ only in effort dynamics, the results point towards a more
 suitable representation of effort dynamics at low biomasses in SSCOM. We think
 that such investigation of the structure of a superensemble may lead to
-improvement in the mechanisms assumed in the individual models.
+improvement in the mechanisms assumed in individual models.
 
 Combining predictions from multiple models via superensemble methods is broadly
 useful in other subfields of fisheries science and ecology in general.
@@ -674,6 +699,26 @@ spatial predictions when designing networks of protected areas
 [@rassweiler2014] or to forecast potential spatial shifts in species
 distribution given climate impacts [@harsch2014].
 
+\R{A}Superensembles can help address some longstanding
+issues in fisheries science.
+For example, superensembles assist by not needing to decide on one model ---
+instead of deciding on dome versus asymptotic fisheries 
+selectivity [e.g., @sampson2012], 
+or on whether to fix or estimate natural mortality [e.g., @johnson2014],
+superensembles can use multiple models to draw inference.
+Furthermore, the relative contributions of individual models can help tease apart 
+the conditions under which various model assumptions 
+result in the most accurate predictions.
+Finally, superensembles can be used to directly 
+estimate other quantities of interest in fisheries science. 
+For instance, superensembles could be used to estimate 
+fishing mortality compared to fishing mortality at MSY ($F/F_\mathrm{MSY}$)
+or a fisheries selectivity curve parameter.
+However, superensembles are not a panacea 
+and are ultimately limited by the quality, breadth, and representativeness
+of simulated or trusted data to which superensembles are calibrated.
+
+
 \noindent
 
 # Acknowledgements
@@ -683,8 +728,7 @@ global stock status assessment and fishery production potential of the seas"
 who contributed to developing the data-limited methods and simulations used in
 our analysis. We thank E. Jardim, F. Scott, and J.A. Hutchings for helpful
 comments during the development of this project, and R.D. Methot for comments
-on an earlier version of the manuscript. A.A. Rosenberg is president of MRAG
-Americas Inc, a consulting company specializing in fisheries science. We thank
+on an earlier version of the manuscript. We thank
 the Gordon and Betty Moore Foundation for funding the working group "Applying
 data-limited stock status models and developing management guidance for
 unassessed fish stocks".
