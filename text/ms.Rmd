@@ -101,9 +101,9 @@ Administration,
 \noindent ^9^Marine Stewarship Council, Marine House, 1 Snow Hill, London, EC1A
 2DH, United Kingdom
 
-\noindent ^10^European Commission, Joint Research Centre, Institute for the
-Protection and Security of the Citizen, Maritime Affairs Unit G03, Via E. Fermi
-2749, 21027 Ispra (VA), Italy
+\noindent ^10^European Commission, DG Joint Research Centre, Directorate D --
+Sustainable Resources, Unit D.02 Water and Marine Resources, Via E. Fermi 2749,
+21027 Ispra VA, Italy
 
 \noindent ^11^Bren School of Environmental Science and Management, University of
 California Santa Barbara, Santa Barbara, CA, 93106-5131, USA
