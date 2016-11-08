@@ -689,7 +689,7 @@ Combining predictions from multiple models via superensemble methods is broadly
 useful in other subfields of fisheries science and ecology in general.
 \R{A}In fisheries science, superensembles provide an 
 additional tool to assist with some longstanding issues.
-For example, superensembles assist since modelers need not 
+For example, superensembles are helpful since modelers need not 
 decide on one model ---
 instead of deciding on dome versus asymptotic fisheries 
 selectivity [e.g., @sampson2012], 
