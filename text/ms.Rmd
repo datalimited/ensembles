@@ -266,11 +266,11 @@ population growth rate, $B_0$ represents unfished biomass or carrying capacity
 $K$, and $C$ represents catch. The fourth model is an empirically derived model
 based on the RAM Legacy Stock Assessment Database [@ricard2012]. @rosenberg2014
 provide a full background on these four methods \R{C} 
-(<http://www.fao.org/docrep/019/i3491e/i3491e00.htm>, last accessed 2016-09-27) 
+(<http://www.fao.org/docrep/019/i3491e/i3491e00.htm>, last accessed 2016-11-08) 
 and code to fit all the models
 is available in an accompanying package `datalimited` for the statistical
 software R [@r2015] <https://github.com/datalimited/datalimited> 
-(last accessed 2016-09-27). In summary:
+(last accessed 2016-11-08). In summary:
 
 * *CMSY* (catch-MSY) implements a stock-reduction analysis with Schaefer biomass
   dynamics [@martell2013]. It requires a prior distributions on $r$ and $K$ as
@@ -345,7 +345,7 @@ measurement error. @rosenberg2014 ran ten iterations for each combination
 of factors adding stochastic draws of recruitment and catch-recording
 variability each time to generate a total of 5760 stocks. 
 Code to generate the simulations is available at
-<https://github.com/iagomosqueira/stockStatusFAO> (last accessed 2016-09-27).
+<https://github.com/datalimited/stocksims> (last accessed 2016-11-08).
 
 ## Building the superensemble models
 
@@ -507,7 +507,7 @@ estimates from these data-rich stock assessments as known without error. Thus,
 any error in the stock-assessment estimates of the mean or slope of
 $B/B_\mathrm{MSY}$ also contributes to our estimates of prediction error for
 each of the four data-limited models and the ensembles. Code to reproduce our
-analysis is available at <https://github.com/datalimited/ensembles> (last accessed 2016-09-27).
+analysis is available at <https://github.com/datalimited/ensembles> (last accessed 2016-11-08).
 
 # Results
 
