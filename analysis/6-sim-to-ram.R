@@ -185,8 +185,9 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
 
 library("doParallel")
 registerDoParallel(cores = parallel::detectCores())
+.parallel <- ifelse(Sys.info()[["sysname"]] == "Windows", FALSE, TRUE)
 qq <- plyr::ldply(seq_len(100L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
-  .parallel = TRUE)
+  .parallel = .parallel)
 
 d_mean_long <- qq %>%
   select(-spec_freq_0.05, -spec_freq_0.2) %>%
