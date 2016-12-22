@@ -1,7 +1,6 @@
 library("dplyr")
 
 # Bring in all results exept CMSY:
-# TODO: local file path:
 d1 <- readRDS("raw-data/batch1result.rds")
 
 # bringing in corrected fits below
