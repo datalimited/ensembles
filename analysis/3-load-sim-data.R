@@ -2,12 +2,10 @@ library("dplyr")
 
 # Bring in all results exept CMSY:
 # TODO: local file path:
-load("../../../Dropbox/FisheriesWorkingGroupPhaseII/Decision_trees/CMSY_COMSIR_SSCOM_COSTELLO_STO_BATCH_ALL_RESULTS 2013-06-24 .Rdata")
+d1 <- readRDS("raw-data/batch1result.rds")
 
 # bringing in corrected fits below
-d1 <- dplyr::filter(batch1results, method_id != "CMSY")
-
-rm(batch1results)
+d1 <- dplyr::filter(d1, method_id != "CMSY")
 
 d1$stock_id <- as.character(d1$stock_id)
 d1$ID <- as.numeric(as.character(d1$ID))
@@ -19,7 +17,6 @@ d1$seed <- as.numeric(as.character(d1$seed))
 d1$n_iterations <- as.numeric(as.character(d1$n_iterations))
 d1$effective_sample_size <- as.numeric(as.character(d1$effective_sample_size))
 
-# TODO: data only local:
 load("raw-data/cmsy_fits_22052015.RData")
 d2 <- cmsynewfits
 rm(cmsynewfits)

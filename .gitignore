@@ -27,15 +27,11 @@ text/supp.tex
 text/ms.md
 analysis/plot-sims.pdf
 text/discussion.mindnode/
-
 *.xls
-
 *.rtf
-
 *.toc
-
 analysis/no-cmsy.pdf
-
 *.vim
-
 text/response-letter.md
+
+.Rhistory

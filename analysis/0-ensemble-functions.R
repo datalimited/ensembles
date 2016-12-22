@@ -98,11 +98,11 @@ cross_val_ensembles <- function(.n, dat, fraction_train = 0.5,
 }
 
 add_label <- function(xfrac, yfrac, label, pos = 4, add_bg = FALSE, ...) {
-# xfrac The fraction over from the left side.
-# yfrac The fraction down from the top.
-# label The text to label with.
-# pos Position to pass to text()
-# ... Anything extra to pass to text(), e.g. cex, col.
+  # xfrac The fraction over from the left side.
+  # yfrac The fraction down from the top.
+  # label The text to label with.
+  # pos Position to pass to text()
+  # ... Anything extra to pass to text(), e.g. cex, col.
   u_ <- par("usr")
   width <- u_[2] - u_[1]
   height <- u_[4] - u_[3]
@@ -129,13 +129,10 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   par(mfrow = c(rows, 4), mgp = c(1.5, 0.5, 0), las = 1, tck = -0.03,
     oma = oma, cex = 0.8, mar = c(0, 0, 0.27, 0),
     xaxs = "i", yaxs = "i", col.axis = "grey60", col.lab = "grey50")
-  #par(family="serif")
 
   hexcol1 <- RColorBrewer::brewer.pal(9, "Blues")
-  #hexcol1 <- c("#FFFFFF", "#6A4A3C")
   hexcol2 <- RColorBrewer::brewer.pal(9, "Oranges")
   hexcol2 <- RColorBrewer::brewer.pal(9, "YlOrRd")
-  #hexcol2 <- c("#FFFFFF", "#CC333F")
   hexcol3 <- RColorBrewer::brewer.pal(9, "Greens")
   hexcol4 <- RColorBrewer::brewer.pal(9, "Purples")
   hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Greys")
@@ -145,31 +142,7 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
   hexcol3 <- hexcol2
   hexcol4 <- hexcol2
   library("RColorBrewer")
-  # hexcol1 <- c("#F9F9F9", brewer.pal(4, "Dark2")[1])
-  # hexcol2 <- c("#F9F9F9", brewer.pal(4, "Dark2")[2])
-  # hexcol3 <- c("#F9F9F9", brewer.pal(4, "Dark2")[3])
-  # hexcol4 <- c("#F9F9F9", brewer.pal(4, "Dark2")[4])
-
-  # hexcol1 <- c(paste0(brewer.pal(4, "Dark2")[1], "FF"), paste0(brewer.pal(4, "Dark2")[1], "00")) %>% rev
-  # hexcol2 <- c(paste0(brewer.pal(4, "Dark2")[2], "FF"), paste0(brewer.pal(4, "Dark2")[2], "00")) %>% rev
-  # hexcol3 <- c(paste0(brewer.pal(4, "Dark2")[3], "FF"), paste0(brewer.pal(4, "Dark2")[3], "00")) %>% rev
-  # hexcol4 <- c(paste0(brewer.pal(4, "Dark2")[4], "FF"), paste0(brewer.pal(4, "Dark2")[4], "00")) %>% rev
-
-  # hexcol1 <- brewer.pal(9, "BuGn")
-  # hexcol2 <- brewer.pal(9, "BuPu")
-  # hexcol3 <- brewer.pal(9, "GnBu")
-  # hexcol4 <- brewer.pal(9, "OrRd")
-
-  # hexcol1 <- brewer.pal(9, "Reds")
-  # hexcol2 <- brewer.pal(9, "Greens")
-  # hexcol3 <- brewer.pal(9, "Blues")
-  # hexcol4 <- brewer.pal(9, "Purples")
-  # hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Spectral") %>% rev
-  #hexcol_ensemble <- RColorBrewer::brewer.pal(9, "Greys")
-
-  #hexcol_third_row <- RColorBrewer::brewer.pal(9, "Greys")
-   #hexcol_third_row <- RColorBrewer::brewer.pal(9, "Spectral") %>% rev
-   hexcol_third_row <- RColorBrewer::brewer.pal(9, "YlGnBu")
+  hexcol_third_row <- RColorBrewer::brewer.pal(9, "YlGnBu")
 
   panels <- seq_len(length(unique(dat$order)))
 
@@ -187,7 +160,6 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
         dy <- hexbin::hcell2xy(bin)$y
         dxy <- data.frame(x = dx, y = dy)
         counts <- bin@count
-        # counts <- round(log(counts*count_transform))
         xbins_plot <- xbins
       } else { # the optional third row:
         xlim <- lims_hex3
@@ -200,12 +172,9 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
         dy <- hexbin::hcell2xy(bin)$y
         dxy <- data.frame(x = dx, y = dy)
         counts <- bin@count
-        # counts <- round(log(counts*count_transform3))
         xbins_plot <- xbins3
       }
     }
-    #alternative power transformation:
-    #counts <- round((counts)^0.30)
     space = "Lab"
     if (m %in% 1)
       pal_function <- colorRampPalette(hexcol1, space = space, bias = bias[1])
@@ -219,8 +188,6 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
       pal_function <- colorRampPalette(hexcol_ensemble, space = space, bias = bias[5])
     if (m %in% 9:12) {
       pal_function <- colorRampPalette(hexcol_third_row, space = space, bias = bias[9])
-      #add_hex <- FALSE
-      #if (m %in% 9) par(mar = par("mar") + c(0, 0, 0.27, 0))
     }
     if (add_hex) {
       pal <- pal_function(max(counts))
@@ -230,8 +197,8 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
     plot(1, 1, xlim = xlim_plot, ylim = ylim_plot, type = "n", asp = 1,
       xlab = "", ylab = "", xaxt = "n", yaxt = "n", xaxs = "i")
     if (add_hex) {
-     # add transparency to de-emphasize fist colour bins:
-     pal[1:5] <- paste0(pal[1:5], round(seq(80, 99, length.out = 5)))
+      # add transparency to de-emphasize fist colour bins:
+      pal[1:5] <- paste0(pal[1:5], round(seq(80, 99, length.out = 5)))
       for (i in 1:nrow(dxy)) {
         hexagon(dxy[i, "x"], dxy[i, "y"], col = pal[counts[i]],
           unitcell = diff(xlim)/xbins_plot/2, border = NA)
@@ -242,14 +209,11 @@ plot_hex_fig <- function(dat, xbins = 100L, xlab = expression(B/B[MSY]),
         bg = paste0(pal[4], alpha), cex = 0.7)
     }
     line_col <- "#58585840"
-    #abline(v = 1, lty = "22", col = line_col, lwd = 1.3)
     segments(1, 0, 1, 2.8, lty = "22", col = line_col, lwd = 1.3)
     abline(h = 1, lty = "22", col = line_col, lwd = 1.3)
-    #abline(a = 0, b = 1, lty = "22", col = line_col, lwd = 1.3)
     segments(-1, -1, 2.8, 2.8, lty = "22", col = line_col, lwd = 1.3)
     box(col = "grey60")
     add_label(-0.01, 0.08, paste0("(", letters[m], ") ", unique(filter(dat, order == m)$clean_method)),
-      #col = "grey20", add_bg = ifelse(m %in% 1:4, FALSE, TRUE))
       col = "grey20", add_bg = FALSE, cex = 0.95)
     if (m %in% c(1, 5, 9)) axis(2, at = axis_ticks[-length(axis_ticks)], col = "grey60")
     if (m %in% (rows * 4 - 3):(rows * 4)) axis(1, at = axis_ticks, col = "grey60")

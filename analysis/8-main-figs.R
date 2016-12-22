@@ -21,7 +21,8 @@ d_sim <- readRDS("generated-data/cv_sim_long.rds")
 d_sim <- suppressWarnings(inner_join(d_sim, clean_names))
 
 get_performance <- function(validation_data) {
-  d_sim_perf <- validation_data %>% group_by(test_iter, type, clean_method, order, label_fudge_x, label_fudge_y) %>%
+  d_sim_perf <- validation_data %>% group_by(test_iter, type, clean_method,
+    order, label_fudge_x, label_fudge_y) %>%
     summarise(
       mare = median(abs(re)),
       mre = median(re),
@@ -91,7 +92,7 @@ re_ram_sum_long$label_fudge_y <- 0
 
 get_roc <- function(true, est) {
   library("pROC") # required or pROC:: will generate errors
-  y <- pROC::roc(response = true, predictor = est, 5)
+  y <- pROC::roc(response = true, predictor = est)
   data.frame(sens = y$sensitivities, spec = y$specificities,
     auc = as.numeric(y$auc))
 }
@@ -100,9 +101,14 @@ get_roc <- function(true, est) {
 # we'll use 0.5 B/Bmsy as the treshold as in US overfished definition
 d_sim_mean <- d_sim_basic %>% filter(type == "mean") %>%
   mutate(above1 = ifelse(bbmsy_true > 0.5, 1, 0))
-rocs_sim_mean <- d_sim_mean %>% group_by(clean_method, order) %>%
-  do({get_roc(true = .$above1, est = .$bbmsy_est)}) %>%
-  as.data.frame
+
+library("doParallel")
+registerDoParallel(cores = parallel::detectCores())
+rocs_sim_mean <- plyr::ddply(d_sim_mean, c("clean_method", "order"), function(x) {
+  get_roc(true = x$above1, est = x$bbmsy_est)
+}, .parallel = TRUE)
+
+
 rocs_sim_mean$Ensemble <- ifelse(grepl("ensemble", rocs_sim_mean$clean_method, ignore.case = TRUE),
   "(a) Ensemble", "(b) Individual")
 auc_sim_mean <- rocs_sim_mean %>%
@@ -144,7 +150,6 @@ make_roc_curves <- function(dat) {
 ## Figure making:
 
 ## ROC curves:
-# make_roc_curves(rocs_sim_all)
 p <- make_roc_curves(rocs_sim_mean)
 ggsave("../figs/roc-sim.pdf", width = 8, height = 5)
 
@@ -165,11 +170,6 @@ main_hexagon_plot <- function(data_to_plot, file_name) {
   ram_third_row_lims <- filter(d_ram, grepl("ensemble", clean_method, ignore.case = TRUE)) %>%
     summarise(lower = min(c(bbmsy_est, bbmsy_true)), upper = max(c(bbmsy_est, bbmsy_true))) %>%
     as.numeric
-
-  # Basic hexagon plot for simulation mean bbmsy:
-  # pdf("../figs/hex-mean-sim-cv.pdf", width = 7, height = 3.9)
-  # plot_hex_fig(d_mean_plot, xbins = 100L)
-  # dev.off()
 
   # Same as above but add the RAM ensembles as a third row:
   pdf(file_name, width = 7.0, height = 4.6)
@@ -204,13 +204,6 @@ plot_hex_fig(d_ram, add_hex = TRUE, alpha = 80,
   lims_hex = range(c(d_ram$bbmsy_est, d_ram$bbmsy_true)), xbins = 25L,
   count_transform = 20)
 dev.off()
-
-# d_mean_plot <- filter(d_sim, type == "mean")
-# d_mean_plot$bbmsy_est[d_mean_plot$bbmsy_est > 10] <- NA
-# d_mean_plot <- na.omit(d_mean_plot)
-# pdf("../figs/hex-mean-sim-covariates-cv.pdf", width = 8, height = 4)
-# plot_hex_fig(d_sim, xbins = 100L, count_transform = 1, alpha = 15)
-# dev.off()
 
 perf <- function(dat, xlim = range(dat$mare) + c(-0.07, 0.025),
   ylim = range(dat$corr) + c(-0.05, 0.02),
@@ -247,7 +240,6 @@ main_performance_plot <- function(data_to_plot, file_name, include_ram = TRUE) {
   par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
     oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
     xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-  #par(family="serif")
 
   perf(data_to_plot, label = "(a) Simulation")
 
@@ -308,7 +300,6 @@ pdf("../figs/performance-slope-sim.pdf", width = 5, height = 4)
 par(mgp = c(1.5, 0.5, 0), las = 1, tck = -0.015,
   oma = c(2.8, 0.5, 1.5, .5), cex = 0.8, mar = c(0, 3, 0, 0),
   xaxs = "i", yaxs = "i", col.axis = "grey50", col.lab = "grey50")
-#par(family="serif")
 
 pal_df <- data_frame(mre = seq(-max(abs(d_slope_error$mre)+0.02),
   max(abs(d_slope_error$mre)+0.02),

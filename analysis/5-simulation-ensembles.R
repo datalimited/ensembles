@@ -23,7 +23,7 @@ dsim <- dsim %>%
 
 # summarise the mean and slope in the last N years:
 library("doParallel")
-registerDoParallel(cores = 4)
+registerDoParallel(cores = parallel::detectCores())
 
 dsim_sum <- plyr::ddply(dsim, c("stockid", "method", "iter"),
   .parallel = TRUE, .fun = mean_slope_bbmsy)
@@ -98,39 +98,6 @@ nvar <- 6L
 # plot(mm_gbm, metric = "Rsquared")
 # dev.off()
 
-# -----------------
-# # try and avoid positive bias at low bbmsy with weights:
-# library(randomForest)
-# library(gbm)
-# m1 <- randomForest(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
-#     spec_freq_0.05 + spec_freq_0.2, data = d_mean)
-# d_mean$rf1 <- exp(predict(m1, n.trees = 1000))
-# ggplot(d_mean, aes(bbmsy_true_mean, rf1)) + geom_point() +
-#   geom_abline(slope = 1, intercept = 0, col = "red")
-#
-# m2 <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
-#     spec_freq_0.05 + spec_freq_0.2, data = d_mean, distribution = "gaussian",
-#   n.trees = 1000L, interaction.depth = 4, shrinkage = 0.01)
-# d_mean$gbm2 <- exp(predict(m2, n.trees = 1000))
-# ggplot(d_mean, aes(bbmsy_true_mean, gbm2)) + geom_point() +
-#   geom_abline(slope = 1, intercept = 0, col = "red")
-#
-# # try with weights inverse to true b/bmsy
-# m2_weights <- gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
-#     spec_freq_0.05 + spec_freq_0.2, data = d_mean, distribution = "gaussian",
-#   n.trees = 1000L, interaction.depth = 4, shrinkage = 0.01,
-#   weights = 1/d_mean$bbmsy_true_mean)
-# d_mean$gbm2_weights <- exp(predict(m2_weights, n.trees = 1000))
-# ggplot(d_mean, aes(bbmsy_true_mean, gbm2_weights)) + geom_point() +
-#   geom_abline(slope = 1, intercept = 0, col = "red")
-#
-# d_mean_long <- reshape2::melt(d_mean, id.vars = c("stockid", "iter", "bbmsy_true_mean"), measure.vars = c("gbm2", "gbm2_weights"), variable.name = "model", value.name = "bbmsy_hat")
-#
-# ggplot(d_mean_long, aes(bbmsy_true_mean, bbmsy_hat)) + facet_wrap(~model, ncol = 1) +
-#   geom_abline(slope = 1, intercept = 0, col = "red") + geom_point(alpha = 0.1)
-
-# -------------------
-
 mlm <- lm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
   spec_freq_0.05 + spec_freq_0.2, data = d_mean)
 mlm2 <- lm(log(bbmsy_true_mean) ~ (CMSY + COMSIR + mPRM + SSCOM +
@@ -175,42 +142,6 @@ p6 <- ggplot(d_mean, aes(spec_freq_0.2, bbmsy_true_mean)) + geom_point()
 pdf("../figs/predictor-vs-truth-gbm.pdf", width = 10, height = 5)
 gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
 dev.off()
-
-## make_partial_resid_gbm <- function(var = "SSCOM") {
-##   d_temp <- d_mean
-##   d_temp$x <- d_mean[,var]
-##   d_temp[,var] <- mean(d_temp[,var])
-##   d_temp$p <- predict(m, n.trees = m$n.trees, type = "response",
-##     newdata = d_temp)
-##   d_temp$res <- log(d_temp$bbmsy_true_mean) - d_temp$p
-##   # ggplot(d_temp, aes(x, exp(res))) + geom_point() + stat_smooth(se = FALSE, col = "red", method = "loess")
-##
-##   d_temp2 <- d_mean
-##   all_vars <- c("CMSY", "COMSIR", "mPRM", "spec_freq_0.05", "spec_freq_0.2", "SSCOM")
-##   other_vars <- all_vars[which(!var == all_vars)]
-##   d_temp2[,other_vars] <-
-##     matrix(apply(
-##       d_temp2[,other_vars], 2, mean),
-##       ncol = 5, nrow = nrow(d_temp), byrow = TRUE)
-##   d_temp2$p <- predict(m, n.trees = m$n.trees, type = "response",
-##     newdata = d_temp2)
-##
-##   p <- ggplot(d_temp, aes(x, res)) + geom_point(alpha = 0.1) +
-##     geom_line(data = d_temp2, aes_string(var, "p"), col = "red", lwd = 1)+
-##     # geom_line(data = subset(partial, predictor == var),
-##       # aes(predictor_value, y), col = "red", lwd = 1) +
-##     xlab(var) + ylab("Partial residual")
-##   p
-## }
-## p1 <- make_partial_resid_gbm("CMSY")
-## p2 <- make_partial_resid_gbm("SSCOM")
-## p3 <- make_partial_resid_gbm("COMSIR")
-## p4 <- make_partial_resid_gbm("mPRM")
-## p5 <- make_partial_resid_gbm("spec_freq_0.05")
-## p6 <- make_partial_resid_gbm("spec_freq_0.2")
-## pdf("../figs/gbm-partial-residuals.pdf", width = 10, height = 5)
-## gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, nrow = 2)
-## dev.off()
 
 partial <- plyr::ldply(seq_len(4L), function(i) {
   dd <- gbm::plot.gbm(m_basic, i.var = i, return.grid = TRUE)
@@ -322,7 +253,7 @@ eq <- paste0("CMSY + COMSIR + mPRM + ",
 eq_basic <- paste0("CMSY + COMSIR + mPRM + SSCOM")
 
 # work through cross validation of ensemble models:
-cv_sim_mean <- plyr::ldply(seq_len(20), .parallel = TRUE,
+cv_sim_mean <- plyr::ldply(seq_len(50), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq),
@@ -333,7 +264,7 @@ cv_sim_mean <- cv_sim_mean %>% mutate(
   lm_ensemble  = exp(lm_ensemble))
 cv_sim_mean$cv_id <- NULL
 
-cv_sim_mean_basic <- plyr::ldply(seq_len(20), .parallel = TRUE,
+cv_sim_mean_basic <- plyr::ldply(seq_len(50), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq_basic),
@@ -344,7 +275,7 @@ cv_sim_mean_basic <- cv_sim_mean_basic %>% mutate(
   lm_ensemble  = exp(lm_ensemble))
 cv_sim_mean_basic$cv_id <- NULL
 
-cv_sim_slope <- plyr::ldply(seq_len(20), .parallel = TRUE,
+cv_sim_slope <- plyr::ldply(seq_len(50), .parallel = TRUE,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
       gbm_formula = paste0("bbmsy_true_slope ~ ", eq_basic),

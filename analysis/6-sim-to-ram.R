@@ -184,7 +184,7 @@ cv_ensemble_ram <- function(nfold = 3L, .n = 1L) {
 }
 
 library("doParallel")
-registerDoParallel(cores = 2L) # often crashes on more cores
+registerDoParallel(cores = parallel::detectCores())
 qq <- plyr::ldply(seq_len(100L), function(i) cv_ensemble_ram(nfold = 3L, .n = i),
   .parallel = TRUE)
 

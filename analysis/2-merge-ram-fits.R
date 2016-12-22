@@ -1,5 +1,5 @@
-# This script does a bunch of messy merging of RAM data It takes the original
-# fits, merges in the revised CMSY fits, renames
+# This script does a bunch of messy merging of RAM data.
+# It takes the original fits, merges in the revised CMSY fits, renames
 # some columns, and shapes the data appropriately for the ensemble models.
 
 library("dplyr")
@@ -30,13 +30,6 @@ d <- d[!duplicated(d), ]
 # need to widen and lengthen to strip out years where anything is NA
 assessed_bbmsy <- select(d, stockid, tsyear, Bbmsy_toUse)
 assessed_bbmsy <- assessed_bbmsy[!duplicated(assessed_bbmsy), ]
-# how is convergence affecting lost stocks?
-# all_na <- function(x) ifelse(sum(is.na(x)) == length(x), TRUE, FALSE)
-# check_nas <- d2 %>% group_by(stockid)%>% summarise(COMSIR = all_na(COMSIR),
-#   CMSY = all_na(CMSY), Costello = all_na(Costello), SSCOM = all_na(SSCOM))
-# colSums(check_nas[,-1])
-# COMSIR     CMSY Costello    SSCOM
-# 80           59        0       44
 d2 <- reshape2::dcast(d, stockid + tsyear + CtoUse + stocklong ~ method,
   value.var = "b2bmsy") %>%
   inner_join(assessed_bbmsy)
@@ -109,13 +102,12 @@ m <- datalimited::fit_prm(ram_prm_dat,
     initial_slope - 1)
 
 mprm_ram <- plyr::ddply(ram_prm_dat, c("stockid"), function(x) {
-  out <- predict_prm(x, model = m, ci = TRUE, level = 0.95)
+  out <- data.frame(fit = datalimited::predict_prm(x, model = m, ci = FALSE))
   out$tsyear <- x$year
   out
 })
 
-mprm_ram <- rename(mprm_ram, b_bmsy_est = fit) %>% mutate(method = "Costello") %>%
-  select(-lower, -upper)
+mprm_ram <- rename(mprm_ram, b_bmsy_est = fit) %>% mutate(method = "Costello")
 
 # merge back in other stock data:
 mprm_ram <- filter(ram_fits, method == "Costello") %>% unique() %>%
