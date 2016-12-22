@@ -104,9 +104,10 @@ d_sim_mean <- d_sim_basic %>% filter(type == "mean") %>%
 
 library("doParallel")
 registerDoParallel(cores = parallel::detectCores())
+.parallel <- ifelse(Sys.info()[["sysname"]] == "Windows", FALSE, TRUE)
 rocs_sim_mean <- plyr::ddply(d_sim_mean, c("clean_method", "order"), function(x) {
   get_roc(true = x$above1, est = x$bbmsy_est)
-}, .parallel = TRUE)
+}, .parallel = .parallel)
 
 
 rocs_sim_mean$Ensemble <- ifelse(grepl("ensemble", rocs_sim_mean$clean_method, ignore.case = TRUE),
