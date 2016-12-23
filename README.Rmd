@@ -1,0 +1,60 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# Improving estimates of population status and trend with superensemble models
+
+This repository holds the analysis for:
+Anderson, S. C., A. B. Cooper, O. P. Jensen, C. Minto, J. T. Thorson, J. C. Walsh, M. Dickey-Collas, K. M. Kleisner, C. Longo, G. C. Osio, D. Ovando, I. Mosqueira, A. A. Rosenberg, and E. R. Selig. 2017. Improving estimates of population status and trend with superensemble models. Fish and Fisheries. In press.
+
+To recreate the analysis, source the `.R` files in the `analysis` folder in order. Or run the following in R:
+
+```{r}
+packages <- c("mblm", "randomForest", "plyr", "dplyr", "ggplot2",
+  "reshape2", "gbm", "devtools", "doParallel", "hexbin", "pROC",
+  "RColorBrewer", "Rcpp", "R2jags", "arm", "bbmle")
+```
+
+```{r, eval=FALSE}
+install.packages(packages)
+devtools::install_github("datalimited/datalimited")
+
+# start in the root "ensembles" folder, then:
+setwd("analysis")
+source("0-ensemble-functions.R")
+source("1-read-old-ram-fits.R")
+source("2-merge-ram-fits.R")
+source("3-load-sim-data.R")
+source("4-add-spectral.R")
+source("5-simulation-ensembles.R")
+source("6-sim-to-ram.R")
+source("7-plot-sims.R")
+source("8-main-figs.R")
+source("8-motivate-fig.R")
+source("9-output-values.R")
+```
+
+Or run `make` on the command line from the `analysis` folder:
+
+```sh
+cd analysis
+make
+```
+
+Generated data ends up in `generated-data` and figures in `figs`. Intermediate versions of some raw data have been cached in the `generated-data` folder so that the scripts will run from a freshly cloned version of this repository. (Some of the raw data files are too large for Git.)
+
+## Package versions used:
+
+```{r, echo=FALSE}
+packages <- c("datalimited", packages)
+x <- suppressPackageStartupMessages(lapply(packages, library, character.only = TRUE))
+x <- devtools::session_info()
+dplyr::filter(x$packages, package %in% packages) %>%
+  dplyr::arrange(package) %>%
+  dplyr::select(-source, -`*`) %>%
+  knitr::kable()
+```
