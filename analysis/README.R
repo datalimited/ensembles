@@ -1,5 +1,6 @@
 install.packages(c("mblm", "randomForest", "dplyr", "plyr", "ggplot2",
-  "reshape2", "gbm", "devtools", "doParallel", "hexbin", "pROC"))
+  "reshape2", "gbm", "devtools", "doParallel", "hexbin", "pROC",
+  "RColorBrewer"))
 devtools::install_github("datalimited/datalimited")
 
 # start in the root "ensembles" folder, then:
