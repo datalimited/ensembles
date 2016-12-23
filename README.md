@@ -31,13 +31,6 @@ source("8-motivate-fig.R")
 source("9-output-values.R")
 ```
 
-Or run `make` on the command line from the `analysis` folder:
-
-``` sh
-cd analysis
-make
-```
-
 Generated data ends up in `analysis/generated-data` and figures in `figs`. Intermediate versions of some raw data have been cached in the `analysis/generated-data` folder so that the scripts will run from a freshly cloned version of this repository. (Some of the raw data files are too large for Git.)
 
 Package versions used:
