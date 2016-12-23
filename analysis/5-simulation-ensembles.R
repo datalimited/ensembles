@@ -24,9 +24,10 @@ dsim <- dsim %>%
 # summarise the mean and slope in the last N years:
 library("doParallel")
 registerDoParallel(cores = parallel::detectCores())
+.parallel <- ifelse(Sys.info()[["sysname"]] == "Windows", FALSE, TRUE)
 
 dsim_sum <- plyr::ddply(dsim, c("stockid", "method", "iter"),
-  .parallel = TRUE, .fun = mean_slope_bbmsy)
+  .parallel = .parallel, .fun = mean_slope_bbmsy)
 saveRDS(dsim_sum, file = "generated-data/dsim_sum.rds")
 # dsim_sum <- readRDS("generated-data/dsim_sum.rds")
 
@@ -253,7 +254,7 @@ eq <- paste0("CMSY + COMSIR + mPRM + ",
 eq_basic <- paste0("CMSY + COMSIR + mPRM + SSCOM")
 
 # work through cross validation of ensemble models:
-cv_sim_mean <- plyr::ldply(seq_len(50), .parallel = TRUE,
+cv_sim_mean <- plyr::ldply(seq_len(50), .parallel = .parallel,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq),
@@ -264,7 +265,7 @@ cv_sim_mean <- cv_sim_mean %>% mutate(
   lm_ensemble  = exp(lm_ensemble))
 cv_sim_mean$cv_id <- NULL
 
-cv_sim_mean_basic <- plyr::ldply(seq_len(50), .parallel = TRUE,
+cv_sim_mean_basic <- plyr::ldply(seq_len(50), .parallel = .parallel,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean, geo_mean = TRUE, id = "sim-mean",
       gbm_formula = paste0("log(bbmsy_true_mean) ~ ", eq_basic),
@@ -275,14 +276,14 @@ cv_sim_mean_basic <- cv_sim_mean_basic %>% mutate(
   lm_ensemble  = exp(lm_ensemble))
 cv_sim_mean_basic$cv_id <- NULL
 
-cv_sim_slope <- plyr::ldply(seq_len(50), .parallel = TRUE,
+cv_sim_slope <- plyr::ldply(seq_len(50), .parallel = .parallel,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_slope, geo_mean = FALSE, id = "sim-slope",
       gbm_formula = paste0("bbmsy_true_slope ~ ", eq_basic),
       lm_formula = paste0("bbmsy_true_slope ~ (", eq_basic, ")^2")))
 cv_sim_slope$cv_id <- NULL
 
-cv_sim_binary <- plyr::ldply(seq_len(1), .parallel = TRUE,
+cv_sim_binary <- plyr::ldply(seq_len(1), .parallel = .parallel,
   .fun = function(.n)
     cross_val_ensembles(.n = .n, dat = d_mean,
       id = "sim-binary", distribution = "bernoulli",
