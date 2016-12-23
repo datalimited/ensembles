@@ -38,7 +38,7 @@ cd analysis
 make
 ```
 
-Generated data ends up in `generated-data` and figures in `figs`. Intermediate versions of some raw data have been cached in the `generated-data` folder so that the scripts will run from a freshly cloned version of this repository. (Some of the raw data files are too large for Git.)
+Generated data ends up in `analysis/generated-data` and figures in `figs`. Intermediate versions of some raw data have been cached in the `analysis/generated-data` folder so that the scripts will run from a freshly cloned version of this repository. (Some of the raw data files are too large for Git.)
 
 Package versions used:
 ----------------------
@@ -47,7 +47,7 @@ Package versions used:
 |:-------------|:------------|:-----------|
 | arm          | 1.9-3       | 2016-11-27 |
 | bbmle        | 1.0.18      | 2016-02-11 |
-| datalimited  | 0.0.2       | 2016-12-20 |
+| datalimited  | 0.0.3       | 2016-12-23 |
 | devtools     | 1.12.0.9000 | 2016-12-18 |
 | doParallel   | 1.0.10      | 2015-10-14 |
 | dplyr        | 0.5.0       | 2016-06-24 |
