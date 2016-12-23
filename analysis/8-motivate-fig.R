@@ -8,52 +8,49 @@ ram <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors=FALSE) %>%
   select(tsyear, Bbmsy_toUse) %>%
   rename(yr = tsyear, b_bmsy = Bbmsy_toUse)
 
-load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/CMSY/cmsy_rlegacy_results_table_v0.RData")
-cmsy <- cmsy.rlegacy.df0 %>%
-  filter(stock_id == "SBWHITACIR") %>%
-  select(yr, b_bmsyiq25, b_bmsy, b_bmsyiq75) %>%
-  mutate(method = "CMSY")
+# load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/CMSY/cmsy_rlegacy_results_table_v0# .RData")
+# cmsy <- cmsy.rlegacy.df0 %>%
+#   filter(stock_id == "SBWHITACIR") %>%
+#   select(yr, b_bmsyiq25, b_bmsy, b_bmsyiq75) %>%
+#   mutate(method = "CMSY")
+# saveRDS(cmsy, file = "generated-data/SBWHITACIR-cmsy.rds")
+cmsy <- readRDS("generated-data/SBWHITACIR-cmsy.rds")
 
-load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/COMSIR/comsir_rlegacy_results_table_v0.RData")
-comsir <- comsir.rlegacy.df0 %>%
-  filter(stock_id == "SBWHITACIR") %>%
-  select(yr, b_bmsyiq25, b_bmsy, b_bmsyiq75) %>%
-  mutate(method = "COM-SIR")
+# load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/COMSIR/comsir_rlegacy_results_table_v0# .RData")
+# comsir <- comsir.rlegacy.df0 %>%
+#   filter(stock_id == "SBWHITACIR") %>%
+#   select(yr, b_bmsyiq25, b_bmsy, b_bmsyiq75) %>%
+#   mutate(method = "COM-SIR")
+# saveRDS(comsir, file = "generated-data/SBWHITACIR-comsir.rds")
+comsir <- readRDS("generated-data/SBWHITACIR-comsir.rds")
 
-load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/SSCOM/sscom_rlegacy_results_table_v0.RData")
-sscom <- sscom.rlegacy.df0 %>%
-  filter(stock_id == "SBWHITACIR") %>%
-  select(yr, b_bmsy_iq25, b_bmsy, b_bmsy_iq75) %>%
-  rename(b_bmsyiq25 = b_bmsy_iq25, b_bmsyiq75 = b_bmsy_iq75) %>%
-  mutate(method = "SSCOM")
+# load("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/SSCOM/sscom_rlegacy_results_table_v0# .RData")
+# sscom <- sscom.rlegacy.df0 %>%
+#   filter(stock_id == "SBWHITACIR") %>%
+#   select(yr, b_bmsy_iq25, b_bmsy, b_bmsy_iq75) %>%
+#   rename(b_bmsyiq25 = b_bmsy_iq25, b_bmsyiq75 = b_bmsy_iq75) %>%
+#   mutate(method = "SSCOM")
+# saveRDS(sscom, file = "generated-data/SBWHITACIR-sscom.rds")
+sscom <- readRDS("generated-data/SBWHITACIR-sscom.rds")
 
-costello <- read.csv("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/Costello/Costello_rlegacy_results.csv")
+# costello <- read.csv("~/Dropbox/FisheriesWorkingGroupPhaseII/RAM_Legacy_fits/Costello/Costello_rlega# cy_results.csv")
 cdat <- read.csv("raw-data/RAM_bmsy_Ctousev4.csv", stringsAsFactors=FALSE)
-costello <- merge(costello, unique(cdat[,c("stockid","stocklong")]), by="stocklong", all.x=TRUE)
-costello <- costello %>% filter(stockid == "SBWHITACIR") %>%
-  select(year, BvBmsy, BvBmsy_LogSD) %>%
-  mutate(year, b_bmsyiq25 = exp(log(BvBmsy) - 0.5 * BvBmsy_LogSD),
-    b_bmsy = BvBmsy,
-    b_bmsyiq75 = exp(log(BvBmsy) + 0.5 * BvBmsy_LogSD)) %>%
-  select(-BvBmsy, -BvBmsy_LogSD) %>%
-  rename(yr = year) %>%
-  mutate(method = "mPRM")
+# costello <- merge(costello, unique(cdat[,c("stockid","stocklong")]), by="stocklong", all.x=TRUE)
+# costello <- costello %>% filter(stockid == "SBWHITACIR") %>%
+#   select(year, BvBmsy, BvBmsy_LogSD) %>%
+#   mutate(year, b_bmsyiq25 = exp(log(BvBmsy) - 0.5 * BvBmsy_LogSD),
+#     b_bmsy = BvBmsy,
+#     b_bmsyiq75 = exp(log(BvBmsy) + 0.5 * BvBmsy_LogSD)) %>%
+#   select(-BvBmsy, -BvBmsy_LogSD) %>%
+#   rename(yr = year) %>%
+#   mutate(method = "mPRM")
+# saveRDS(costello, file = "generated-data/SBWHITACIR-costello.rds")
+costello <- readRDS("generated-data/SBWHITACIR-costello.rds")
 
 dl_dat <- bind_rows(cmsy, comsir, sscom, costello) %>%
   arrange(method, yr)
 
-#library(ggplot2)
-#ggplot(dl_dat, aes(yr, b_bmsy, colour = method)) + geom_line() + xlim(1990, 2011) +
-#geom_ribbon(aes(ymax = b_bmsyiq75, ymin = b_bmsyiq25, fill = method), alpha = 0.2) +
-#geom_line(data = ram, aes(yr, b_bmsy), colour = "black", fill = "black")
-
-pal <- paste0(RColorBrewer::brewer.pal(4, "Dark2")) # colour-blind proof
-pal <- c("#728905", "#2075C7", "#465A61", "#D01B24") # solarized
-pal <- c("#BD1550", "#E97F02", "#F8CA00", "#8A9B0F") # http://www.colourlovers.com/palette/848743/(◕_”_◕)
-pal <- c("#00A0B0", "#6A4A3C", "#CC333F", "#EDC951") #"EDC951" #http://www.colourlovers.com/palette/1473/Ocean_Five
-pal <- paste0(RColorBrewer::brewer.pal(4, "Set2"))
 library(RColorBrewer)
-pals <- c("BuGn", "BuPu", "GnBu", "OrRd")
 pals <- c("Reds", "Greens", "Blues", "Purples")
 pal <- sapply(pals, function(x) brewer.pal(9, x)[7]) %>% as.character
 
@@ -74,7 +71,6 @@ ylim <- range(c(dl_dat$b_bmsyiq25, dl_dat$b_bmsyiq75))
 pdf("../figs/motivate.pdf", width = 4.6, height = 2.9)
 par(mar = c(3, 3.4, .5, 4.5), cex = 0.8, oma = c(0, 0, 0, 0), tck = -0.015,
   mgp = c(2, 0.5, 0), col.axis = "grey40", las = 1)
-#par(family="serif")
 plot(1, 1, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", axes = FALSE)
 abline(h = 1, lty = 2, col = "grey40", lwd = 2)
 plyr::d_ply(dl_dat, "method", plot_method)
