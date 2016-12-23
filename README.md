@@ -2,6 +2,8 @@
 Improving estimates of population status and trend with superensemble models
 ============================================================================
 
+[![DOI](https://zenodo.org/badge/33008246.svg)](https://zenodo.org/badge/latestdoi/33008246)
+
 This repository holds the analysis for: Anderson, S. C., A. B. Cooper, O. P. Jensen, C. Minto, J. T. Thorson, J. C. Walsh, M. Dickey-Collas, K. M. Kleisner, C. Longo, G. C. Osio, D. Ovando, I. Mosqueira, A. A. Rosenberg, and E. R. Selig. 2017. Improving estimates of population status and trend with superensemble models. Fish and Fisheries. In press.
 
 To recreate the analysis, source the `.R` files in the `analysis` folder in order. Or run the following in R:
