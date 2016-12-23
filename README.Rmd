@@ -45,7 +45,7 @@ cd analysis
 make
 ```
 
-Generated data ends up in `generated-data` and figures in `figs`. Intermediate versions of some raw data have been cached in the `generated-data` folder so that the scripts will run from a freshly cloned version of this repository. (Some of the raw data files are too large for Git.)
+Generated data ends up in `analysis/generated-data` and figures in `figs`. Intermediate versions of some raw data have been cached in the `analysis/generated-data` folder so that the scripts will run from a freshly cloned version of this repository. (Some of the raw data files are too large for Git.)
 
 ## Package versions used:
 
