@@ -49,7 +49,7 @@ dsim_sum <- dsim_sum %>% mutate(
   above_bbmsy1_true = ifelse(bbmsy_true_mean > 1, 1, 0))
 
 # save a data frame of 'true' operating model values to merge in:
-trues <- select(dsim_sum, stockid, iter, above_bbmsy1_true,
+trues <- select(filter(dsim_sum, method == "SSCOM"), stockid, iter, above_bbmsy1_true,
   bbmsy_true_mean, bbmsy_true_slope)
 trues <- trues[!duplicated(trues), ] # one value per operating model stockid
 
@@ -123,6 +123,40 @@ m_basic <- gbm::gbm(log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM,
 m_slope_basic <- gbm::gbm(bbmsy_true_slope ~ CMSY + COMSIR + mPRM + SSCOM,
   distribution = "gaussian",
   data = d_slope, n.trees = 2000L, interaction.depth = 6, shrinkage = 0.01)
+
+################# check random forest against global analysis
+library(randomForest)
+m_rf <- randomForest(
+  log(bbmsy_true_mean) ~ CMSY + COMSIR + mPRM + SSCOM +
+    spec_freq_0.05 + spec_freq_0.2,
+  data = d_mean, ntree = 1000L)
+xa <- partialPlot(m_rf, x.var="CMSY", pred.data=d_mean, plot = FALSE)
+xb <- partialPlot(m_rf, x.var="mPRM", pred.data=d_mean, plot = FALSE)
+xc <- partialPlot(m_rf, x.var="COMSIR", pred.data=d_mean, plot = FALSE)
+xd <- partialPlot(m_rf, x.var="SSCOM", pred.data=d_mean, plot = FALSE)
+xe <- partialPlot(m_rf, x.var="spec_freq_0.05", pred.data=d_mean, plot = FALSE)
+xf <- partialPlot(m_rf, x.var="spec_freq_0.2", pred.data=d_mean, plot = FALSE)
+
+xa <- data.frame(predictor = "CMSY", as.data.frame(xa))
+xb <- data.frame(predictor = "mPRM", as.data.frame(xb))
+xc <- data.frame(predictor = "COMSIR", as.data.frame(xc))
+xd <- data.frame(predictor = "SSCOM", as.data.frame(xd))
+xe <- data.frame(predictor = "spec_freq_0.05", as.data.frame(xe))
+xf <- data.frame(predictor = "spec_freq_0.2", as.data.frame(xf))
+
+p <- bind_rows(xa, xb) %>%
+  bind_rows(xc) %>%
+  bind_rows(xd) %>%
+  bind_rows(xe) %>%
+  bind_rows(xf) %>%
+  ggplot(aes(x, exp(y)))+ geom_line() +
+  facet_wrap(~predictor, scales="free_x") +
+  ylab(expression(Average~B/B[MSY])) +
+  xlab("Predictor value")
+ct_size <- 1000  #or 3000
+cutoff_yr <- 20  #or 10
+ggsave(paste0("../figs/ensemble-partial_TS",cutoff_yr,"_CS", ct_size,".pdf"),width = 7, height = 4)
+#################
 
 p1 <- ggplot(d_mean, aes(CMSY, gbm_pred)) + geom_point()
 p2 <- ggplot(d_mean, aes(COMSIR, gbm_pred)) + geom_point()
