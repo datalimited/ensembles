@@ -1,0 +1,150 @@
+---
+title: "ROC for OHI thresholds"
+author: "Sean Anderson"
+date: '2017-07-18'
+output: html_document
+---
+
+Let's read in the data, source some functions, and manipulate the data so we can create some ROC curves at relevant thresholds for the OHI.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+source("0-ensemble-functions.R")
+
+# bring in the simulated data and shape it for plotting:
+clean_names <- dplyr::data_frame(
+  method = c("CMSY", "COMSIR", "mPRM", "SSCOM",
+    "gbm_ensemble", "rf_ensemble", "lm_ensemble", "mean_ensemble"),
+  clean_method = c("CMSY", "COM-SIR", "mPRM", "SSCOM",
+    "GBM Superensemble", "RF Superensemble", "LM Superensemble", "Mean Ensemble"),
+  order = c(1, 2, 4, 3, 8, 7, 6, 5),
+  label_fudge_x = c(
+    0, -0.03,0,-0.04,
+    0, 0,0,-0.05),
+  label_fudge_y = c(
+    0, -0.02,0.03,0.04,
+    0, 0.02,0,-0.02))
+
+d_sim <- readRDS("generated-data/cv_sim_long.rds")
+d_sim <- suppressWarnings(inner_join(d_sim, clean_names))
+
+get_performance <- function(validation_data) {
+  d_sim_perf <- validation_data %>% group_by(test_iter, type, clean_method,
+    order, label_fudge_x, label_fudge_y) %>%
+    summarise(
+      mare = median(abs(re)),
+      mre = median(re),
+      corr = cor(bbmsy_true_trans, bbmsy_est_trans, method = "spearman",
+        use = "pairwise.complete.obs"))
+  
+  d_sim_perf$clean_method <- as.factor(d_sim_perf$clean_method)
+  d_sim_perf$clean_method <- reorder(d_sim_perf$clean_method, d_sim_perf$order)
+  
+  d_sim_perf_slope <- filter(d_sim_perf, type == "slope")
+  d_sim_perf <- filter(d_sim_perf, type == "mean")
+  
+  d_sim_perf_long <- reshape2::melt(d_sim_perf,
+    id.vars = c("test_iter", "clean_method", "type", "order", 
+      "label_fudge_x", "label_fudge_y"))
+  d_sim_perf_summ <- d_sim_perf_long %>%
+    group_by(clean_method, order, variable, label_fudge_x, label_fudge_y) %>%
+    summarise(
+      m = median(value),
+      l = quantile(value, 0.25),
+      u = quantile(value, 0.75)) %>%
+    as.data.frame
+  d_sim_perf_summ$text_col <- ifelse(grepl("ensemble", 
+    d_sim_perf_summ$clean_method, ignore.case = TRUE),
+    "grey20", "grey50")
+  d_sim_perf_wide_temp <- reshape2::dcast(d_sim_perf_summ, 
+    clean_method + order ~ variable,
+    value.var = "m")
+  d_sim_perf_wide_temp
+}
+d_sim_perf_wide <- get_performance(d_sim)
+saveRDS(d_sim_perf_wide, "generated-data/d_sim_perf_wide.rds")
+
+# Format basic simulation ensemble without covariates for plotting:
+d_sim_basic <- readRDS("generated-data/cv_sim_mean_basic_long.rds")
+d_sim_basic <- suppressWarnings(inner_join(d_sim_basic, clean_names))
+d_sim_perf_wide_basic <- get_performance(d_sim_basic)
+saveRDS(d_sim_perf_wide_basic, "generated-data/d_sim_perf_wide_basic.rds")
+d_sim_basic$bbmsy_est[d_sim_basic$bbmsy_est > 10] <- NA
+d_sim_basic <- na.omit(d_sim_basic)
+```
+
+Get ROC and AUC for models applied to simulation data with b/bmsy as the response. We'll use 0.8 B/Bmsy as the threshold to start with. 
+
+```{r}
+library("doParallel")
+registerDoParallel(cores = parallel::detectCores())
+.parallel <- ifelse(Sys.info()[["sysname"]] == "Windows", FALSE, TRUE)
+
+d_sim_mean <- d_sim_basic %>% filter(type == "mean") %>%
+  mutate(above_0.8 = ifelse(bbmsy_true > 0.8, 1, 0)) %>% 
+  mutate(above_1.45 = ifelse(bbmsy_true > 1.45, 1, 0)) %>% 
+  mutate(below_1.45_above_0.8 = ifelse(bbmsy_true < 1.45 & bbmsy_true > 0.8, 1, 0)) %>% 
+  mutate(clean_method = paste(order, clean_method, sep = "-"))
+
+d_sim_mean$Ensemble <- ifelse(grepl("ensemble", 
+  d_sim_mean$clean_method, ignore.case = TRUE),
+  "(a) Ensemble", "(b) Individual")
+
+get_roc <- function(true, est) {
+  library("pROC") # required or pROC:: will generate errors
+  y <- pROC::roc(response = true, predictor = est)
+  data.frame(sens = y$sensitivities, spec = y$specificities,
+    auc = as.numeric(y$auc))
+}
+
+rocs_sim_mean_0.8 <- plyr::ddply(d_sim_mean, c("clean_method", "Ensemble"), 
+  function(x) {
+    get_roc(true = x$above_0.8, est = x$bbmsy_est)
+  }, .parallel = .parallel)
+
+rocs_sim_mean_1.45 <- plyr::ddply(d_sim_mean, c("clean_method", "Ensemble"), 
+  function(x) {
+    get_roc(true = x$above_1.45, est = x$bbmsy_est)
+  }, .parallel = .parallel)
+
+rocs_sim_mean_0.8_1.45 <- plyr::ddply(d_sim_mean, c("clean_method", "Ensemble"), 
+  function(x) {
+    get_roc(true = x$below_1.45_above_0.8, est = x$bbmsy_est)
+  }, .parallel = .parallel)
+
+saveRDS(rocs_sim_mean_0.8, file = "generated-data/rocs_sim_mean_0.8.rds")
+saveRDS(rocs_sim_mean_1.45, file = "generated-data/rocs_sim_mean_1.45.rds")
+saveRDS(rocs_sim_mean_0.8_1.45, file = "generated-data/rocs_sim_mean_0.8_1.45.rds")
+
+# auc_sim_mean <- rocs_sim_mean %>%
+#   group_by(clean_method) %>%
+#   summarise(auc = auc[1])
+```
+
+Now make the curves:
+
+```{r}
+make_roc_curves <- function(dat) {
+  p <- ggplot(dat, aes(spec, sens, colour = clean_method, group = clean_method)) +
+    geom_line() + coord_equal() +
+    geom_abline(intercept = 1, slope = 1, lty = 2, col = "darkgrey") +
+    xlim(1, 0) +
+    xlab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as < threshold)) +
+    ylab(expression(Rate~of~correctly~categorizing~B/B[MSY]~as > threshold)) +
+    theme_bw() +
+    theme(plot.background = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()) + facet_wrap(~Ensemble) +
+    scale_colour_brewer(palette="Spectral", guide = guide_legend(title = "Model"))
+  p
+}
+p <- make_roc_curves(rocs_sim_mean_0.8)
+ggsave("../figs/ohi-roc-sim-0.8.png", width = 8, height = 5)
+
+p <- make_roc_curves(rocs_sim_mean_1.45)
+ggsave("../figs/ohi-roc-sim-1.45.png", width = 8, height = 5)
+
+p <- make_roc_curves(rocs_sim_mean_0.8_1.45)
+ggsave("../figs/ohi-roc-sim-0.8-1.45.png", width = 8, height = 5)
+```
