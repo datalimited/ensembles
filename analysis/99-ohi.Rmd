@@ -5,9 +5,10 @@ date: '2017-07-18'
 output: html_document
 ---
 
-Let's read in the data, source some functions, and manipulate the data so we can create some ROC curves at relevant thresholds for the OHI.
+Let's read in the data, source some functions, and manipulate the data so we can create some ROC curves at relevant thresholds for the OHI. The data we are working with is the cross validated (out-of-sample) simulation data. 
 
 ```{r}
+setwd("analysis")
 library(dplyr)
 library(ggplot2)
 source("0-ensemble-functions.R")
@@ -74,7 +75,7 @@ d_sim_basic$bbmsy_est[d_sim_basic$bbmsy_est > 10] <- NA
 d_sim_basic <- na.omit(d_sim_basic)
 ```
 
-Get ROC and AUC for models applied to simulation data with b/bmsy as the response. We'll use 0.8 B/Bmsy as the threshold to start with. 
+Get ROC and AUC for models applied to simulation data with b/bmsy as the response. We'll test 3 threshold levels. 0.8, 1.45, and > 0.8 but < 1.45. The last one checks whether the model correctly put b/bmsy between 0.8 and 1.45 vs. above or below. 
 
 ```{r}
 library("doParallel")
@@ -116,10 +117,29 @@ rocs_sim_mean_0.8_1.45 <- plyr::ddply(d_sim_mean, c("clean_method", "Ensemble"),
 saveRDS(rocs_sim_mean_0.8, file = "generated-data/rocs_sim_mean_0.8.rds")
 saveRDS(rocs_sim_mean_1.45, file = "generated-data/rocs_sim_mean_1.45.rds")
 saveRDS(rocs_sim_mean_0.8_1.45, file = "generated-data/rocs_sim_mean_0.8_1.45.rds")
+```
 
-# auc_sim_mean <- rocs_sim_mean %>%
-#   group_by(clean_method) %>%
-#   summarise(auc = auc[1])
+Let's read in the model output and calculate the AUC values (area under the curve). 0.5 is as good as a coin flip. 1.00 is perfect.
+
+```{r}
+rocs_sim_mean_0.8 <- readRDS("generated-data/rocs_sim_mean_0.8.rds")
+rocs_sim_mean_1.45 <- readRDS("generated-data/rocs_sim_mean_1.45.rds")
+rocs_sim_mean_0.8_1.45 <- readRDS("generated-data/rocs_sim_mean_0.8_1.45.rds")
+
+rocs_sim_mean_0.8 %>%
+  group_by(clean_method) %>%
+  summarise(auc = round(auc[1], 2)) %>% 
+  arrange(-auc)
+
+rocs_sim_mean_1.45 %>%
+  group_by(clean_method) %>%
+  summarise(auc = round(auc[1], 2)) %>% 
+  arrange(-auc)
+
+rocs_sim_mean_0.8_1.45 %>%
+  group_by(clean_method) %>%
+  summarise(auc = round(auc[1], 2)) %>% 
+  arrange(-auc)
 ```
 
 Now make the curves:
